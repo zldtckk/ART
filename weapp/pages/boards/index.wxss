@@ -1,0 +1,50 @@
+.boards-list {
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+.board-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 40rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  box-shadow: var(--shadow);
+}
+.board-item-disabled {
+  opacity: 0.5;
+}
+.board-icon-wrap {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.board-item-body {
+  flex: 1;
+  min-width: 0;
+}
+.board-item-label {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+.board-item-desc {
+  display: block;
+  font-size: 26rpx;
+  color: var(--text2);
+  margin-top: 4rpx;
+}
+.board-item-coming {
+  font-size: 22rpx;
+  color: var(--text3);
+  background: var(--bg);
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+}

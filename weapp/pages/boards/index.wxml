@@ -1,0 +1,40 @@
+<view class="page">
+  <view class="header">
+    <text class="header-title">板块</text>
+  </view>
+
+  <view class="boards-list">
+    <view class="board-item" bindtap="goBoard" data-board="circle">
+      <view class="board-icon-wrap" style="background:rgba(0,122,255,0.08);">
+        <view class="icon icon-home-active" style="width:44rpx;height:44rpx;"></view>
+      </view>
+      <view class="board-item-body">
+        <text class="board-item-label">画室圈子</text>
+        <text class="board-item-desc">闲聊、求助、树洞、拼车、拼饭</text>
+      </view>
+      <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
+    </view>
+
+    <view class="board-item" bindtap="goBoard" data-board="market">
+      <view class="board-icon-wrap" style="background:rgba(255,149,0,0.08);">
+        <view class="icon icon-shopping" style="width:44rpx;height:44rpx;"></view>
+      </view>
+      <view class="board-item-body">
+        <text class="board-item-label">二手集市</text>
+        <text class="board-item-desc">出售·求购·赠送</text>
+      </view>
+      <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
+    </view>
+
+    <view class="board-item board-item-disabled">
+      <view class="board-icon-wrap" style="background:rgba(175,82,222,0.08);">
+        <view class="icon icon-heart" style="width:44rpx;height:44rpx;"></view>
+      </view>
+      <view class="board-item-body">
+        <text class="board-item-label">爱豆专区</text>
+        <text class="board-item-desc">追星交流、周边分享</text>
+      </view>
+      <text class="board-item-coming">即将开放</text>
+    </view>
+  </view>
+</view>

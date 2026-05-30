@@ -1,0 +1,42 @@
+<view class="page">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">画室圈子</text>
+    <view class="header-right"></view>
+  </view>
+
+  <scroll-view scroll-x class="type-bar">
+    <view wx:for="{{types}}" wx:key="key" class="type-item {{currentType === item.key ? 'type-active' : ''}}" bindtap="switchType" data-type="{{item.key}}">
+      <text>{{item.name}}</text>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{loading && posts.length === 0}}" class="loading-spinner"></view>
+  <block wx:elif="{{posts.length === 0}}">
+    <view class="empty-state">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无帖子</text>
+      <text class="empty-hint">去发第一条帖子吧</text>
+    </view>
+  </block>
+  <block wx:else>
+    <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
+      <view class="post-header">
+        <view class="post-avatar">
+          <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
+          <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
+        </view>
+        <view class="post-meta">
+          <text class="post-name">{{item.is_anonymous ? '匿名用户' : (item.display_name || '用户')}}</text>
+          <text class="post-tag tag tag-warning">{{item.circle_type_name || '闲聊'}}</text>
+        </view>
+      </view>
+      <view class="post-content">{{item.content}}</view>
+      <view class="post-actions">
+        <text class="action-btn" data-id="{{item.id}}" catchtap="onLike">{{item.is_liked ? '❤️' : '🤍'}} {{item.like_count || 0}}</text>
+        <text class="action-btn">💬 {{item.comment_count || 0}}</text>
+      </view>
+    </view>
+    <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+  </block>
+</view>

@@ -1,0 +1,35 @@
+<view class="post-card">
+  <view class="post-header">
+    <view class="post-avatar">
+      <image wx:if="{{post.display_avatar}}" src="{{post.display_avatar}}" mode="aspectFill" class="avatar-img" />
+      <view wx:else class="avatar-placeholder">{{post.is_anonymous ? '匿' : (post.display_name ? post.display_name[0] : '用')}}</view>
+    </view>
+    <view class="post-meta">
+      <text class="post-name">{{post.is_anonymous ? '匿名用户' : (post.display_name || '用户')}}</text>
+      <text class="post-time">{{post.created_at}}</text>
+    </view>
+    <text wx:if="{{post.board === 'market' && post.price != null}}" class="post-price">¥{{post.price}}</text>
+  </view>
+  <view class="post-content">{{post.content}}</view>
+  <scroll-view wx:if="{{images.length > 0}}" class="post-images" scroll-x>
+    <image wx:for="{{images}}" wx:key="*this" src="{{item}}" mode="aspectFill" class="post-image" />
+  </scroll-view>
+  <view class="post-tags">
+    <text wx:if="{{post.board === 'market'}}" class="tag tag-primary">{{post.market_tag === 'buy' ? '求购' : '出售'}}</text>
+    <text wx:elif="{{post.circle_type}}" class="tag tag-warning">{{circleTypeName}}</text>
+  </view>
+  <view class="post-actions">
+    <view class="action-btn" bindtap="onLike">
+      <text>{{post.is_liked ? '❤️' : '🤍'}} {{post.like_count || 0}}</text>
+    </view>
+    <view class="action-btn" bindtap="onFavorite">
+      <text>{{post.is_favorited ? '⭐' : '☆'}}</text>
+    </view>
+    <view class="action-btn" bindtap="onChat">
+      <text>💬 私信</text>
+    </view>
+    <view class="action-btn" bindtap="onTap">
+      <text>💬 {{post.comment_count || 0}}</text>
+    </view>
+  </view>
+</view>

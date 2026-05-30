@@ -1,0 +1,17 @@
+<view class="page login-page">
+  <view class="login-header">
+    <view class="icon icon-boards-active" style="width:120rpx;height:120rpx;"></view>
+    <text class="login-title">画室圈</text>
+    <text class="login-subtitle">杭州美术集训生社区</text>
+  </view>
+
+  <button class="wx-login-btn btn" bindtap="handleWxLogin" loading="{{loading}}" disabled="{{loading}}">
+    微信一键登录
+  </button>
+
+  <view wx:if="{{sysUserId}}" class="sys-user-card">
+    <text class="sys-user-label">您的数字ID（请牢记）</text>
+    <text class="sys-user-id">{{sysUserId}}</text>
+    <text class="btn btn-secondary" bindtap="goHome">记住ID，开始使用</text>
+  </view>
+</view>

@@ -1,0 +1,9 @@
+.post-card { background: var(--card); margin: 16rpx 32rpx; padding: 32rpx; border-radius: var(--radius); box-shadow: var(--shadow); }
+.post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.post-name { font-size: 26rpx; font-weight: 500; }
+.post-time { font-size: 20rpx; color: var(--text3); }
+.post-content { font-size: 28rpx; line-height: 1.6; margin-bottom: 16rpx; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.post-actions { display: flex; gap: 32rpx; font-size: 24rpx; color: var(--text2); }
+.empty-state { text-align: center; padding: 120rpx 0; }
+.empty-icon { font-size: 96rpx; }
+.empty-text { font-size: 28rpx; color: var(--text2); margin-top: 16rpx; }

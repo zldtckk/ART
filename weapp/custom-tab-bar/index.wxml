@@ -1,0 +1,43 @@
+<view wx:if="{{!hideTabBar}}" class="tab-bar">
+  <!-- 首页 -->
+  <view class="tab-item {{selected === 0 ? 'active' : ''}}" data-index="0" bindtap="switchTab">
+    <view class="tab-icon-wrap">
+      <view class="icon tab-icon icon-{{selected === 0 ? 'home-active' : 'home'}}"></view>
+      <text class="tab-label">{{list[0].text}}</text>
+    </view>
+  </view>
+
+  <!-- 消息 + 未读红点 -->
+  <view class="tab-item {{selected === 1 ? 'active' : ''}}" data-index="1" bindtap="switchTab">
+    <view class="tab-icon-wrap">
+      <view class="icon tab-icon icon-{{selected === 1 ? 'message-active' : 'message'}}"></view>
+      <text class="tab-label">{{list[1].text}}</text>
+    </view>
+    <view wx:if="{{unreadCount > 0}}" class="unread-badge">
+      <text class="unread-text">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+    </view>
+  </view>
+
+  <!-- FAB 发帖（正中间） -->
+  <view class="tab-fab-wrapper">
+    <view class="tab-fab" bindtap="handleFab">
+      <view class="icon tab-fab-icon icon-plus"></view>
+    </view>
+  </view>
+
+  <!-- 板块 -->
+  <view class="tab-item {{selected === 2 ? 'active' : ''}}" data-index="2" bindtap="switchTab">
+    <view class="tab-icon-wrap">
+      <view class="icon tab-icon icon-{{selected === 2 ? 'boards-active' : 'boards'}}"></view>
+      <text class="tab-label">{{list[2].text}}</text>
+    </view>
+  </view>
+
+  <!-- 我的 -->
+  <view class="tab-item {{selected === 3 ? 'active' : ''}}" data-index="3" bindtap="switchTab">
+    <view class="tab-icon-wrap">
+      <view class="icon tab-icon icon-{{selected === 3 ? 'profile-active' : 'profile'}}"></view>
+      <text class="tab-label">{{list[3].text}}</text>
+    </view>
+  </view>
+</view>

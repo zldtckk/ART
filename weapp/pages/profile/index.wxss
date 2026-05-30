@@ -1,0 +1,124 @@
+/* Empty state (not logged in) */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160rpx 32rpx 0;
+}
+.empty-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 24rpx;
+}
+.empty-desc {
+  font-size: 28rpx;
+  color: var(--text2);
+  margin-top: 8rpx;
+}
+
+/* Profile header */
+.profile-header {
+  padding: 48rpx 32rpx 40rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+.profile-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.avatar-img { width: 100%; height: 100%; }
+.profile-avatar-placeholder {
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+.profile-name {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.profile-studio {
+  display: block;
+  font-size: 28rpx;
+  color: var(--text2);
+  margin-top: 4rpx;
+}
+.profile-id {
+  display: block;
+  font-size: 24rpx;
+  color: var(--text3);
+  margin-top: 2rpx;
+}
+.profile-badge {
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 24rpx;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge-approved { background: rgba(52,199,89,0.1); color: var(--success); }
+.badge-pending { background: rgba(255,149,0,0.1); color: var(--warning); }
+.badge-rejected { background: rgba(255,59,48,0.1); color: var(--danger); }
+.badge-none { background: rgba(255,149,0,0.1); color: var(--warning); }
+
+/* Entry cards */
+.profile-entries {
+  margin: 0 32rpx;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.profile-entry {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 32rpx;
+  border-bottom: 0.5rpx solid var(--border);
+}
+.profile-entry:last-child {
+  border-bottom: none;
+}
+.entry-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.entry-label {
+  flex: 1;
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--text);
+}
+.entry-count {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+/* Quick action buttons */
+.profile-actions {
+  margin: 24rpx 32rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+/* Logout */
+.profile-logout {
+  padding: 48rpx 32rpx;
+}

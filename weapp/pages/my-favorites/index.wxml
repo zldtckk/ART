@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">我的收藏</text>
+  </view>
+  <view wx:if="{{loading}}" class="loading-spinner"></view>
+  <block wx:elif="{{posts.length === 0}}">
+    <view class="empty-state"><text class="empty-icon">⭐</text><text class="empty-text">暂无收藏</text></view>
+  </block>
+  <block wx:else>
+    <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
+      <view class="post-header">
+        <text class="post-name">{{item.display_name || '用户'}}</text>
+        <text class="post-time">{{item.created_at}}</text>
+      </view>
+      <view class="post-content">{{item.content}}</view>
+      <view class="post-actions">
+        <text>❤️ {{item.like_count}}</text>
+        <text>💬 {{item.comment_count}}</text>
+      </view>
+    </view>
+    <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+  </block>
+</view>

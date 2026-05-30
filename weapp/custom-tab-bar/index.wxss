@@ -1,0 +1,106 @@
+@import '../styles/icons.wxss';
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160rpx;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid #f0f0f2;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1000;
+  padding: 16rpx 0 env(safe-area-inset-bottom);
+}
+
+/* Tab items (首页, 消息, 板块, 我的) */
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-icon-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: 8rpx 12rpx;
+}
+
+.tab-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.tab-label {
+  font-size: 20rpx;
+  color: #aeaeb2;
+  line-height: 1.2;
+  transition: color 0.15s;
+}
+
+.tab-item.active .tab-label {
+  color: #007aff;
+}
+
+/* Unread badge on 消息 tab */
+.unread-badge {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 18rpx;
+  border-radius: 18rpx;
+  padding: 2rpx 12rpx;
+  min-width: 28rpx;
+  text-align: center;
+  line-height: 1.8;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.unread-text {
+  color: #fff;
+  font-size: 18rpx;
+}
+
+/* FAB button - 等宽居中 */
+.tab-fab-wrapper {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-fab {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #007aff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(0,122,255,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.tab-fab:active {
+  transform: scale(0.92);
+  box-shadow: 0 2rpx 10rpx rgba(0,122,255,0.2);
+}
+
+.tab-fab-icon {
+  width: 36rpx !important;
+  height: 36rpx !important;
+}

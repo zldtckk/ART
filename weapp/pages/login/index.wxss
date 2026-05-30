@@ -1,0 +1,9 @@
+.login-page { padding: 240rpx 64rpx 0; }
+.login-header { text-align: center; margin-bottom: 80rpx; }
+.login-logo { width: 160rpx; height: 160rpx; border-radius: 40rpx; }
+.login-title { font-size: 48rpx; font-weight: 700; margin-top: 24rpx; display: block; }
+.login-subtitle { font-size: 28rpx; color: var(--text2); margin-top: 8rpx; display: block; }
+.wx-login-btn { margin-bottom: 32rpx; }
+.sys-user-card { margin-top: 48rpx; background: var(--card); border-radius: var(--radius); padding: 40rpx; text-align: center; }
+.sys-user-label { font-size: 24rpx; color: var(--text2); display: block; }
+.sys-user-id { font-size: 48rpx; font-weight: 700; color: var(--accent); display: block; margin: 24rpx 0; letter-spacing: 4rpx; }

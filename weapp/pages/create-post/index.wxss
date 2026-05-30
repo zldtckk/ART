@@ -1,0 +1,24 @@
+.create-form { padding: 32rpx; }
+.form-row { margin-bottom: 24rpx; }
+.form-label { display: block; font-size: 26rpx; color: var(--text2); margin-bottom: 12rpx; }
+.board-selector { display: flex; gap: 16rpx; }
+.board-option { flex: 1; text-align: center; padding: 20rpx; border-radius: var(--radius-sm); background: #f2f2f7; font-size: 26rpx; }
+.board-selected { background: var(--accent); color: #fff; }
+.type-scroll { white-space: nowrap; }
+.type-option { display: inline-block; padding: 12rpx 28rpx; background: #f2f2f7; border-radius: 32rpx; font-size: 24rpx; margin-right: 12rpx; }
+.type-selected { background: var(--accent); color: #fff; }
+.tag-row { display: flex; gap: 12rpx; }
+.tag-option { padding: 12rpx 28rpx; border-radius: 32rpx; background: #f2f2f7; font-size: 24rpx; }
+.tag-selected { background: var(--accent); color: #fff; }
+.content-textarea { width: 100%; height: 300rpx; background: #f2f2f7; border-radius: var(--radius-sm); padding: 24rpx; font-size: 28rpx; }
+.char-count { text-align: right; font-size: 22rpx; color: var(--text3); margin-top: 8rpx; display: block; }
+.image-section { display: flex; flex-wrap: wrap; gap: 16rpx; margin: 24rpx 0; }
+.image-preview { position: relative; width: 160rpx; height: 160rpx; }
+.preview-img { width: 100%; height: 100%; border-radius: var(--radius-sm); }
+.image-remove { position: absolute; top: -12rpx; right: -12rpx; width: 36rpx; height: 36rpx; background: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24rpx; }
+.image-add { width: 160rpx; height: 160rpx; background: #f2f2f7; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; border: 2rpx dashed var(--border); }
+.add-icon { font-size: 64rpx; color: var(--text3); }
+.anonymous-row { display: flex; align-items: center; gap: 16rpx; }
+.form-row:last-child { display: flex; align-items: center; justify-content: space-between; }
+.submit-btn { font-size: 28rpx; color: #fff; font-weight: 500; background: var(--accent); padding: 16rpx 40rpx; border-radius: 40rpx; flex-shrink: 0; }
+.submit-btn.disabled { opacity: 0.5; }

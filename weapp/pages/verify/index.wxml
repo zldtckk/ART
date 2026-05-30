@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">画室认证</text>
+  </view>
+  <view class="verify-form">
+    <text class="form-desc">认证为画室成员后，可以评论、发帖和私信</text>
+
+    <text class="form-label">选择画室</text>
+    <view wx:if="{{loading}}" class="loading-spinner"></view>
+    <view wx:else class="studio-picker" bindtap="toggleStudioList">
+      <text class="studio-picker-text {{selectedStudioName ? '' : 'placeholder'}}">{{selectedStudioName || '请选择画室'}}</text>
+      <text class="studio-picker-arrow">{{showStudioList ? '▲' : '▼'}}</text>
+    </view>
+    <view wx:if="{{showStudioList}}" class="studio-dropdown">
+      <view wx:for="{{studios}}" wx:key="id" class="studio-option {{selectedStudioId === item.id ? 'studio-selected' : ''}}" bindtap="selectStudio" data-id="{{item.id}}" data-name="{{item.name}}">
+        <text class="studio-name">{{item.name}}</text>
+        <text wx:if="{{item.district}}" class="studio-district">{{item.district}}</text>
+      </view>
+    </view>
+
+    <text class="form-label">真实姓名</text>
+    <input class="input-field" placeholder="请输入真实姓名" value="{{realName}}" bindinput="onNameInput" />
+
+    <text class="form-label">班级（选填）</text>
+    <input class="input-field" placeholder="如：高三一班" value="{{className}}" bindinput="onClassInput" />
+
+    <text class="form-label">学生证/校园卡（选填）</text>
+    <view class="upload-section">
+      <view wx:if="{{studentIdImage}}" class="upload-preview">
+        <image src="{{studentIdImage}}" mode="aspectFill" class="preview-img" />
+      </view>
+      <view class="upload-btn" bindtap="uploadStudentId">
+        <text wx:if="{{!studentIdImage}}">+ 上传图片</text>
+        <text wx:else>重新上传</text>
+      </view>
+    </view>
+
+    <button class="btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">提交认证</button>
+  </view>
+</view>

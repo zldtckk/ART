@@ -1,0 +1,13 @@
+<view class="comment-item">
+  <view class="comment-avatar">
+    <image wx:if="{{comment.avatar_url}}" src="{{comment.avatar_url}}" mode="aspectFill" class="avatar-img" />
+    <view wx:else class="avatar-placeholder">{{comment.nickname ? comment.nickname[0] : '匿'}}</view>
+  </view>
+  <view class="comment-body">
+    <view class="comment-header">
+      <text class="comment-name">{{comment.nickname || '匿名'}}</text>
+      <text class="comment-time">{{comment.created_at}}</text>
+    </view>
+    <text class="comment-content">{{comment.content}}</text>
+  </view>
+</view>

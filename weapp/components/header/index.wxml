@@ -1,0 +1,8 @@
+<view class="header">
+  <view class="back-btn" bindtap="onBack">
+    <text>&#139; 返回</text>
+  </view>
+  <text class="header-title">{{title}}</text>
+  <view wx:if="{{showAction}}" class="header-action" bindtap="onAction">{{actionText}}</view>
+  <view wx:else class="header-placeholder"></view>
+</view>

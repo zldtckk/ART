@@ -1,0 +1,195 @@
+@import './styles/icons.wxss';
+
+/* Apple 灰色系设计系统 */
+page {
+  --accent: #007aff;
+  --danger: #ff3b30;
+  --warning: #ff9500;
+  --success: #34c759;
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --text: #1c1c1e;
+  --text2: #6c6c70;
+  --text3: #aeaeb2;
+  --border: #e5e5ea;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+/* Reset */
+view, text, image, input, textarea, scroll-view, button, navigator {
+  box-sizing: border-box;
+}
+
+/* Common classes */
+.page {
+  min-height: 100vh;
+  padding-bottom: 100rpx;
+  background: var(--bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 100rpx 32rpx 16rpx;
+  background: rgba(245,245,247,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.header-left {
+  flex: 0 0 120rpx;
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  flex: 0 0 120rpx;
+}
+
+.header-action {
+  padding: 8rpx;
+  min-width: 80rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+.back-btn {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: var(--accent);
+  padding: 8rpx 0;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 48rpx;
+  border-radius: var(--radius-sm);
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  width: 100%;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-small {
+  padding: 16rpx 32rpx;
+  font-size: 24rpx;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  margin: 16rpx 32rpx;
+  padding: 32rpx;
+  box-shadow: var(--shadow);
+}
+
+.input-field {
+  background: #f2f2f7;
+  border-radius: var(--radius-sm);
+  padding: 24rpx 32rpx;
+  font-size: 28rpx;
+  border: 1px solid transparent;
+  width: 100%;
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.divider {
+  height: 0.5px;
+  background: var(--border);
+  margin: 16rpx 0;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80rpx 0;
+}
+
+.loading-spinner::after {
+  content: '';
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tags/badges */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  background: #f2f2f7;
+  color: var(--text2);
+  margin-right: 8rpx;
+}
+
+.tag-primary {
+  background: #e8f0fe;
+  color: var(--accent);
+}
+
+.tag-warning {
+  background: #fff3e0;
+  color: var(--warning);
+}
+
+.tag-danger {
+  background: #ffe8e6;
+  color: var(--danger);
+}

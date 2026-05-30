@@ -1,0 +1,64 @@
+const api = require('../../utils/api');
+const { MARKET_CATEGORIES, MARKET_TAGS, PAGE_SIZE } = require('../../utils/constants');
+
+Page({
+  data: {
+    categories: [{ key: 'all', name: '全部' }, ...MARKET_CATEGORIES],
+    tags: [{ key: 'all', name: '全部' }, ...MARKET_TAGS],
+    currentCategory: 'all',
+    currentTag: 'all',
+    posts: [],
+    loading: true,
+    loadingMore: false,
+    page: 1,
+    hasMore: true,
+  },
+
+  onLoad() { this.loadPosts(); },
+  goCreate() { wx.navigateTo({ url: '/pages/create-post/index?board=market' }); },
+  goBack() { wx.navigateBack(); },
+
+  processPosts(posts) {
+    const tagNames = { buy: '求购', sell: '出售', free: '赠送' };
+    const catNames = { art_supplies: '画材', textbooks: '教材', life: '生活', digital: '数码', other: '其他' };
+    return (posts || []).map((p) => ({
+      ...p,
+      _market_tag_name: tagNames[p.market_tag] || '出售',
+      _market_cat_name: catNames[p.market_category] || p.market_category || '画材',
+    }));
+  },
+
+  switchCategory(e) {
+    this.setData({ currentCategory: e.currentTarget.dataset.key, posts: [], page: 1, hasMore: true, loading: true });
+    this.loadPosts();
+  },
+
+  switchTag(e) {
+    this.setData({ currentTag: e.currentTarget.dataset.key, posts: [], page: 1, hasMore: true, loading: true });
+    this.loadPosts();
+  },
+
+  async loadPosts() {
+    const market_category = this.data.currentCategory !== 'all' ? this.data.currentCategory : undefined;
+    const market_tag = this.data.currentTag !== 'all' ? this.data.currentTag : undefined;
+    try {
+      const posts = await api.getPosts({ board: 'market', market_category, market_tag, page: this.data.page, limit: PAGE_SIZE });
+      this.setData({
+        posts: this.data.page === 1 ? this.processPosts(posts) : this.data.posts.concat(this.processPosts(posts)),
+        loading: false,
+        loadingMore: false,
+        hasMore: posts.length >= PAGE_SIZE,
+      });
+    } catch (e) {
+      this.setData({ loading: false, loadingMore: false });
+    }
+  },
+
+  loadMore() {
+    if (!this.data.hasMore || this.data.loadingMore) return;
+    this.setData({ loadingMore: true, page: this.data.page + 1 });
+    this.loadPosts();
+  },
+
+  goPost(e) { wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` }); },
+});

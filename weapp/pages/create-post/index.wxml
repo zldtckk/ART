@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">发帖</text>
+    <view class="header-right"></view>
+  </view>
+
+  <view class="create-form">
+    <!-- Board selection -->
+    <view class="form-row">
+      <text class="form-label">板块</text>
+      <view class="board-selector">
+        <view wx:for="{{boards}}" wx:key="key" class="board-option {{selectedBoard === item.key ? 'board-selected' : ''}}" bindtap="selectBoard" data-board="{{item.key}}">
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Circle type (only for circle board) -->
+    <view wx:if="{{selectedBoard === 'circle'}}" class="form-row">
+      <text class="form-label">分类</text>
+      <scroll-view scroll-x class="type-scroll">
+        <view wx:for="{{circleTypes}}" wx:key="key" class="type-option {{circleType === item.key ? 'type-selected' : ''}}" bindtap="selectCircleType" data-key="{{item.key}}">
+          <text>{{item.name}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- Market fields (only for market board) -->
+    <view wx:if="{{selectedBoard === 'market'}}" class="form-row">
+      <text class="form-label">标签</text>
+      <view class="tag-row">
+        <view wx:for="{{marketTags}}" wx:key="key" class="tag-option {{marketTag === item.key ? 'tag-selected' : ''}}" bindtap="selectMarketTag" data-key="{{item.key}}">{{item.name}}</view>
+      </view>
+    </view>
+    <view wx:if="{{selectedBoard === 'market'}}" class="form-row">
+      <text class="form-label">分类</text>
+      <scroll-view scroll-x class="type-scroll">
+        <view wx:for="{{marketCategories}}" wx:key="key" class="type-option {{marketCategory === item.key ? 'type-selected' : ''}}" bindtap="selectMarketCategory" data-key="{{item.key}}">{{item.name}}</view>
+      </scroll-view>
+    </view>
+    <!-- Content -->
+    <textarea class="content-textarea" placeholder="说点什么..." value="{{content}}" bindinput="onContentInput" maxlength="2000" />
+    <text class="char-count">{{content.length}}/2000</text>
+
+    <!-- Images -->
+    <view class="image-section">
+      <view wx:for="{{images}}" wx:key="*this" class="image-preview">
+        <image src="{{item}}" mode="aspectFill" class="preview-img" />
+        <text class="image-remove" bindtap="removeImage" data-index="{{index}}">×</text>
+      </view>
+      <view wx:if="{{images.length < 9}}" class="image-add" bindtap="chooseImage">
+        <text class="add-icon">+</text>
+      </view>
+    </view>
+
+    <!-- Anonymous toggle (only for treehole) -->
+    <view wx:if="{{selectedBoard === 'circle' && circleType === 'treehole'}}" class="form-row">
+      <view class="anonymous-row">
+        <text class="form-label" style="margin-bottom:0;">匿名发布</text>
+        <switch checked="{{isAnonymous}}" bindchange="toggleAnonymous" />
+      </view>
+    </view>
+    <view class="form-row" style="display:flex;justify-content:flex-end;">
+      <text class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">{{submitting ? '发布中...' : '发布'}}</text>
+    </view>
+  </view>
+</view>

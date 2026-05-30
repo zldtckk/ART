@@ -1,0 +1,43 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 32rpx;
+  background-color: #ffffff;
+  border-bottom: 2rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  font-size: 32rpx;
+  color: #333;
+  padding: 8rpx 0;
+  min-width: 120rpx;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-action {
+  font-size: 28rpx;
+  color: #333;
+  padding: 8rpx 0;
+  min-width: 120rpx;
+  text-align: right;
+}
+
+.header-placeholder {
+  min-width: 120rpx;
+}

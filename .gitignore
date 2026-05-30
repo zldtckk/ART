@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.db
+*.db-shm
+*.db-wal
+.env
+.DS_Store
+*.local
+weapp/dist/
+weapp/node_modules/
+weapp/.temp/
+server/uploads/

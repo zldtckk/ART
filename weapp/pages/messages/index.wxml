@@ -1,0 +1,61 @@
+<view class="page">
+  <view class="header">
+    <view class="header-left"><view wx:if="{{convId}}" class="back-btn" bindtap="backToList"><text>‹ 返回</text></view></view>
+    <text class="header-title">{{convId ? '聊天' : '消息'}}</text>
+    <view class="header-right"></view>
+  </view>
+
+  <!-- Tabs (only show when not in chat) -->
+  <view wx:if="{{!convId}}" class="tab-bar-inline">
+    <view class="tab {{tab === 'chat' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="chat"><text>私信</text></view>
+    <view class="tab {{tab === 'notification' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="notification"><text>通知</text></view>
+  </view>
+
+  <!-- Chat conversation list -->
+  <view wx:if="{{!convId && tab === 'chat'}}">
+    <view wx:for="{{conversations}}" wx:key="id" class="conv-item" bindtap="openChat" data-convid="{{item.id}}">
+      <view class="conv-avatar">
+        <view class="avatar-placeholder" style="width:96rpx;height:96rpx;font-size:36rpx;">{{item.peer_name ? item.peer_name[0] : '?'}}</view>
+      </view>
+      <view class="conv-body">
+        <text class="conv-name">{{item.peer_name || '用户'}}</text>
+        <text class="conv-preview">{{item.last_message}}</text>
+      </view>
+      <text class="conv-time">{{item.last_message_at}}</text>
+    </view>
+    <view wx:if="{{conversations.length === 0}}" class="empty-state">
+      <text class="empty-icon">💬</text>
+      <text class="empty-text">暂无私信</text>
+    </view>
+  </view>
+
+  <!-- Notifications -->
+  <view wx:if="{{!convId && tab === 'notification'}}">
+    <view wx:for="{{notifications}}" wx:key="id" class="notif-item" bindtap="goPost" data-postid="{{item.related_post_id}}">
+      <view class="notif-header">
+        <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : '📢'}}</text>
+        <text class="notif-title">{{item.title}}</text>
+      </view>
+      <text class="notif-content">{{item.content}}</text>
+      <text class="notif-time">{{item.created_at}}</text>
+    </view>
+    <view wx:if="{{notifications.length === 0}}" class="empty-state">
+      <text class="empty-icon">🔔</text>
+      <text class="empty-text">暂无通知</text>
+    </view>
+  </view>
+
+  <!-- Inline chat view -->
+  <view wx:if="{{convId}}" class="chat-view">
+    <scroll-view scroll-y class="message-list" scroll-into-view="msg-bottom" scroll-with-animation>
+      <view wx:for="{{messages}}" wx:key="id" class="msg {{item.sender_id === currentUserId ? 'msg-self' : 'msg-other'}}">
+        <view class="msg-bubble">{{item.content}}</view>
+      </view>
+      <view id="msg-bottom"></view>
+    </scroll-view>
+    <view class="chat-input-bar">
+      <input class="chat-input" placeholder="输入消息..." value="{{messageText}}" bindinput="onMessageInput" confirm-type="send" bindconfirm="sendMessage" />
+      <text class="chat-send" bindtap="sendMessage">发送</text>
+    </view>
+  </view>
+</view>

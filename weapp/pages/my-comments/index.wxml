@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">我的评论</text>
+  </view>
+  <view wx:if="{{loading}}" class="loading-spinner"></view>
+  <block wx:elif="{{comments.length === 0}}">
+    <view class="empty-state"><text class="empty-icon">💬</text><text class="empty-text">暂无评论</text></view>
+  </block>
+  <block wx:else>
+    <view wx:for="{{comments}}" wx:key="id" class="comment-item" bindtap="goPost" data-postid="{{item.post_id}}">
+      <view class="comment-bubble">{{item.content}}</view>
+      <text class="comment-ref">回复帖子: {{item.post_content || ''}}</text>
+      <text class="meta-time">{{item.created_at}}</text>
+    </view>
+    <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+  </block>
+</view>

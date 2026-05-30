@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "envId": "cloud1-d5ggpvn6l40fbefe9",
+  "functionRoot": "./weapp/cloudfunctions",
+  "functions": [
+    { "name": "login", "runtime": "Nodejs16.13" },
+    { "name": "verifyCode", "runtime": "Nodejs16.13" },
+    { "name": "getConversation", "runtime": "Nodejs16.13" },
+    { "name": "sendMessage", "runtime": "Nodejs16.13" },
+    { "name": "getNotifications", "runtime": "Nodejs16.13" },
+    { "name": "bootstrap", "runtime": "Nodejs16.13" },
+    { "name": "seed", "runtime": "Nodejs16.13" },
+    { "name": "getUserStats", "runtime": "Nodejs16.13" }
+  ]
+}
