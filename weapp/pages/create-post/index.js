@@ -71,8 +71,13 @@ Page({
   selectMarketCategory(e) { this.setData({ marketCategory: e.currentTarget.dataset.key }); },
 
   chooseImage() {
-    wx.chooseImage({ count: 9, sizeType: ['compressed'] }).then((res) => {
-      this.setData({ images: this.data.images.concat(res.tempFilePaths) });
+    const remaining = 9 - this.data.images.length;
+    if (remaining <= 0) {
+      wx.showToast({ title: '最多上传9张图片', icon: 'none' });
+      return;
+    }
+    wx.chooseImage({ count: remaining, sizeType: ['compressed'] }).then((res) => {
+      this.setData({ images: this.data.images.concat(res.tempFilePaths).slice(0, 9) });
     }).catch(() => {});
   },
 

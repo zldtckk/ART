@@ -130,7 +130,9 @@ view, text, image, input, textarea, scroll-view, button, navigator {
 .input-field {
   background: #f2f2f7;
   border-radius: var(--radius-sm);
-  padding: 24rpx 32rpx;
+  padding: 0 32rpx;
+  height: 88rpx;
+  line-height: 88rpx;
   font-size: 28rpx;
   border: 1px solid transparent;
   width: 100%;

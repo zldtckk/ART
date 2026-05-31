@@ -41,10 +41,10 @@ Component({
       }
     },
     pollUnread() {
-      const token = wx.getStorageSync('token')
-      if (!token) { this.setData({ unreadCount: 0 }); return }
+      const user = wx.getStorageSync('user')
+      if (!user) { this.setData({ unreadCount: 0 }); return }
       const api = require('../utils/api')
-      api.get('/messages/notifications').then(res => {
+      api.getNotifications().then(res => {
         this.setData({ unreadCount: res.unread_count || 0 })
       }).catch(() => {})
     },
@@ -54,27 +54,27 @@ Component({
       wx.switchTab({ url: item.pagePath })
     },
     async handleFab() {
-      if (!wx.getStorageSync('token')) {
+      if (!wx.getStorageSync('user')) {
         wx.navigateTo({ url: '/pages/login/index' })
         return
       }
-      // 从服务器获取最新用户信息（确保认证状态是最新的）
+      // 从云端获取最新用户信息（确保认证状态是最新的）
       wx.showLoading({ title: '加载中' })
       try {
         const api = require('../utils/api')
         const auth = require('../utils/auth')
-        const res = await api.get('/users/me')
+        const user = await api.getMyProfile()
         wx.hideLoading()
-        if (res.user) {
-          auth.setUser(res.user)
-          if (res.user.verification_status === 'approved' || res.user.is_verified) {
+        if (user) {
+          auth.setUser(user)
+          if (user.verification_status === 'approved' || user.is_verified) {
             wx.switchTab({ url: '/pages/create-post/index' })
             return
           }
         }
       } catch(e) {
         wx.hideLoading()
-        // 服务端失败时回退到本地缓存判断
+        // 云端失败时回退到本地缓存判断
         const user = wx.getStorageSync('user') || {}
         if (user.verification_status === 'approved' || user.is_verified) {
           wx.switchTab({ url: '/pages/create-post/index' })

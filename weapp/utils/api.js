@@ -378,7 +378,7 @@ async function markConversationRead(conversationId) {
   const openid = getApp().globalData.user._openid;
   if (!openid) return;
   await db.collection('messages')
-    .where({ conversation_id: conversationId, _openid: _.neq(openid), is_read: false })
+    .where({ conversation_id: conversationId, sender_id: _.neq(openid), is_read: false })
     .update({ data: { is_read: true } });
 }
 
@@ -426,8 +426,10 @@ async function verifyStudioCode(code) {
 // ── Image Upload ──
 
 async function uploadImage(filePath) {
+  const { compressImage } = require('./compress');
+  const compressed = await compressImage(filePath);
   const cloudPath = `images/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
-  const res = await wx.cloud.uploadFile({ cloudPath, filePath });
+  const res = await wx.cloud.uploadFile({ cloudPath, filePath: compressed });
   return res.fileID;
 }
 

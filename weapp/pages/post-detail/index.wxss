@@ -86,8 +86,6 @@
 }
 .detail-image {
   width: 100%;
-  max-height: 600rpx;
-  object-fit: cover;
   border-radius: var(--radius-sm);
   background: var(--border);
 }

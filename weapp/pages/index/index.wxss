@@ -196,27 +196,19 @@
 }
 
 /* Images grid */
-.post-images {
+.post-img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rpx;
   margin-bottom: 20rpx;
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
-.post-images.single .post-image-single {
-  max-height: 400rpx;
-  width: 100%;
-  object-fit: cover;
+/* 所有缩略图尺寸由 JS inline style 控制，统一方块居中裁剪 */
+.grid-img {
+  display: block;
   background: var(--border);
-}
-.post-images.multi {
-  display: flex;
-  gap: 8rpx;
-}
-.post-images.multi .post-image {
-  flex: 1;
-  aspect-ratio: 1;
-  object-fit: cover;
-  background: var(--border);
-  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 /* Post footer */

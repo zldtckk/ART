@@ -29,8 +29,8 @@ Page({
     const user = authData.user;
     this.setData({
       isLoggedIn: authData.isLoggedIn,
-      isVerified: !!user.is_verified,
-      currentUserId: user._openid || null,
+      isVerified: !!(user && user.is_verified),
+      currentUserId: (user && user._openid) || null,
     });
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
@@ -49,12 +49,38 @@ Page({
     return map[type] || '';
   },
 
+  _getCellSizes() {
+    if (this._cellSizes) return this._cellSizes;
+    const w = wx.getSystemInfoSync().windowWidth;
+    const rpx = w / 750;
+    const pad = Math.round(64 * rpx);
+    const gap = Math.round(4 * rpx);
+    this._cellSizes = {
+      one: w - pad,
+      two: Math.floor((w - pad - gap) / 2),
+      three: Math.floor((w - pad - gap * 2) / 3),
+    };
+    return this._cellSizes;
+  },
+
   processPosts(posts) {
-    return (posts || []).map((p) => ({
-      ...p,
-      _parsedImages: this.parseImages(p.images),
-      circle_type_name: this.getCircleTypeName(p.circle_type),
-    }));
+    const sizes = this._getCellSizes();
+    return (posts || []).map((p) => {
+      const allImages = this.parseImages(p.images);
+      const displayImages = allImages.slice(0, 9);
+      const count = displayImages.length;
+      let cellStyle = '';
+      if (count === 1) cellStyle = `width:${sizes.one}px;height:${sizes.one}px;`;
+      else if (count === 2) cellStyle = `width:${sizes.two}px;height:${sizes.two}px;`;
+      else if (count >= 3) cellStyle = `width:${sizes.three}px;height:${sizes.three}px;`;
+      return {
+        ...p,
+        _parsedImages: displayImages,
+        _imageCount: count,
+        _imgCellStyle: cellStyle,
+        circle_type_name: this.getCircleTypeName(p.circle_type),
+      };
+    });
   },
 
   async loadHotPosts() {

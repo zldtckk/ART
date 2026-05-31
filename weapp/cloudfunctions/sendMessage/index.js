@@ -16,7 +16,7 @@ exports.main = async (event) => {
     is_read: false,
     createTime: db.serverDate(),
   };
-  await db.collection('messages').add({ data: msg });
+  const res = await db.collection('messages').add({ data: msg });
 
   // 更新会话最后消息
   await db.collection('conversations').doc(conversationId).update({
@@ -26,5 +26,5 @@ exports.main = async (event) => {
     },
   });
 
-  return { code: 0, message: msg };
+  return { code: 0, message: { ...msg, _id: res._id } };
 };

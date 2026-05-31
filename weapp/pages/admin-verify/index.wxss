@@ -13,8 +13,7 @@
 .empty-icon { font-size: 96rpx; }
 .empty-text { font-size: 28rpx; color: var(--text2); margin-top: 16rpx; }
 .studio-mgmt { padding: 32rpx; }
-.add-studio-form { margin-bottom: 32rpx; }
-.input-field { margin-bottom: 16rpx; }
+.add-studio-form { margin-bottom: 32rpx; display: flex; flex-direction: column; gap: 16rpx; }
 .studio-card { padding: 24rpx 32rpx; background: var(--card); border-radius: var(--radius); margin-bottom: 16rpx; box-shadow: var(--shadow); }
 .studio-card-name { font-size: 28rpx; font-weight: 500; display: block; }
 .studio-card-district { font-size: 24rpx; color: var(--text2); margin-top: 4rpx; display: block; }

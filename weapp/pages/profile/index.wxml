@@ -24,7 +24,6 @@
       <view class="profile-info">
         <text class="profile-name">{{user.nickname || '用户'}}</text>
         <text class="profile-studio">{{user.studio_name || (user.is_verified ? '' : '未认证画室')}}{{user.class_name ? ' · ' + user.class_name : ''}}</text>
-        <text class="profile-id">ID: {{user.sys_user_id || ''}}</text>
       </view>
       <view class="profile-badge badge-{{user.verification_status || 'none'}}">
         {{user.is_verified ? '已认证' : user.verification_status === 'pending' ? '审核中' : '未认证'}}
