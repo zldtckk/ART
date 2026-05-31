@@ -115,6 +115,7 @@ async function deletePost(id) {
   await db.collection('posts').doc(id).remove();
   await db.collection('comments').where({ post_id: id }).remove();
   await db.collection('likes').where({ post_id: id }).remove();
+  await db.collection('favorites').where({ post_id: id }).remove();
 }
 
 // ── Comments ──

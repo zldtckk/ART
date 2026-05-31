@@ -12,6 +12,10 @@
 .header-placeholder {
   width: 100rpx;
 }
+.post-action-danger {
+  margin-left: auto;
+  color: var(--danger);
+}
 
 /* Post card */
 .post-card {

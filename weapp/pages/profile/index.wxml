@@ -64,10 +64,6 @@
       <button wx:if="{{user.verification_status === 'pending'}}" class="btn btn-secondary" bindtap="goVerify" style="flex:1;font-size:26rpx;padding:16rpx 0;">查看审核状态</button>
     </view>
 
-    <!-- Debug: become admin -->
-    <view class="profile-logout">
-      <button class="btn btn-secondary btn-block" bindtap="becomeAdmin" style="font-size:24rpx;color:#999;">调试: 设为圈主</button>
-    </view>
     <!-- Admin & Logout -->
     <view wx:if="{{user.role === 'admin' || user.role === 'circle_master'}}" class="profile-logout">
       <button class="btn btn-secondary btn-block" bindtap="goAdmin" style="font-size:28rpx;">管理后台</button>

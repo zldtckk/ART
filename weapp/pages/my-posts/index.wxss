@@ -1,4 +1,9 @@
-.post-card { background: var(--card); margin: 16rpx 32rpx; padding: 32rpx; border-radius: var(--radius); box-shadow: var(--shadow); }
+.swipe-wrap { position: relative; overflow: hidden; margin: 16rpx 32rpx; border-radius: var(--radius); box-shadow: var(--shadow); }
+.swipe-inner { position: relative; z-index: 1; transition: transform 0.25s ease; }
+.swipe-inner.swiped { transform: translateX(-160rpx); }
+.swipe-del { position: absolute; right: 0; top: 0; bottom: 0; width: 160rpx; z-index: 0; background: #ff3b30; display: flex; align-items: center; justify-content: center; border-radius: 0 var(--radius) var(--radius) 0; }
+.swipe-del-text { color: #fff; font-size: 28rpx; font-weight: 500; }
+.post-card { background: var(--card); padding: 32rpx; border-radius: var(--radius); }
 .post-content { font-size: 28rpx; line-height: 1.6; margin-bottom: 16rpx; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
 .post-meta-line { display: flex; gap: 24rpx; font-size: 22rpx; color: var(--text2); }
 .meta-item { }

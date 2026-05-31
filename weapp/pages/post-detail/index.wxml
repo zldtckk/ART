@@ -52,6 +52,9 @@
             <view class="icon {{post.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:28rpx;height:28rpx;"></view>
             <text>{{post.is_favorited ? '已收藏' : '收藏'}}</text>
           </view>
+          <view wx:if="{{isSelf}}" class="post-action post-action-danger" bindtap="handleDelete">
+            <text>删除帖子</text>
+          </view>
         </view>
       </view>
 

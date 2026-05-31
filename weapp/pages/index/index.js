@@ -22,6 +22,12 @@ Page({
     loadingMore: false,
     page: 1,
     hasMore: true,
+    refreshing: false,
+  },
+
+  onLoad() {
+    this.loadHotPosts();
+    this.loadPosts();
   },
 
   onShow() {
@@ -35,8 +41,19 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
-    this.loadHotPosts();
-    this.loadPosts();
+    if (getApp().globalData.feedNeedsRefresh) {
+      getApp().globalData.feedNeedsRefresh = false;
+      this.setData({ page: 1, hasMore: true });
+      this.loadHotPosts();
+      this.loadPosts();
+    }
+  },
+
+  onRefresh() {
+    this.setData({ refreshing: true, page: 1, hasMore: true });
+    Promise.all([this.loadHotPosts(), this.loadPosts()]).finally(() => {
+      this.setData({ refreshing: false });
+    });
   },
 
   parseImages(imagesStr) {
@@ -206,6 +223,13 @@ Page({
     return {
       title: '画室圈 - 杭州美术集训生社区',
       path: '/pages/index/index',
+    };
+  },
+
+  onShareTimeline() {
+    return {
+      title: '画室圈 - 杭州美术集训生社区',
+      query: '',
     };
   },
 });

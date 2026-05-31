@@ -121,9 +121,7 @@
 }
 
 /* === Post cards (web style: full width, border-bottom) === */
-.feed-scroll {
-  height: calc(100vh - 460rpx);
-}
+.feed-scroll { flex: 1; overflow: hidden; }
 .post-card {
   background: var(--card);
   padding: 32rpx;

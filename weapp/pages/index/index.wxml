@@ -1,106 +1,117 @@
-<view class="page">
-  <view class="header">
-    <view class="header-left"></view>
-    <text class="header-title">首页</text>
-    <view class="header-right"></view>
-  </view>
-
-  <!-- Verification banner -->
-  <view wx:if="{{!isVerified && isLoggedIn}}" class="verify-banner" bindtap="goVerify">
-    <text class="verify-banner-text">📋 认证画室成员，解锁全部功能</text>
-    <text class="verify-banner-link">去认证 ›</text>
-  </view>
-
-  <!-- Hot posts banner -->
-  <view wx:if="{{hotPosts.length > 0}}" class="hot-banner" bindtap="goPost" data-id="{{hotPosts[bannerIdx].id}}">
-    <view class="hot-sidebar">
-      <text class="hot-sidebar-text">热帖</text>
-      <text class="hot-sidebar-text">排行</text>
+<view class="page page-flex">
+  <!-- 固定顶部区域 -->
+  <view class="top-area">
+    <view class="header">
+      <view class="header-left"></view>
+      <text class="header-title">首页</text>
+      <view class="header-right"></view>
     </view>
-    <swiper class="hot-swiper" vertical autoplay interval="3500" duration="500" current="{{bannerIdx}}" bindchange="onBannerChange">
-      <swiper-item wx:for="{{hotPosts}}" wx:key="id" class="hot-item-swiper">
-        <view class="hot-content-wrap">
-          <text class="hot-title">{{item.content}}</text>
-          <text class="hot-meta">阅读量 {{item.like_count}}</text>
-        </view>
-      </swiper-item>
-    </swiper>
-  </view>
 
-  <!-- Board entrances -->
-  <view class="board-entrances">
-    <view class="board-card board-card-circle" bindtap="goBoard" data-board="circle">
-      <text class="board-card-title">画室圈子</text>
-      <text class="board-card-desc">闲聊·求助·树洞·拼车·拼饭</text>
+    <!-- Verification banner -->
+    <view wx:if="{{!isVerified && isLoggedIn}}" class="verify-banner" bindtap="goVerify">
+      <text class="verify-banner-text">📋 认证画室成员，解锁全部功能</text>
+      <text class="verify-banner-link">去认证 ›</text>
     </view>
-    <view class="board-card board-card-market" bindtap="goBoard" data-board="market">
-      <text class="board-card-title">闲置交易</text>
-      <text class="board-card-desc">画材二手·低价好物</text>
+
+    <!-- Hot posts banner -->
+    <view wx:if="{{hotPosts.length > 0}}" class="hot-banner" bindtap="goPost" data-id="{{hotPosts[bannerIdx].id}}">
+      <view class="hot-sidebar">
+        <text class="hot-sidebar-text">热帖</text>
+        <text class="hot-sidebar-text">排行</text>
+      </view>
+      <swiper class="hot-swiper" vertical autoplay interval="3500" duration="500" current="{{bannerIdx}}" bindchange="onBannerChange">
+        <swiper-item wx:for="{{hotPosts}}" wx:key="id" class="hot-item-swiper">
+          <view class="hot-content-wrap">
+            <text class="hot-title">{{item.content}}</text>
+            <text class="hot-meta">阅读量 {{item.like_count}}</text>
+          </view>
+        </swiper-item>
+      </swiper>
+    </view>
+
+    <!-- Board entrances -->
+    <view class="board-entrances">
+      <view class="board-card board-card-circle" bindtap="goBoard" data-board="circle">
+        <text class="board-card-title">画室圈子</text>
+        <text class="board-card-desc">闲聊·求助·树洞·拼车·拼饭</text>
+      </view>
+      <view class="board-card board-card-market" bindtap="goBoard" data-board="market">
+        <text class="board-card-title">闲置交易</text>
+        <text class="board-card-desc">画材二手·低价好物</text>
+      </view>
+    </view>
+
+    <!-- Latest posts header -->
+    <view class="section-header">
+      <view class="icon icon-trending" style="width:32rpx;height:32rpx;"></view>
+      <text class="section-title">最新动态</text>
     </view>
   </view>
 
-  <!-- Latest posts header -->
-  <view class="section-header">
-    <view class="icon icon-trending" style="width:32rpx;height:32rpx;"></view>
-    <text class="section-title">最新动态</text>
-  </view>
-
-  <!-- Post feed -->
-  <view wx:if="{{loading && posts.length === 0}}" class="loading-spinner"></view>
-  <block wx:elif="{{posts.length === 0}}">
-    <view class="empty-state">
+  <!-- 可下拉刷新的帖子列表 -->
+  <scroll-view
+    class="feed-scroll"
+    scroll-y
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+    bindscrolltolower="loadMore"
+    lower-threshold="100"
+  >
+    <view wx:if="{{loading && posts.length === 0}}" class="loading-spinner"></view>
+    <view wx:elif="{{posts.length === 0}}" class="empty-state">
       <text class="empty-icon">📭</text>
       <text class="empty-text">暂无帖子</text>
     </view>
-  </block>
-  <scroll-view wx:else scroll-y class="feed-scroll" bindscrolltolower="loadMore">
-    <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
-      <view class="post-header">
-        <view class="post-avatar">
-          <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
-          <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
-        </view>
-        <view class="post-author">
-          <view class="post-author-name">{{item.is_anonymous ? '匿名用户' : (item.display_name || '未知用户')}}</view>
-          <view class="post-meta">
-            <text class="post-meta-time">{{item.created_at}}</text>
-            <text wx:if="{{item.circle_type}}" class="tag tag-{{item.circle_type}}">{{item.circle_type_name || item.circle_type}}</text>
-            <text wx:if="{{item.studio_name}}" class="studio-badge">{{item.studio_name}}</text>
+    <block wx:else>
+      <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
+        <view class="post-header">
+          <view class="post-avatar">
+            <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
+            <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
+          </view>
+          <view class="post-author">
+            <view class="post-author-name">{{item.is_anonymous ? '匿名用户' : (item.display_name || '未知用户')}}</view>
+            <view class="post-meta">
+              <text class="post-meta-time">{{item.created_at}}</text>
+              <text wx:if="{{item.circle_type}}" class="tag tag-{{item.circle_type}}">{{item.circle_type_name || item.circle_type}}</text>
+              <text wx:if="{{item.studio_name}}" class="studio-badge">{{item.studio_name}}</text>
+            </view>
+          </view>
+          <view wx:if="{{isLoggedIn && !item.is_anonymous && item.user_id !== currentUserId}}" class="post-chat-btn" bindtap="startChat" data-uid="{{item.user_id}}" catchtap="startChat">
+            <view class="icon icon-message" style="width:28rpx;height:28rpx;"></view>
           </view>
         </view>
-        <view wx:if="{{isLoggedIn && !item.is_anonymous && item.user_id !== currentUserId}}" class="post-chat-btn" bindtap="startChat" data-uid="{{item.user_id}}" catchtap="startChat">
-          <view class="icon icon-message" style="width:28rpx;height:28rpx;"></view>
+
+        <view wx:if="{{item.content}}" class="post-content">{{item.content}}</view>
+
+        <view wx:if="{{item._imageCount > 0}}" class="post-img-grid post-img-grid-{{item._imageCount}}">
+          <image
+            wx:for="{{item._parsedImages}}"
+            wx:for-item="imgUrl"
+            wx:key="*this"
+            src="{{imgUrl}}"
+            mode="aspectFill"
+            class="grid-img"
+            style="{{item._imgCellStyle}}"
+          />
+        </view>
+
+        <view class="post-footer">
+          <view class="post-action">
+            <view class="icon icon-comment" style="width:28rpx;height:28rpx;"></view>
+            <text>{{item.comment_count || 0}}</text>
+          </view>
+          <view class="post-action {{item.is_liked ? 'post-action-active' : ''}}" bindtap="onLike" data-id="{{item.id}}" catchtap="onLike">
+            <view class="icon {{item.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:28rpx;height:28rpx;"></view>
+            <text>{{item.like_count || 0}}</text>
+          </view>
+          <view class="post-action {{item.is_favorited ? 'post-action-active' : ''}}" bindtap="onFavorite" data-id="{{item.id}}" catchtap="onFavorite">
+            <view class="icon {{item.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:28rpx;height:28rpx;"></view>
+          </view>
         </view>
       </view>
-
-      <view wx:if="{{item.content}}" class="post-content">{{item.content}}</view>
-
-      <view wx:if="{{item._imageCount > 0}}" class="post-img-grid post-img-grid-{{item._imageCount}}">
-        <image
-          wx:for="{{item._parsedImages}}"
-          wx:for-item="imgUrl"
-          wx:key="*this"
-          src="{{imgUrl}}"
-          mode="aspectFill"
-          class="grid-img"
-          style="{{item._imgCellStyle}}"
-        />
-      </view>
-
-      <view class="post-footer">
-        <view class="post-action">
-          <view class="icon icon-comment" style="width:28rpx;height:28rpx;"></view>
-          <text>{{item.comment_count || 0}}</text>
-        </view>
-        <view class="post-action {{item.is_liked ? 'post-action-active' : ''}}" bindtap="onLike" data-id="{{item.id}}" catchtap="onLike">
-          <view class="icon {{item.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:28rpx;height:28rpx;"></view>
-          <text>{{item.like_count || 0}}</text>
-        </view>
-        <view class="post-action {{item.is_favorited ? 'post-action-active' : ''}}" bindtap="onFavorite" data-id="{{item.id}}" catchtap="onFavorite">
-          <view class="icon {{item.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:28rpx;height:28rpx;"></view>
-        </view>
-      </view>
-    </view>
-    <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+      <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+    </block>
   </scroll-view>
 </view>

@@ -8,13 +8,22 @@
     <view class="empty-state"><text class="empty-icon">📝</text><text class="empty-text">暂无帖子</text></view>
   </block>
   <block wx:else>
-    <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
-      <view class="post-content">{{item.content}}</view>
-      <view class="post-meta-line">
-        <text class="meta-item">{{item.board === 'market' ? '二手' : item.board === 'circle' ? '画室圈' : '粉丝圈'}}</text>
-        <text class="meta-item">{{item.created_at}}</text>
-        <text class="meta-item">💬 {{item.comment_count}}</text>
-        <text class="meta-item">{{item.is_liked ? '❤️' : '🤍'}} {{item.like_count}}</text>
+    <view wx:for="{{posts}}" wx:key="id" class="swipe-wrap"
+      data-id="{{item._id || item.id}}"
+      bindtouchstart="onSwipeStart" bindtouchmove="onSwipeMove" bindtouchend="onSwipeEnd">
+      <view class="swipe-inner {{swipeOpenId === (item._id || item.id) ? 'swiped' : ''}}">
+        <view class="post-card" bindtap="onCardTap" data-id="{{item._id || item.id}}">
+          <view class="post-content">{{item.content}}</view>
+          <view class="post-meta-line">
+            <text class="meta-item">{{item.board === 'market' ? '二手' : item.board === 'circle' ? '画室圈' : '粉丝圈'}}</text>
+            <text class="meta-item">{{item.created_at}}</text>
+            <text class="meta-item">💬 {{item.comment_count}}</text>
+            <text class="meta-item">{{item.is_liked ? '❤️' : '🤍'}} {{item.like_count}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="swipe-del" bindtap="deletePost" data-id="{{item._id || item.id}}">
+        <text class="swipe-del-text">删除</text>
       </view>
     </view>
     <view wx:if="{{loadingMore}}" class="loading-spinner"></view>

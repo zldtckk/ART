@@ -68,4 +68,11 @@ Page({
       path: '/pages/board-market/index',
     };
   },
+
+  onShareTimeline() {
+    return {
+      title: '二手集市 - 画材、教材、低价好物',
+      query: '',
+    };
+  },
 });

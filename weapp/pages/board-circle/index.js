@@ -66,6 +66,13 @@ Page({
     };
   },
 
+  onShareTimeline() {
+    return {
+      title: '画室圈子 - 画室日常、求助、树洞',
+      query: '',
+    };
+  },
+
   async onLike(e) {
     const id = e.currentTarget.dataset.id;
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }

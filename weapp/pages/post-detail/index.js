@@ -118,6 +118,29 @@ Page({
     } catch (e) { /* ignore */ }
   },
 
+  handleDelete() {
+    const hasComments = this.data.comments.length > 0;
+    wx.showModal({
+      title: '删除帖子',
+      content: hasComments ? '删除后评论也会一并消失，确定删除？' : '确定删除这条帖子？',
+      confirmText: '删除',
+      confirmColor: '#ff3b30',
+      success: (res) => {
+        if (!res.confirm) return;
+        wx.showLoading({ title: '删除中' });
+        api.deletePost(this.postId).then(() => {
+          wx.hideLoading();
+          getApp().globalData.feedNeedsRefresh = true;
+          wx.showToast({ title: '已删除', icon: 'success' });
+          setTimeout(() => wx.navigateBack(), 800);
+        }).catch(() => {
+          wx.hideLoading();
+          wx.showToast({ title: '删除失败', icon: 'none' });
+        });
+      },
+    });
+  },
+
   onShareAppMessage() {
     const post = this.data.post;
     const title = post ? (post.content || '').slice(0, 30) : '来看看这条帖子';
@@ -125,6 +148,17 @@ Page({
     return {
       title: title || '来看看这条帖子',
       path: `/pages/post-detail/index?id=${this.postId}`,
+      imageUrl,
+    };
+  },
+
+  onShareTimeline() {
+    const post = this.data.post;
+    const title = post ? (post.content || '').slice(0, 30) : '来看看这条帖子';
+    const imageUrl = (post && post._parsedImages && post._parsedImages[0]) || '';
+    return {
+      title: title || '来看看这条帖子',
+      query: `id=${this.postId}`,
       imageUrl,
     };
   },

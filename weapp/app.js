@@ -1,6 +1,7 @@
 App({
   globalData: {
     user: null,
+    feedNeedsRefresh: false,
   },
 
   onLaunch() {
