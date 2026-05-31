@@ -118,6 +118,17 @@ Page({
     } catch (e) { /* ignore */ }
   },
 
+  onShareAppMessage() {
+    const post = this.data.post;
+    const title = post ? (post.content || '').slice(0, 30) : '来看看这条帖子';
+    const imageUrl = (post && post._parsedImages && post._parsedImages[0]) || '';
+    return {
+      title: title || '来看看这条帖子',
+      path: `/pages/post-detail/index?id=${this.postId}`,
+      imageUrl,
+    };
+  },
+
   goBack() { wx.navigateBack(); },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
 });

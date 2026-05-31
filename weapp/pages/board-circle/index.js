@@ -59,6 +59,13 @@ Page({
   goPost(e) { wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` }); },
   goCreate() { wx.navigateTo({ url: '/pages/create-post/index?board=circle' }); },
 
+  onShareAppMessage() {
+    return {
+      title: '画室圈子 - 画室日常、求助、树洞',
+      path: '/pages/board-circle/index',
+    };
+  },
+
   async onLike(e) {
     const id = e.currentTarget.dataset.id;
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }

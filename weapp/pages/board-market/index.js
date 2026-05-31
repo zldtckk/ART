@@ -61,4 +61,11 @@ Page({
   },
 
   goPost(e) { wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` }); },
+
+  onShareAppMessage() {
+    return {
+      title: '二手集市 - 画材、教材、低价好物',
+      path: '/pages/board-market/index',
+    };
+  },
 });

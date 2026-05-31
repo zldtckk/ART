@@ -201,4 +201,11 @@ Page({
   onReachBottom() {
     this.loadMore();
   },
+
+  onShareAppMessage() {
+    return {
+      title: '画室圈 - 杭州美术集训生社区',
+      path: '/pages/index/index',
+    };
+  },
 });
