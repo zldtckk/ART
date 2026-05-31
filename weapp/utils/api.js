@@ -139,6 +139,25 @@ async function addComment(postId, content) {
   await db.collection('posts').doc(postId).update({
     data: { comment_count: _.inc(1) },
   });
+  // 给帖子作者发通知
+  const myOpenid = getApp().globalData.user._openid;
+  db.collection('posts').doc(postId).get().then(postDoc => {
+    const post = postDoc.data;
+    if (post && post._openid && post._openid !== myOpenid) {
+      const user = getApp().globalData.user || {};
+      db.collection('notifications').add({
+        data: {
+          user_id: post._openid,
+          type: 'comment',
+          title: '有人评论了你的帖子',
+          content: content.slice(0, 30),
+          related_post_id: postId,
+          is_read: false,
+          createTime: db.serverDate(),
+        },
+      }).catch(() => {});
+    }
+  }).catch(() => {});
   const user = (getApp().globalData.user) || {};
   return mapDoc({
     ...data,
@@ -150,7 +169,7 @@ async function addComment(postId, content) {
 
 // ── Likes ──
 
-async function toggleLike(postId) {
+async function toggleLike(postId, authorOpenid) {
   const openid = getApp().globalData.user._openid;
   if (!openid) return { liked: false };
 
@@ -171,6 +190,21 @@ async function toggleLike(postId) {
   await db.collection('posts').doc(postId).update({
     data: { like_count: _.inc(1) },
   });
+  // 给作者发通知（不给自己发）
+  if (authorOpenid && authorOpenid !== openid) {
+    const user = getApp().globalData.user || {};
+    db.collection('notifications').add({
+      data: {
+        user_id: authorOpenid,
+        type: 'like',
+        title: '有人赞了你的帖子',
+        content: `${user.nickname || '有人'} 赞了你的帖子`,
+        related_post_id: postId,
+        is_read: false,
+        createTime: db.serverDate(),
+      },
+    }).catch(() => {});
+  }
   return { liked: true };
 }
 
@@ -257,25 +291,13 @@ async function getPendingVerifications() {
 }
 
 async function approveVerification(userId) {
-  await db.collection('users').doc(userId).update({
-    data: { verification_status: 'approved', is_verified: true },
-  });
-  await db.collection('notifications').add({
-    data: {
-      user_id: userId,
-      type: 'verify_result',
-      title: '认证通过',
-      content: '恭喜，你的画室认证已通过！',
-      is_read: false,
-      createTime: db.serverDate(),
-    },
-  });
+  const res = await wx.cloud.callFunction({ name: 'approveVerification', data: { userId } });
+  return res.result;
 }
 
-async function rejectVerification(userId) {
-  await db.collection('users').doc(userId).update({
-    data: { verification_status: 'rejected' },
-  });
+async function rejectVerification(userId, reason) {
+  const res = await wx.cloud.callFunction({ name: 'rejectVerification', data: { userId, reason } });
+  return res.result;
 }
 
 // ── Admin ──
@@ -417,11 +439,9 @@ async function deleteConversation(conversationId) {
 }
 
 async function markNotificationsRead() {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return;
-  await db.collection('notifications')
-    .where({ user_id: openid, is_read: false })
-    .update({ data: { is_read: true } });
+  const user = getApp().globalData.user;
+  if (!user) return;
+  await wx.cloud.callFunction({ name: 'markNotificationsRead' });
 }
 
 // ── Verification Code ──

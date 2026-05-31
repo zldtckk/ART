@@ -3,8 +3,30 @@
     <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
     <text class="header-title">画室认证</text>
   </view>
-  <view class="verify-form">
-    <text class="form-desc">认证为画室成员后，可以评论、发帖和私信</text>
+  <!-- 审核中 -->
+  <view wx:if="{{verificationStatus === 'pending'}}" class="status-view">
+    <text class="status-icon">⏳</text>
+    <text class="status-title">审核中</text>
+    <text class="status-desc">你的认证申请已提交，管理员审核后会通知你，请耐心等待。</text>
+    <button class="btn btn-secondary" style="margin-top:48rpx;" bindtap="goBack">返回</button>
+  </view>
+
+  <!-- 已通过 -->
+  <view wx:elif="{{verificationStatus === 'approved'}}" class="status-view">
+    <text class="status-icon">✅</text>
+    <text class="status-title">已认证</text>
+    <text class="status-desc">你已完成画室认证，可以正常发帖、评论和私信。</text>
+    <button class="btn btn-secondary" style="margin-top:48rpx;" bindtap="goBack">返回</button>
+  </view>
+
+  <!-- 表单（未认证或被拒绝） -->
+  <view wx:else class="verify-form">
+    <view wx:if="{{verificationStatus === 'rejected'}}" class="reject-notice">
+      <text class="reject-title">上次认证未通过</text>
+      <text wx:if="{{rejectionReason}}" class="reject-reason">原因：{{rejectionReason}}</text>
+      <text class="reject-hint">请修改后重新提交</text>
+    </view>
+    <text wx:else class="form-desc">认证为画室成员后，可以评论、发帖和私信</text>
 
     <text class="form-label">选择画室</text>
     <view wx:if="{{loading}}" class="loading-spinner"></view>

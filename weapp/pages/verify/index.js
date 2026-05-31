@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 
+
 Page({
   data: {
     studios: [],
@@ -12,11 +13,32 @@ Page({
     studentIdImage: '',
     submitting: false,
     loading: true,
+    verificationStatus: 'none',
+    rejectionReason: '',
   },
 
   onLoad() {
-    api.getStudios().then(studios => {
-      this.setData({ studios });
+    // 先用本地缓存快速渲染
+    const cached = wx.getStorageSync('user') || {};
+    this.setData({
+      verificationStatus: cached.verification_status || 'none',
+      rejectionReason: cached.rejection_reason || '',
+    });
+    // 再从云端拉最新状态
+    api.getMyProfile().then(user => {
+      if (!user) return;
+      auth.setUser(user);
+      this.setData({
+        verificationStatus: user.verification_status || 'none',
+        rejectionReason: user.rejection_reason || '',
+      });
+      if (user.verification_status === 'pending' || user.verification_status === 'approved') {
+        this.setData({ loading: false });
+        return;
+      }
+      return api.getStudios();
+    }).then(studios => {
+      if (studios) this.setData({ studios });
     }).catch(() => {}).finally(() => this.setData({ loading: false }));
   },
 

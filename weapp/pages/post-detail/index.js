@@ -64,8 +64,8 @@ Page({
       return;
     }
     try {
-      const res = await api.toggleLike(this.postId);
       const post = this.data.post;
+      const res = await api.toggleLike(this.postId, post && post.user_id);
       if (post) {
         this.setData({
           post: { ...post, is_liked: res.liked, like_count: post.like_count + (res.liked ? 1 : -1) },

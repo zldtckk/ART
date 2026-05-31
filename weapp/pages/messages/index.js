@@ -132,7 +132,22 @@ Page({
       this.setData({ swipeOpenId: null });
       return;
     }
-    this.goPost(e);
+    const notif = this.data.notifications.find(n => (n._id || n.id) === id);
+    this.setData({
+      notifications: this.data.notifications.map(n =>
+        (n._id || n.id) === id ? { ...n, is_read: true } : n
+      ),
+    });
+    if (!notif) return;
+    if (notif.related_post_id) {
+      wx.navigateTo({ url: `/pages/post-detail/index?id=${notif.related_post_id}` });
+    } else if (notif.type === 'verify_result') {
+      if (notif.title && notif.title.includes('通过') && !notif.title.includes('未通过')) {
+        wx.switchTab({ url: '/pages/profile/index' });
+      } else {
+        wx.navigateTo({ url: '/pages/verify/index' });
+      }
+    }
   },
 
   deleteConv(e) {

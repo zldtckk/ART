@@ -9,6 +9,9 @@ Page({
     newStudioName: '',
     newStudioDistrict: '',
     loading: true,
+    showRejectModal: false,
+    rejectTargetId: null,
+    rejectReason: '',
   },
 
   onLoad() {
@@ -19,12 +22,15 @@ Page({
   switchTab(e) { this.setData({ tab: e.currentTarget.dataset.tab }); },
 
   loadPending() {
-    api.getPendingVerifications().then(users => {
+    Promise.all([api.getPendingVerifications(), api.getStudios()]).then(([users, studios]) => {
+      const studioMap = {};
+      (studios || []).forEach(s => { studioMap[s._id] = s.name; studioMap[s.id] = s.name; });
       const list = (users || []).map(v => ({
         ...v,
-        _displayName: v.real_name || v.nickname || '',
+        _displayName: v.real_name || v.nickname || '未知',
+        _studioName: studioMap[v.studio_id] || v.studio_id || '未填写',
       }));
-      this.setData({ pendingList: list });
+      this.setData({ pendingList: list, studios });
     }).catch(() => {}).finally(() => this.setData({ loading: false }));
   },
 
@@ -32,6 +38,11 @@ Page({
     api.getStudios().then(studios => {
       this.setData({ studios });
     }).catch(() => {});
+  },
+
+  previewImage(e) {
+    const url = e.currentTarget.dataset.url;
+    if (url) wx.previewImage({ urls: [url], current: url });
   },
 
   approve(e) {
@@ -44,10 +55,30 @@ Page({
 
   reject(e) {
     const id = e.currentTarget.dataset.id;
-    api.rejectVerification(id).then(() => {
+    this.setData({ showRejectModal: true, rejectTargetId: id, rejectReason: '' });
+  },
+
+  onRejectReasonInput(e) {
+    this.setData({ rejectReason: e.detail.value });
+  },
+
+  cancelReject() {
+    this.setData({ showRejectModal: false, rejectTargetId: null, rejectReason: '' });
+  },
+
+  confirmReject() {
+    const { rejectTargetId, rejectReason } = this.data;
+    if (!rejectReason.trim()) {
+      wx.showToast({ title: '请填写拒绝原因', icon: 'none' });
+      return;
+    }
+    this.setData({ showRejectModal: false });
+    wx.showLoading({ title: '处理中' });
+    api.rejectVerification(rejectTargetId, rejectReason.trim()).then(() => {
+      wx.hideLoading();
       wx.showToast({ title: '已拒绝', icon: 'success' });
-      this.setData({ pendingList: this.data.pendingList.filter(v => v.id !== id && v._id !== id) });
-    }).catch(() => wx.showToast({ title: '操作失败', icon: 'none' }));
+      this.setData({ pendingList: this.data.pendingList.filter(v => v.id !== rejectTargetId && v._id !== rejectTargetId) });
+    }).catch(() => { wx.hideLoading(); wx.showToast({ title: '操作失败', icon: 'none' }); });
   },
 
   goBack() { wx.navigateBack(); },

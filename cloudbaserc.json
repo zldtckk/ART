@@ -12,6 +12,9 @@
     { "name": "seed", "runtime": "Nodejs16.13" },
     { "name": "getUserStats", "runtime": "Nodejs16.13" },
     { "name": "deleteNotification", "runtime": "Nodejs16.13" },
-    { "name": "deleteConversation", "runtime": "Nodejs16.13" }
+    { "name": "deleteConversation", "runtime": "Nodejs16.13" },
+    { "name": "markNotificationsRead", "runtime": "Nodejs16.13" },
+    { "name": "approveVerification", "runtime": "Nodejs16.13" },
+    { "name": "rejectVerification", "runtime": "Nodejs16.13" }
   ]
 }
