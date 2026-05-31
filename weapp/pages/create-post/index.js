@@ -125,10 +125,10 @@ Page({
         if (this.data.price) postData.price = parseFloat(this.data.price);
       }
 
-      await api.createPost(postData);
+      const post = await api.createPost(postData);
       wx.showToast({ title: '发布成功', icon: 'success' });
       setTimeout(() => {
-        wx.navigateBack({ delta: 1 });
+        wx.navigateTo({ url: `/pages/post-detail/index?id=${post._id}` });
       }, 800);
     } catch (e) {
       wx.showToast({ title: '发布失败', icon: 'none' });

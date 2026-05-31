@@ -13,15 +13,24 @@
 
   <!-- Chat conversation list -->
   <view wx:if="{{!convId && tab === 'chat'}}">
-    <view wx:for="{{conversations}}" wx:key="id" class="conv-item" bindtap="openChat" data-convid="{{item.id}}">
-      <view class="conv-avatar">
-        <view class="avatar-placeholder" style="width:96rpx;height:96rpx;font-size:36rpx;">{{item.peer_name ? item.peer_name[0] : '?'}}</view>
+    <view wx:for="{{conversations}}" wx:key="id" class="swipe-wrap"
+      data-id="{{item._id || item.id}}"
+      bindtouchstart="onSwipeStart" bindtouchmove="onSwipeMove" bindtouchend="onSwipeEnd">
+      <view class="swipe-inner {{swipeOpenId === (item._id || item.id) ? 'swiped' : ''}}">
+        <view class="conv-item" bindtap="onConvTap" data-convid="{{item._id || item.id}}" data-id="{{item._id || item.id}}">
+          <view class="conv-avatar">
+            <view class="avatar-placeholder" style="width:96rpx;height:96rpx;font-size:36rpx;">{{item.peer_name ? item.peer_name[0] : '?'}}</view>
+          </view>
+          <view class="conv-body">
+            <text class="conv-name">{{item.peer_name || '用户'}}</text>
+            <text class="conv-preview">{{item.last_message}}</text>
+          </view>
+          <text class="conv-time">{{item.last_message_at}}</text>
+        </view>
       </view>
-      <view class="conv-body">
-        <text class="conv-name">{{item.peer_name || '用户'}}</text>
-        <text class="conv-preview">{{item.last_message}}</text>
+      <view class="swipe-del" bindtap="deleteConv" data-id="{{item._id || item.id}}">
+        <text class="swipe-del-text">删除</text>
       </view>
-      <text class="conv-time">{{item.last_message_at}}</text>
     </view>
     <view wx:if="{{conversations.length === 0}}" class="empty-state">
       <text class="empty-icon">💬</text>
@@ -31,13 +40,22 @@
 
   <!-- Notifications -->
   <view wx:if="{{!convId && tab === 'notification'}}">
-    <view wx:for="{{notifications}}" wx:key="id" class="notif-item" bindtap="goPost" data-postid="{{item.related_post_id}}">
-      <view class="notif-header">
-        <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : '📢'}}</text>
-        <text class="notif-title">{{item.title}}</text>
+    <view wx:for="{{notifications}}" wx:key="id" class="swipe-wrap"
+      data-id="{{item._id || item.id}}"
+      bindtouchstart="onSwipeStart" bindtouchmove="onSwipeMove" bindtouchend="onSwipeEnd">
+      <view class="swipe-inner {{swipeOpenId === (item._id || item.id) ? 'swiped' : ''}}">
+        <view class="notif-item" bindtap="onNotifTap" data-postid="{{item.related_post_id}}" data-id="{{item._id || item.id}}">
+          <view class="notif-header">
+            <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : '📢'}}</text>
+            <text class="notif-title">{{item.title}}</text>
+          </view>
+          <text class="notif-content">{{item.content}}</text>
+          <text class="notif-time">{{item.created_at}}</text>
+        </view>
       </view>
-      <text class="notif-content">{{item.content}}</text>
-      <text class="notif-time">{{item.created_at}}</text>
+      <view class="swipe-del" bindtap="deleteNotif" data-id="{{item._id || item.id}}">
+        <text class="swipe-del-text">删除</text>
+      </view>
     </view>
     <view wx:if="{{notifications.length === 0}}" class="empty-state">
       <text class="empty-icon">🔔</text>

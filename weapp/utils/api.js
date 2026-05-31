@@ -405,6 +405,16 @@ async function getNotifications() {
   return res.result;
 }
 
+async function deleteNotification(notificationId) {
+  const res = await wx.cloud.callFunction({ name: 'deleteNotification', data: { notificationId } });
+  return res.result;
+}
+
+async function deleteConversation(conversationId) {
+  const res = await wx.cloud.callFunction({ name: 'deleteConversation', data: { conversationId } });
+  return res.result;
+}
+
 async function markNotificationsRead() {
   const openid = getApp().globalData.user._openid;
   if (!openid) return;
@@ -469,6 +479,8 @@ module.exports = {
   sendMessage,
   getNotifications,
   markNotificationsRead,
+  deleteNotification,
+  deleteConversation,
   verifyStudioCode,
   uploadImage,
   uploadImages,

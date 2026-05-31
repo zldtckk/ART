@@ -12,7 +12,10 @@ Page({
     loading: true,
     convId: null,
     currentUserId: null,
+    swipeOpenId: null,
   },
+  _touchStartX: 0,
+  _touchItemId: null,
 
   onLoad(options) {
     if (options.convId) {
@@ -94,6 +97,62 @@ Page({
         this.setData({ messages: [...this.data.messages, res.message] });
       }
     }).catch(() => {});
+  },
+
+  onSwipeStart(e) {
+    this._touchStartX = e.touches[0].clientX;
+    this._touchItemId = e.currentTarget.dataset.id;
+  },
+
+  onSwipeMove(e) {
+    const dx = e.touches[0].clientX - this._touchStartX;
+    if (dx < -40) {
+      this.setData({ swipeOpenId: this._touchItemId });
+    } else if (dx > 10) {
+      this.setData({ swipeOpenId: null });
+    }
+  },
+
+  onSwipeEnd() {
+    this._touchStartX = 0;
+  },
+
+  onConvTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (this.data.swipeOpenId === id) {
+      this.setData({ swipeOpenId: null });
+      return;
+    }
+    this.openChat(e);
+  },
+
+  onNotifTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (this.data.swipeOpenId === id) {
+      this.setData({ swipeOpenId: null });
+      return;
+    }
+    this.goPost(e);
+  },
+
+  deleteConv(e) {
+    const id = e.currentTarget.dataset.id;
+    this.setData({ swipeOpenId: null });
+    wx.showLoading({ title: '删除中' });
+    api.deleteConversation(id).then(() => {
+      wx.hideLoading();
+      this.setData({ conversations: this.data.conversations.filter(c => (c._id || c.id) !== id) });
+    }).catch(() => { wx.hideLoading(); wx.showToast({ title: '删除失败', icon: 'none' }); });
+  },
+
+  deleteNotif(e) {
+    const id = e.currentTarget.dataset.id;
+    this.setData({ swipeOpenId: null });
+    wx.showLoading({ title: '删除中' });
+    api.deleteNotification(id).then(() => {
+      wx.hideLoading();
+      this.setData({ notifications: this.data.notifications.filter(n => (n._id || n.id) !== id) });
+    }).catch(() => { wx.hideLoading(); wx.showToast({ title: '删除失败', icon: 'none' }); });
   },
 
   goPost(e) {
