@@ -73,12 +73,11 @@ async function getStudios() {
 
 // ── Posts ──
 
-async function getPosts({ board, studio_id, circle_type, fan_type, market_category, market_tag, sort, page = 1, limit = 20 } = {}) {
+async function getPosts({ board, studio_id, circle_type, market_category, market_tag, sort, page = 1, limit = 20 } = {}) {
   const conditions = {};
   if (board) conditions.board = board;
   if (studio_id) conditions.studio_id = studio_id;
   if (circle_type && circle_type !== 'all') conditions.circle_type = circle_type;
-  if (fan_type && fan_type !== 'all') conditions.fan_type = fan_type;
   if (market_category && market_category !== 'all') conditions.market_category = market_category;
   if (market_tag && market_tag !== 'all') conditions.market_tag = market_tag;
 

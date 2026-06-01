@@ -26,20 +26,6 @@
       </scroll-view>
     </view>
 
-    <!-- Fan fields (only for fan board) -->
-    <view wx:if="{{selectedBoard === 'fan'}}" class="form-row">
-      <text class="form-label">分类</text>
-      <scroll-view scroll-x class="type-scroll">
-        <view wx:for="{{fanTypes}}" wx:key="key" class="type-option {{fanType === item.key ? 'type-selected' : ''}}" bindtap="selectFanType" data-key="{{item.key}}">
-          <text>{{item.name}}</text>
-        </view>
-      </scroll-view>
-    </view>
-    <view wx:if="{{selectedBoard === 'fan'}}" class="form-row">
-      <text class="form-label">爱豆</text>
-      <input class="idol-input" placeholder="输入爱豆名字（可选）" value="{{idolTag}}" bindinput="onIdolTagInput" maxlength="20" />
-    </view>
-
     <!-- Market fields (only for market board) -->
     <view wx:if="{{selectedBoard === 'market'}}" class="form-row">
       <text class="form-label">标签</text>
