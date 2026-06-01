@@ -17,6 +17,7 @@ Page({
     const board = e.currentTarget.dataset.board
     if (board === 'circle') wx.navigateTo({ url: '/pages/board-circle/index' })
     else if (board === 'market') wx.navigateTo({ url: '/pages/board-market/index' })
+    else if (board === 'fan') wx.navigateTo({ url: '/pages/board-fan/index' })
     else wx.showToast({ title: '开发中', icon: 'none' })
   }
 })

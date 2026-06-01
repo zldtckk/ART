@@ -26,15 +26,15 @@
       <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
     </view>
 
-    <view class="board-item board-item-disabled">
-      <view class="board-icon-wrap" style="background:rgba(175,82,222,0.08);">
-        <view class="icon icon-heart" style="width:44rpx;height:44rpx;"></view>
+    <view class="board-item" bindtap="goBoard" data-board="fan">
+      <view class="board-icon-wrap" style="background:rgba(255,45,85,0.08);">
+        <view class="icon icon-heart-active" style="width:44rpx;height:44rpx;"></view>
       </view>
       <view class="board-item-body">
         <text class="board-item-label">爱豆专区</text>
-        <text class="board-item-desc">追星交流、周边分享</text>
+        <text class="board-item-desc">安利·求同好·活动·八卦</text>
       </view>
-      <text class="board-item-coming">即将开放</text>
+      <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
     </view>
   </view>
 </view>
