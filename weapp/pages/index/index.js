@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { BOARDS, PAGE_SIZE } = require('../../utils/constants');
+const { getCircleTypeName } = require('../../utils/formatter');
 
 Page({
   data: {
@@ -61,10 +62,6 @@ Page({
     try { return JSON.parse(imagesStr); } catch (e) { return []; }
   },
 
-  getCircleTypeName(type) {
-    const map = { general: '闲聊', help: '求助', treehole: '树洞', carpool: '拼车', lunch: '拼饭', other: '其他' };
-    return map[type] || '';
-  },
 
   _getCellSizes() {
     if (this._cellSizes) return this._cellSizes;
@@ -95,7 +92,7 @@ Page({
         _parsedImages: displayImages,
         _imageCount: count,
         _imgCellStyle: cellStyle,
-        circle_type_name: this.getCircleTypeName(p.circle_type),
+        circle_type_name: getCircleTypeName(p.circle_type),
       };
     });
   },
@@ -173,36 +170,53 @@ Page({
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
 
-  async onLike(e) {
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
-    }
+  onLike(e) {
+    if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     const id = e.currentTarget.dataset.id;
-    try {
-      const res = await api.toggleLike(id);
-      const posts = this.data.posts.map((p) => {
-        if (p._id === id || p.id === id) return { ...p, is_liked: res.liked, like_count: res.like_count !== undefined ? res.like_count : p.like_count };
-        return p;
+    const post = this.data.posts.find(p => p._id === id || p.id === id);
+    if (!post) return;
+    const wasLiked = post.is_liked;
+    // 乐观更新
+    this.setData({
+      posts: this.data.posts.map(p =>
+        (p._id === id || p.id === id)
+          ? { ...p, is_liked: !wasLiked, like_count: p.like_count + (wasLiked ? -1 : 1) }
+          : p
+      ),
+    });
+    api.toggleLike(id).then(res => {
+      this.setData({
+        posts: this.data.posts.map(p =>
+          (p._id === id || p.id === id) ? { ...p, like_count: res.like_count } : p
+        ),
       });
-      this.setData({ posts });
-    } catch (e) { /* ignore */ }
+    }).catch(() => {
+      this.setData({
+        posts: this.data.posts.map(p =>
+          (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
+        ),
+      });
+    });
   },
 
-  async onFavorite(e) {
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
-    }
+  onFavorite(e) {
+    if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     const id = e.currentTarget.dataset.id;
-    try {
-      const res = await api.toggleFavorite(id);
-      const posts = this.data.posts.map((p) => {
-        if (p._id === id) return { ...p, is_favorited: res.favorited };
-        return p;
+    const post = this.data.posts.find(p => p._id === id || p.id === id);
+    if (!post) return;
+    const wasFavorited = post.is_favorited;
+    this.setData({
+      posts: this.data.posts.map(p =>
+        (p._id === id || p.id === id) ? { ...p, is_favorited: !wasFavorited } : p
+      ),
+    });
+    api.toggleFavorite(id).catch(() => {
+      this.setData({
+        posts: this.data.posts.map(p =>
+          (p._id === id || p.id === id) ? { ...p, is_favorited: wasFavorited } : p
+        ),
       });
-      this.setData({ posts });
-    } catch (e) { /* ignore */ }
+    });
   },
 
   onReachBottom() {

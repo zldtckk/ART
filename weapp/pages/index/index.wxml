@@ -67,7 +67,7 @@
       <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
         <view class="post-header">
           <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
-            <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
+            <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" lazy-load />
             <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
           </view>
           <view class="post-author">
@@ -91,20 +91,21 @@
             mode="aspectFill"
             class="grid-img"
             style="{{item._imgCellStyle}}"
+            lazy-load
           />
         </view>
 
         <view class="post-footer">
           <view class="post-action">
-            <view class="icon icon-comment" style="width:28rpx;height:28rpx;"></view>
+            <view class="icon icon-comment" style="width:32rpx;height:32rpx;"></view>
             <text>{{item.comment_count || 0}}</text>
           </view>
           <view class="post-action {{item.is_liked ? 'post-action-active' : ''}}" bindtap="onLike" data-id="{{item.id}}" catchtap="onLike">
-            <view class="icon {{item.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:28rpx;height:28rpx;"></view>
+            <view class="icon {{item.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:32rpx;height:32rpx;"></view>
             <text>{{item.like_count || 0}}</text>
           </view>
           <view class="post-action {{item.is_favorited ? 'post-action-active' : ''}}" bindtap="onFavorite" data-id="{{item.id}}" catchtap="onFavorite">
-            <view class="icon {{item.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:28rpx;height:28rpx;"></view>
+            <view class="icon {{item.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:32rpx;height:32rpx;"></view>
           </view>
         </view>
       </view>

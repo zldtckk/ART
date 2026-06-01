@@ -34,17 +34,6 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
-    // Reset form every time page is shown
-    this.setData({
-      content: '',
-      images: [],
-      isAnonymous: false,
-      circleType: 'general',
-      price: '',
-      marketTag: 'sell',
-      marketCategory: 'art_supplies',
-      submitting: false,
-    });
   },
 
   onContentInput(e) { this.setData({ content: e.detail.value }); },
@@ -125,13 +114,16 @@ Page({
         if (this.data.price) postData.price = parseFloat(this.data.price);
       }
 
-      const post = await api.createPost(postData);
+      await api.createPost(postData);
+      // 重置表单
+      this.setData({ content: '', images: [], price: '', isAnonymous: false, circleType: 'general', marketTag: 'sell', marketCategory: 'art_supplies' });
       wx.showToast({ title: '发布成功', icon: 'success' });
+      getApp().globalData.feedNeedsRefresh = true;
       setTimeout(() => {
-        wx.navigateTo({ url: `/pages/post-detail/index?id=${post._id}` });
+        wx.switchTab({ url: '/pages/index/index' });
       }, 800);
     } catch (e) {
-      wx.showToast({ title: '发布失败', icon: 'none' });
+      wx.showToast({ title: e.message || '发布失败', icon: 'none' });
     } finally {
       this.setData({ submitting: false });
     }

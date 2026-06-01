@@ -23,14 +23,5 @@ exports.main = async (event) => {
     await db.collection('posts').doc(postId).update({ data: { like_count: _.inc(1) } });
   }
 
-  // 读回真实值（含 Math.max 防止历史脏数据出现负数）
-  const postDoc = await db.collection('posts').doc(postId).get();
-  const likeCount = Math.max(0, postDoc.data.like_count || 0);
-
-  // 如果脏数据导致 count 和实际不符，直接修正（可选，首次运行修复历史数据）
-  if (postDoc.data.like_count < 0) {
-    await db.collection('posts').doc(postId).update({ data: { like_count: 0 } });
-  }
-
-  return { liked: !wasLiked, like_count: likeCount };
+  return { liked: !wasLiked };
 };

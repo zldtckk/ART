@@ -5,6 +5,15 @@ const _ = db.command;
 
 const MAX_LEN = 500;
 
+async function checkText(content, openid) {
+  try {
+    const res = await cloud.openapi.security.msgSecCheck({ content, version: 2, scene: 1, openid });
+    return res.result && res.result.suggest === 'risky';
+  } catch (e) {
+    return false; // 检测接口异常时放行，不影响正常使用
+  }
+}
+
 exports.main = async (event) => {
   const { postId, content } = event;
   const openid = cloud.getWXContext().OPENID;
@@ -13,6 +22,8 @@ exports.main = async (event) => {
   const text = (content || '').trim();
   if (!text) return { code: -1, msg: '评论不能为空' };
   if (text.length > MAX_LEN) return { code: -1, msg: '评论过长' };
+
+  if (await checkText(text, openid)) return { code: -1, msg: '评论内容违规，请修改后重试' };
 
   // 校验帖子存在，避免孤儿评论
   const postRes = await db.collection('posts').doc(postId).get().catch(() => null);

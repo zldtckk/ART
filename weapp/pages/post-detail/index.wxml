@@ -31,7 +31,7 @@
         <view class="post-content">{{post.content}}</view>
 
         <view wx:if="{{post._parsedImages && post._parsedImages.length > 0}}" class="detail-images">
-          <image wx:for="{{post._parsedImages}}" wx:key="*this" src="{{item}}" mode="widthFix" class="detail-image" />
+          <image wx:for="{{post._parsedImages}}" wx:key="*this" src="{{item}}" mode="widthFix" class="detail-image" lazy-load />
         </view>
 
         <!-- Market info -->
@@ -42,11 +42,11 @@
 
         <view class="post-footer">
           <view class="post-action {{post.is_liked ? 'post-action-active' : ''}}" bindtap="handleLike">
-            <view class="icon {{post.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:28rpx;height:28rpx;"></view>
+            <view class="icon {{post.is_liked ? 'icon-heart-active' : 'icon-heart'}}" style="width:32rpx;height:32rpx;"></view>
             <text>{{post.like_count}}</text>
           </view>
           <view class="post-action {{post.is_favorited ? 'post-action-active' : ''}}" bindtap="handleFavorite">
-            <view class="icon {{post.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:28rpx;height:28rpx;"></view>
+            <view class="icon {{post.is_favorited ? 'icon-bookmark-active' : 'icon-bookmark'}}" style="width:32rpx;height:32rpx;"></view>
             <text>{{post.is_favorited ? '已收藏' : '收藏'}}</text>
           </view>
           <view wx:if="{{isSelf}}" class="post-action post-action-danger" bindtap="handleDelete">
@@ -83,7 +83,7 @@
     <view wx:if="{{currentUser}}" class="comment-input-bar">
       <block wx:if="{{currentUser.is_verified}}">
         <input class="comment-input" placeholder="写评论..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="handleComment" />
-        <text class="comment-send-btn {{commentText.trim() && !submitting ? '' : 'disabled'}}" bindtap="handleComment">发送</text>
+        <text class="comment-send-btn {{commentValid && !submitting ? '' : 'disabled'}}" bindtap="handleComment">发送</text>
       </block>
       <text wx:else class="btn btn-secondary btn-block" bindtap="goVerify" style="border-radius:40rpx;font-size:28rpx;text-align:center;">认证后即可评论</text>
     </view>

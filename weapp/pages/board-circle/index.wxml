@@ -23,7 +23,7 @@
     <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
       <view class="post-header">
         <view class="post-avatar">
-          <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
+          <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" lazy-load />
           <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
         </view>
         <view class="post-meta">

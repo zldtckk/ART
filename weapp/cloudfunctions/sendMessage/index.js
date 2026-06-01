@@ -4,6 +4,15 @@ const db = cloud.database();
 
 const MAX_LEN = 1000;
 
+async function checkText(content, openid) {
+  try {
+    const res = await cloud.openapi.security.msgSecCheck({ content, version: 2, scene: 1, openid });
+    return res.result && res.result.suggest === 'risky';
+  } catch (e) {
+    return false;
+  }
+}
+
 exports.main = async (event) => {
   const { conversationId, content } = event;
   const wxContext = cloud.getWXContext();
@@ -13,6 +22,8 @@ exports.main = async (event) => {
   const text = (content || '').trim();
   if (!text) return { code: -1, msg: '消息不能为空' };
   if (text.length > MAX_LEN) return { code: -1, msg: '消息过长' };
+
+  if (await checkText(text, openid)) return { code: -1, msg: '消息内容违规，请修改后重试' };
 
   // 校验调用者是会话参与者，禁止往他人会话注入消息
   const convRes = await db.collection('conversations').doc(conversationId).get().catch(() => null);

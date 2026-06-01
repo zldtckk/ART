@@ -6,7 +6,7 @@
     { "name": "login", "runtime": "Nodejs16.13" },
     { "name": "verifyCode", "runtime": "Nodejs16.13" },
     { "name": "getConversation", "runtime": "Nodejs16.13" },
-    { "name": "sendMessage", "runtime": "Nodejs16.13" },
+    { "name": "sendMessage", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
     { "name": "getNotifications", "runtime": "Nodejs16.13" },
     { "name": "bootstrap", "runtime": "Nodejs16.13" },
     { "name": "seed", "runtime": "Nodejs16.13" },
@@ -23,7 +23,8 @@
     { "name": "getConversationMessages", "runtime": "Nodejs16.13" },
     { "name": "markConversationRead", "runtime": "Nodejs16.13" },
     { "name": "getPendingVerifications", "runtime": "Nodejs16.13" },
-    { "name": "addComment", "runtime": "Nodejs16.13" },
-    { "name": "deletePost", "runtime": "Nodejs16.13" }
+    { "name": "addComment", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
+    { "name": "deletePost", "runtime": "Nodejs16.13" },
+    { "name": "createPost", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } }
   ]
 }

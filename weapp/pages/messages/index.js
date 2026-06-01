@@ -1,17 +1,6 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
-
-function formatTime(val) {
-  if (!val) return '';
-  const d = val instanceof Date ? val : new Date(typeof val === 'object' && val.$date ? val.$date : val);
-  if (isNaN(d.getTime())) return '';
-  const now = new Date();
-  const diff = now - d;
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
-  if (d.toDateString() === now.toDateString()) return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-  return `${d.getMonth() + 1}/${d.getDate()}`;
-}
+const { formatTime } = require('../../utils/formatter');
 
 Page({
   data: {

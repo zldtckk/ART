@@ -1,5 +1,6 @@
 const db = wx.cloud.database();
 const _ = db.command;
+const { formatTime } = require('./formatter');
 
 // ── Helpers ──
 
@@ -37,6 +38,7 @@ async function enrichPosts(posts) {
       display_name: p.is_anonymous ? '匿名用户' : (author.nickname || '新用户'),
       display_avatar: p.is_anonymous ? '' : (author.avatar_url || ''),
       user_id: p._openid,
+      created_at: formatTime(p.createTime),
     };
   });
 }
@@ -50,6 +52,7 @@ async function enrichComments(comments) {
       ...c,
       display_name: author.nickname || '用户',
       display_avatar: author.avatar_url || '',
+      created_at: formatTime(c.createTime),
     };
   });
 }
@@ -127,22 +130,10 @@ async function getPost(id) {
 }
 
 async function createPost(data) {
-  const app = getApp();
-  const user = app.globalData.user;
-  const doc = {
-    ...data,
-    images: data.images || [],
-    is_anonymous: !!data.is_anonymous,
-    is_public: data.is_public !== undefined ? !!data.is_public : true,
-    like_count: 0,
-    comment_count: 0,
-    favorite_count: 0,
-    createTime: db.serverDate(),
-    updateTime: db.serverDate(),
-  };
-  if (user && user.studio_id) doc.studio_id = user.studio_id;
-  const res = await db.collection('posts').add({ data: doc });
-  return mapDoc({ ...doc, _id: res._id });
+  const res = await wx.cloud.callFunction({ name: 'createPost', data });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '发布失败');
+  return mapDoc(result.post);
 }
 
 async function deletePost(id) {
@@ -319,9 +310,26 @@ async function getMyFavorites({ page = 1, limit = 20 } = {}) {
 
   if (!favRes.data.length) return [];
 
-  const postIds = [...new Set(favRes.data.map(f => f.post_id))];
+  // 去重：同一帖子多条收藏记录，保留首条，多余的标记待清理
+  const seen = new Set();
+  const dupIds = [];
+  favRes.data.forEach(f => {
+    if (seen.has(f.post_id)) dupIds.push(f._id);
+    else seen.add(f.post_id);
+  });
+
+  const postIds = [...seen];
   const postsRes = await db.collection('posts').where({ _id: _.in(postIds) }).get();
   const posts = mapDocs(postsRes.data);
+  const existingPostIds = new Set(posts.map(p => p._id));
+
+  // 自愈：清理孤儿收藏（帖子已删除）+ 重复记录，使收藏数与实际一致
+  const orphanIds = favRes.data.filter(f => !existingPostIds.has(f.post_id)).map(f => f._id);
+  const toRemove = [...new Set([...dupIds, ...orphanIds])];
+  if (toRemove.length) {
+    Promise.all(toRemove.map(id => db.collection('favorites').doc(id).remove())).catch(() => {});
+  }
+
   return enrichPosts(posts);
 }
 

@@ -1,5 +1,6 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
+const { getCircleTypeName } = require('../../utils/formatter');
 
 Page({
   data: {
@@ -7,6 +8,7 @@ Page({
     comments: [],
     loading: true,
     commentText: '',
+    commentValid: false,
     submitting: false,
     currentUser: null,
     isLoggedIn: false,
@@ -30,10 +32,6 @@ Page({
     try { return JSON.parse(imagesStr); } catch (e) { return []; }
   },
 
-  getCircleTypeName(type) {
-    const map = { general: '闲聊', help: '求助', treehole: '树洞', carpool: '拼车', lunch: '拼饭', other: '其他' };
-    return map[type] || type;
-  },
 
   async loadPost() {
     try {
@@ -43,7 +41,7 @@ Page({
       ]);
       if (post) {
         post._parsedImages = this.parseImages(post.images);
-        post.circle_type_name = this.getCircleTypeName(post.circle_type);
+        post.circle_type_name = getCircleTypeName(post.circle_type);
       }
       const user = auth.getAuth().user;
       this.setData({
@@ -58,35 +56,39 @@ Page({
     }
   },
 
-  async handleLike() {
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
-    }
-    try {
-      const post = this.data.post;
-      const res = await api.toggleLike(this.postId);
-      if (post) {
-        this.setData({
-          post: { ...post, is_liked: res.liked, like_count: res.like_count !== undefined ? res.like_count : post.like_count },
-        });
-      }
-    } catch (e) { /* ignore */ }
+  handleLike() {
+    if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
+    const post = this.data.post;
+    if (!post) return;
+    // 乐观更新：立即更新 UI
+    const wasLiked = post.is_liked;
+    this.setData({
+      post: { ...post, is_liked: !wasLiked, like_count: post.like_count + (wasLiked ? -1 : 1) },
+    });
+    // 后台同步，失败回滚
+    api.toggleLike(this.postId).then(res => {
+      this.setData({ post: { ...this.data.post, like_count: res.like_count } });
+    }).catch(() => {
+      this.setData({ post: { ...this.data.post, is_liked: wasLiked, like_count: post.like_count } });
+    });
   },
 
-  async handleFavorite() {
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
-    }
-    try {
-      const res = await api.toggleFavorite(this.postId);
-      const post = this.data.post;
-      if (post) this.setData({ post: { ...post, is_favorited: res.favorited } });
-    } catch (e) { /* ignore */ }
+  handleFavorite() {
+    if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
+    const post = this.data.post;
+    if (!post) return;
+    // 乐观更新
+    const wasFavorited = post.is_favorited;
+    this.setData({ post: { ...post, is_favorited: !wasFavorited } });
+    api.toggleFavorite(this.postId).catch(() => {
+      this.setData({ post: { ...this.data.post, is_favorited: wasFavorited } });
+    });
   },
 
-  onCommentInput(e) { this.setData({ commentText: e.detail.value }); },
+  onCommentInput(e) {
+    const val = e.detail.value;
+    this.setData({ commentText: val, commentValid: val.trim().length > 0 });
+  },
 
   async handleComment() {
     if (!auth.isLoggedIn()) {
@@ -100,8 +102,10 @@ Page({
       this.setData({
         comments: [...this.data.comments, comment],
         commentText: '',
+        commentValid: false,
         post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
       });
+      wx.showToast({ title: '评论已发送', icon: 'success' });
     } catch (e) {
       wx.showToast({ title: e.message || '评论失败', icon: 'none' });
     }

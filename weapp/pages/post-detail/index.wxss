@@ -128,7 +128,9 @@
 .post-action {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: 10rpx;
+  padding: 8rpx 0;
+  font-size: 30rpx;
 }
 .post-action-active {
   color: var(--accent);

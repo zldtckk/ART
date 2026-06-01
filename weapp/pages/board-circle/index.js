@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { CIRCLE_TYPES, PAGE_SIZE } = require('../../utils/constants');
+const { getCircleTypeName } = require('../../utils/formatter');
 
 Page({
   data: {
@@ -26,13 +27,8 @@ Page({
     this.loadPosts();
   },
 
-  getCircleTypeName(type) {
-    const map = { general: '闲聊', help: '求助', treehole: '树洞', carpool: '拼车', lunch: '拼饭', other: '其他' };
-    return map[type] || type;
-  },
-
   processPosts(posts) {
-    return (posts || []).map((p) => ({ ...p, circle_type_name: this.getCircleTypeName(p.circle_type) }));
+    return (posts || []).map((p) => ({ ...p, circle_type_name: getCircleTypeName(p.circle_type) }));
   },
 
   async loadPosts() {
@@ -73,16 +69,31 @@ Page({
     };
   },
 
-  async onLike(e) {
+  onLike(e) {
     const id = e.currentTarget.dataset.id;
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
-    try {
-      const res = await api.toggleLike(id);
-      const posts = this.data.posts.map((p) => {
-        if (p._id === id || p.id === id) return { ...p, is_liked: res.liked, like_count: res.like_count !== undefined ? res.like_count : p.like_count };
-        return p;
+    const post = this.data.posts.find(p => p._id === id || p.id === id);
+    if (!post) return;
+    const wasLiked = post.is_liked;
+    this.setData({
+      posts: this.data.posts.map(p =>
+        (p._id === id || p.id === id)
+          ? { ...p, is_liked: !wasLiked, like_count: p.like_count + (wasLiked ? -1 : 1) }
+          : p
+      ),
+    });
+    api.toggleLike(id).then(res => {
+      this.setData({
+        posts: this.data.posts.map(p =>
+          (p._id === id || p.id === id) ? { ...p, like_count: res.like_count } : p
+        ),
       });
-      this.setData({ posts });
-    } catch (e) { /* ignore */ }
+    }).catch(() => {
+      this.setData({
+        posts: this.data.posts.map(p =>
+          (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
+        ),
+      });
+    });
   },
 });
