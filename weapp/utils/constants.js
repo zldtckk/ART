@@ -21,6 +21,12 @@ const MARKET_CATEGORIES = [
   { key: 'other', name: '其他' },
 ];
 
+const FAN_TYPES = [
+  { key: 'share', name: '安利' },
+  { key: 'findmate', name: '求同好' },
+  { key: 'gossip', name: '八卦' },
+];
+
 const MARKET_TAGS = [
   { key: 'sell', name: '出售' },
   { key: 'buy', name: '求购' },
@@ -46,6 +52,7 @@ function resolvePostImages(post) {
 module.exports = {
   BOARDS,
   CIRCLE_TYPES,
+  FAN_TYPES,
   MARKET_CATEGORIES,
   MARKET_TAGS,
   PAGE_SIZE,

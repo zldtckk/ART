@@ -24,4 +24,10 @@ function getCircleTypeName(type) {
   return CIRCLE_TYPE_MAP[type] || '';
 }
 
-module.exports = { formatTime, getCircleTypeName };
+const FAN_TYPE_MAP = { share: '安利', findmate: '求同好', gossip: '八卦' };
+
+function getFanTypeName(type) {
+  return FAN_TYPE_MAP[type] || '';
+}
+
+module.exports = { formatTime, getCircleTypeName, getFanTypeName };
