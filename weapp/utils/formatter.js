@@ -30,4 +30,11 @@ function getFanTypeName(type) {
   return FAN_TYPE_MAP[type] || '';
 }
 
-module.exports = { formatTime, getCircleTypeName, getFanTypeName };
+// 显示名：优先自定义昵称，否则用「用户+数字ID」，保证不同用户不撞名
+function displayName(u) {
+  if (!u) return '用户';
+  if (u.nickname) return u.nickname;
+  return u.sys_user_id ? '用户' + u.sys_user_id : '用户';
+}
+
+module.exports = { formatTime, getCircleTypeName, getFanTypeName, displayName };

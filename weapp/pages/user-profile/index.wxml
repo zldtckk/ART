@@ -21,7 +21,7 @@
         </view>
       </view>
       <view class="user-info">
-        <text class="user-name">{{user.nickname || '用户'}}</text>
+        <text class="user-name">{{user.nickname || (user.sys_user_id ? '用户' + user.sys_user_id : '用户')}}</text>
         <text wx:if="{{user.studio_name || user.class_name}}" class="user-sub">
           {{user.studio_name || ''}}{{user.studio_name && user.class_name ? ' · ' : ''}}{{user.class_name || ''}}
         </text>

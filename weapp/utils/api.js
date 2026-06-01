@@ -1,6 +1,6 @@
 const db = wx.cloud.database();
 const _ = db.command;
-const { formatTime } = require('./formatter');
+const { formatTime, displayName } = require('./formatter');
 
 // ── Helpers ──
 
@@ -35,7 +35,7 @@ async function enrichPosts(posts) {
     const author = userMap[p._openid] || {};
     return {
       ...p,
-      display_name: p.is_anonymous ? '匿名用户' : (author.nickname || '新用户'),
+      display_name: p.is_anonymous ? '匿名用户' : displayName(author),
       display_avatar: p.is_anonymous ? '' : (author.avatar_url || ''),
       user_id: p._openid,
       created_at: formatTime(p.createTime),
@@ -50,7 +50,7 @@ async function enrichComments(comments) {
     const author = userMap[c._openid] || {};
     return {
       ...c,
-      display_name: author.nickname || '用户',
+      display_name: displayName(author),
       display_avatar: author.avatar_url || '',
       created_at: formatTime(c.createTime),
     };
@@ -166,7 +166,7 @@ async function addComment(postId, content) {
   const user = (getApp().globalData.user) || {};
   return mapDoc({
     ...result.comment,
-    display_name: user.nickname || '用户',
+    display_name: displayName(user),
     display_avatar: user.avatar_url || '',
   });
 }

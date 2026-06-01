@@ -22,7 +22,7 @@
         </view>
       </view>
       <view class="profile-info">
-        <text class="profile-name">{{user.nickname || '用户'}}</text>
+        <text class="profile-name">{{user.nickname || (user.sys_user_id ? '用户' + user.sys_user_id : '用户')}}</text>
         <text class="profile-studio">{{user.studio_name || (user.is_verified ? '' : '未认证画室')}}{{user.class_name ? ' · ' + user.class_name : ''}}</text>
       </view>
       <view class="profile-badge badge-{{user.verification_status || 'none'}}">

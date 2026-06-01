@@ -16,6 +16,11 @@ exports.main = async () => {
   const ZODIAC = ['rat','ox','tiger','rabbit','dragon','snake','horse','goat','monkey','rooster','dog','pig'];
   const pick = ZODIAC[Math.floor(Math.random() * ZODIAC.length)];
 
+  // 由 openid 派生 6 位数字编号（确定可复现，用于默认显示名「用户392011」）
+  let h = 0;
+  for (let i = 0; i < openid.length; i++) { h = (h * 31 + openid.charCodeAt(i)) >>> 0; }
+  const sysUserId = String(100000 + (h % 900000));
+
   // 新建用户
   const user = {
     _openid: openid,
@@ -23,6 +28,7 @@ exports.main = async () => {
     is_verified: false,
     verification_status: 'none',
     avatar_url: `/assets/avatars/${pick}.png`,
+    sys_user_id: sysUserId,
     createTime: db.serverDate(),
   };
   await db.collection('users').add({ data: user });

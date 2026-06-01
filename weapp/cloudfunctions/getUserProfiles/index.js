@@ -4,7 +4,7 @@ const db = cloud.database();
 const _ = db.command;
 
 // 公开字段白名单——绝不返回 student_id_url / real_name / phone 等隐私字段
-const PUBLIC_FIELDS = ['_openid', 'nickname', 'avatar_url', 'studio_id', 'class_name', 'is_verified', 'verification_status', 'role'];
+const PUBLIC_FIELDS = ['_openid', 'nickname', 'avatar_url', 'sys_user_id', 'studio_id', 'class_name', 'is_verified', 'verification_status', 'role'];
 
 function pickPublic(u) {
   const out = {};
