@@ -200,6 +200,10 @@
   margin-top: 8rpx;
 }
 
+.comment-pending {
+  opacity: 0.5;
+}
+
 /* Comment input bar */
 .comment-input-bar {
   position: fixed;

@@ -1,6 +1,6 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
-const { BOARDS, CIRCLE_TYPES, MARKET_CATEGORIES, MARKET_TAGS } = require('../../utils/constants');
+const { BOARDS, CIRCLE_TYPES, FAN_TYPES, MARKET_CATEGORIES, MARKET_TAGS } = require('../../utils/constants');
 
 Page({
   data: {
@@ -10,11 +10,14 @@ Page({
     images: [],
     isAnonymous: false,
     circleType: 'general',
+    fanType: 'share',
+    idolTag: '',
     price: '',
     marketTag: 'sell',
     marketCategory: 'art_supplies',
     submitting: false,
     circleTypes: CIRCLE_TYPES,
+    fanTypes: FAN_TYPES,
     marketCategories: MARKET_CATEGORIES,
     marketTags: MARKET_TAGS,
     showBoardPicker: false,
@@ -38,6 +41,8 @@ Page({
 
   onContentInput(e) { this.setData({ content: e.detail.value }); },
   onPriceInput(e) { this.setData({ price: e.detail.value }); },
+  onIdolTagInput(e) { this.setData({ idolTag: e.detail.value }); },
+  selectFanType(e) { this.setData({ fanType: e.currentTarget.dataset.key }); },
 
   toggleAnonymous() {
     this.setData({ isAnonymous: !this.data.isAnonymous });
@@ -108,6 +113,9 @@ Page({
 
       if (this.data.selectedBoard === 'circle') {
         postData.circle_type = this.data.circleType;
+      } else if (this.data.selectedBoard === 'fan') {
+        postData.fan_type = this.data.fanType;
+        if (this.data.idolTag.trim()) postData.idol_tag = this.data.idolTag.trim();
       } else if (this.data.selectedBoard === 'market') {
         postData.market_tag = this.data.marketTag;
         postData.market_category = this.data.marketCategory;
@@ -116,7 +124,7 @@ Page({
 
       await api.createPost(postData);
       // 重置表单
-      this.setData({ content: '', images: [], price: '', isAnonymous: false, circleType: 'general', marketTag: 'sell', marketCategory: 'art_supplies' });
+      this.setData({ content: '', images: [], price: '', isAnonymous: false, circleType: 'general', fanType: 'share', idolTag: '', marketTag: 'sell', marketCategory: 'art_supplies' });
       wx.showToast({ title: '发布成功', icon: 'success' });
       getApp().globalData.feedNeedsRefresh = true;
       setTimeout(() => {

@@ -15,7 +15,8 @@
     "pages/my-posts/index",
     "pages/my-comments/index",
     "pages/my-favorites/index",
-    "pages/user-profile/index"
+    "pages/user-profile/index",
+    "pages/board-fan/index"
   ],
   "window": {
     "navigationStyle": "custom",

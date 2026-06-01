@@ -90,26 +90,52 @@ Page({
     this.setData({ commentText: val, commentValid: val.trim().length > 0 });
   },
 
-  async handleComment() {
+  handleComment() {
     if (!auth.isLoggedIn()) {
       wx.navigateTo({ url: '/pages/login/index' });
       return;
     }
-    if (!this.data.commentText.trim()) return;
-    this.setData({ submitting: true });
-    try {
-      const comment = await api.addComment(this.postId, this.data.commentText.trim());
+    const text = this.data.commentText.trim();
+    if (!text || this.data.submitting) return;
+
+    const user = this.data.currentUser || {};
+    const tempId = `temp_${Date.now()}`;
+
+    // 乐观插入：立刻显示评论，输入框清空
+    this.setData({
+      comments: [...this.data.comments, {
+        _id: tempId,
+        id: tempId,
+        content: text,
+        display_name: user.nickname || '我',
+        display_avatar: user.avatar_url || '',
+        created_at: '刚刚',
+        _pending: true,
+      }],
+      commentText: '',
+      commentValid: false,
+      submitting: true,
+      post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
+    });
+
+    api.addComment(this.postId, text).then(comment => {
+      // 用真实数据替换临时评论
       this.setData({
-        comments: [...this.data.comments, comment],
-        commentText: '',
-        commentValid: false,
-        post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
+        comments: this.data.comments.map(c => c._id === tempId ? { ...comment, _pending: false } : c),
+        submitting: false,
       });
       wx.showToast({ title: '评论已发送', icon: 'success' });
-    } catch (e) {
+    }).catch(e => {
+      // 失败：移除临时评论，还原文字和计数
+      this.setData({
+        comments: this.data.comments.filter(c => c._id !== tempId),
+        commentText: text,
+        commentValid: true,
+        submitting: false,
+        post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count - 1 } : null,
+      });
       wx.showToast({ title: e.message || '评论失败', icon: 'none' });
-    }
-    this.setData({ submitting: false });
+    });
   },
 
   handleDelete() {
