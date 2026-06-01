@@ -26,9 +26,9 @@ Page({
 
   onLoad(options) {
     if (options.board) this.setData({ selectedBoard: options.board });
-    const boards = BOARDS.filter((b) => b.key !== 'fan').map((b) => ({
+    const boards = BOARDS.map((b) => ({
       ...b,
-      name: b.key === 'circle' ? '画室圈子' : b.name,
+      name: b.key === 'circle' ? '画室圈子' : b.key === 'fan' ? '爱豆专区' : b.name,
     }));
     this.setData({ boards });
   },
