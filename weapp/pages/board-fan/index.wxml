@@ -2,9 +2,7 @@
   <view class="header">
     <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
     <text class="header-title">爱豆专区</text>
-    <view class="header-right">
-      <text class="header-action" bindtap="goCreate">发帖</text>
-    </view>
+    <view class="header-right"></view>
   </view>
 
   <scroll-view scroll-x class="type-bar">

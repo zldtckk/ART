@@ -53,7 +53,6 @@ Page({
   },
 
   goPost(e) { wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` }); },
-  goCreate() { wx.navigateTo({ url: '/pages/create-post/index?board=fan' }); },
   goUserProfile(e) {
     const uid = e.currentTarget.dataset.uid;
     if (!uid) return;
