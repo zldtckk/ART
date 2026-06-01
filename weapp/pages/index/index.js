@@ -184,13 +184,7 @@ Page({
           : p
       ),
     });
-    api.toggleLike(id).then(res => {
-      this.setData({
-        posts: this.data.posts.map(p =>
-          (p._id === id || p.id === id) ? { ...p, like_count: res.like_count } : p
-        ),
-      });
-    }).catch(() => {
+    api.toggleLike(id).catch(() => {
       this.setData({
         posts: this.data.posts.map(p =>
           (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p

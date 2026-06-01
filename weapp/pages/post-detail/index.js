@@ -65,10 +65,7 @@ Page({
     this.setData({
       post: { ...post, is_liked: !wasLiked, like_count: post.like_count + (wasLiked ? -1 : 1) },
     });
-    // 后台同步，失败回滚
-    api.toggleLike(this.postId).then(res => {
-      this.setData({ post: { ...this.data.post, like_count: res.like_count } });
-    }).catch(() => {
+    api.toggleLike(this.postId).catch(() => {
       this.setData({ post: { ...this.data.post, is_liked: wasLiked, like_count: post.like_count } });
     });
   },
