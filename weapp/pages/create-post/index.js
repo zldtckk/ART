@@ -4,7 +4,10 @@ const { BOARDS, CIRCLE_TYPES, FAN_TYPES, MARKET_CATEGORIES, MARKET_TAGS } = requ
 
 Page({
   data: {
-    boards: [],
+    boards: BOARDS.map(b => ({
+      ...b,
+      name: b.key === 'circle' ? '画室圈子' : b.key === 'fan' ? '爱豆专区' : b.name,
+    })),
     selectedBoard: 'circle',
     content: '',
     images: [],
@@ -26,11 +29,6 @@ Page({
 
   onLoad(options) {
     if (options.board) this.setData({ selectedBoard: options.board });
-    const boards = BOARDS.map((b) => ({
-      ...b,
-      name: b.key === 'circle' ? '画室圈子' : b.key === 'fan' ? '爱豆专区' : b.name,
-    }));
-    this.setData({ boards });
   },
 
   onShow() {
