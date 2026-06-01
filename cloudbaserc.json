@@ -17,6 +17,13 @@
     { "name": "approveVerification", "runtime": "Nodejs16.13" },
     { "name": "rejectVerification", "runtime": "Nodejs16.13" },
     { "name": "toggleLike", "runtime": "Nodejs16.13" },
-    { "name": "toggleFavorite", "runtime": "Nodejs16.13" }
+    { "name": "toggleFavorite", "runtime": "Nodejs16.13" },
+    { "name": "getUserProfiles", "runtime": "Nodejs16.13" },
+    { "name": "getConversationList", "runtime": "Nodejs16.13" },
+    { "name": "getConversationMessages", "runtime": "Nodejs16.13" },
+    { "name": "markConversationRead", "runtime": "Nodejs16.13" },
+    { "name": "getPendingVerifications", "runtime": "Nodejs16.13" },
+    { "name": "addComment", "runtime": "Nodejs16.13" },
+    { "name": "deletePost", "runtime": "Nodejs16.13" }
   ]
 }

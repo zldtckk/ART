@@ -14,7 +14,7 @@
       <!-- Post body -->
       <view class="post-card" wx:if="{{post}}" style="border-bottom:none;">
         <view class="post-header">
-          <view class="post-avatar">
+          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{post.user_id}}" data-anon="{{post.is_anonymous}}">
             <image wx:if="{{post.display_avatar}}" src="{{post.display_avatar}}" mode="aspectFill" class="avatar-img" />
             <view wx:else class="avatar-placeholder">{{post.is_anonymous ? '匿' : (post.display_name ? post.display_name[0] : '用')}}</view>
           </view>
@@ -25,9 +25,6 @@
               <text wx:if="{{post.circle_type}}" class="tag tag-{{post.circle_type}}">{{post.circle_type_name || post.circle_type}}</text>
               <text wx:if="{{post.studio_name}}" class="studio-badge">{{post.studio_name}}</text>
             </view>
-          </view>
-          <view wx:if="{{!isSelf}}" class="post-chat-btn" bindtap="startChat" data-uid="{{post.user_id}}">
-            <view class="icon icon-message" style="width:28rpx;height:28rpx;"></view>
           </view>
         </view>
 

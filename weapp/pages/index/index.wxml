@@ -66,7 +66,7 @@
     <block wx:else>
       <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
         <view class="post-header">
-          <view class="post-avatar">
+          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
             <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" />
             <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
           </view>
@@ -77,9 +77,6 @@
               <text wx:if="{{item.circle_type}}" class="tag tag-{{item.circle_type}}">{{item.circle_type_name || item.circle_type}}</text>
               <text wx:if="{{item.studio_name}}" class="studio-badge">{{item.studio_name}}</text>
             </view>
-          </view>
-          <view wx:if="{{isLoggedIn && !item.is_anonymous && item.user_id !== currentUserId}}" class="post-chat-btn" bindtap="startChat" data-uid="{{item.user_id}}" catchtap="startChat">
-            <view class="icon icon-message" style="width:28rpx;height:28rpx;"></view>
           </view>
         </view>
 

@@ -1,6 +1,18 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 
+function formatTime(val) {
+  if (!val) return '';
+  const d = val instanceof Date ? val : new Date(typeof val === 'object' && val.$date ? val.$date : val);
+  if (isNaN(d.getTime())) return '';
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+  if (d.toDateString() === now.toDateString()) return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
 Page({
   data: {
     tab: 'chat',
@@ -33,6 +45,12 @@ Page({
     this.setData({ currentUserId: (user && user._openid) || null });
     this.loadConversations();
     this.loadNotifications();
+
+    const pendingConvId = getApp().globalData.pendingConvId;
+    if (pendingConvId) {
+      getApp().globalData.pendingConvId = null;
+      this.openChat(pendingConvId);
+    }
   },
 
   switchTab(e) {
@@ -48,27 +66,24 @@ Page({
 
   async loadConversations() {
     try {
+      // 云函数已返回 peer_name/peer_avatar，无需逐条查询
       const conversations = await api.getConversationList();
-      const user = auth.getAuth().user;
-      const myOpenid = user && user._openid;
-
-      const enriched = await Promise.all((conversations || []).map(async (conv) => {
-        const peerId = conv.user1 === myOpenid ? conv.user2 : conv.user1;
-        try {
-          const peer = await api.getUserProfile(peerId);
-          return { ...conv, peer_name: (peer && peer.nickname) || '用户' };
-        } catch (e) {
-          return { ...conv, peer_name: '用户' };
-        }
+      const formatted = (conversations || []).map(conv => ({
+        ...conv,
+        peer_name: conv.peer_name || '用户',
+        last_message_at: formatTime(conv.last_message_at),
       }));
-
-      this.setData({ conversations: enriched });
+      this.setData({ conversations: formatted });
     } catch (e) { /* ignore */ }
   },
 
   loadNotifications() {
     api.getNotifications().then(res => {
-      this.setData({ notifications: res.notifications || [] });
+      const notifications = (res.notifications || []).map(n => ({
+        ...n,
+        created_at: formatTime(n.createTime || n.created_at),
+      }));
+      this.setData({ notifications });
     }).catch(() => {});
   },
 
@@ -76,7 +91,8 @@ Page({
     const convId = typeof e === 'string' ? e : (e && e.currentTarget ? e.currentTarget.dataset.convid : null);
     if (!convId) return;
     this.setData({ convId, loading: true });
-    api.getConversationMessages(convId).then(messages => {
+    api.getConversationMessages(convId).then(rawMessages => {
+      const messages = (rawMessages || []).map(m => ({ ...m, created_at: formatTime(m.createTime || m.created_at) }));
       this.setData({ messages, loading: false });
       api.markConversationRead(convId).catch(() => {});
     }).catch(() => this.setData({ loading: false }));
@@ -93,11 +109,18 @@ Page({
     const text = this.data.messageText.trim();
     this.setData({ messageText: '' });
     api.sendMessage(this.data.convId, text).then(res => {
-      if (res.message) {
+      if (res && res.message) {
         this.setData({ messages: [...this.data.messages, res.message] });
+      } else {
+        this.setData({ messageText: text });
+        wx.showToast({ title: (res && res.msg) || '发送失败', icon: 'none' });
       }
-    }).catch(() => {});
+    }).catch(() => {
+      this.setData({ messageText: text });
+      wx.showToast({ title: '发送失败，请重试', icon: 'none' });
+    });
   },
+
 
   onSwipeStart(e) {
     this._touchStartX = e.touches[0].clientX;

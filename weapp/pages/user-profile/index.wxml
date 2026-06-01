@@ -1,0 +1,66 @@
+<view class="page">
+  <!-- Header -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <view class="icon-back-arrow"></view>
+      <text>返回</text>
+    </view>
+    <text class="header-title">{{isSelf ? '我的主页' : 'Ta的主页'}}</text>
+    <view class="header-placeholder"></view>
+  </view>
+
+  <view wx:if="{{loading && !user}}" class="loading-spinner"></view>
+
+  <block wx:elif="{{user}}">
+    <!-- User info card -->
+    <view class="user-card">
+      <view class="user-avatar">
+        <image wx:if="{{user.avatar_url}}" src="{{user.avatar_url}}" mode="aspectFill" class="avatar-img" />
+        <view wx:else class="avatar-placeholder avatar-placeholder-lg">
+          <text>{{user.nickname ? user.nickname[0] : '用'}}</text>
+        </view>
+      </view>
+      <view class="user-info">
+        <text class="user-name">{{user.nickname || '用户'}}</text>
+        <text wx:if="{{user.studio_name || user.class_name}}" class="user-sub">
+          {{user.studio_name || ''}}{{user.studio_name && user.class_name ? ' · ' : ''}}{{user.class_name || ''}}
+        </text>
+        <view class="user-badge badge-{{user.verification_status || 'none'}}">
+          {{user.is_verified ? '已认证' : user.verification_status === 'pending' ? '审核中' : '未认证'}}
+        </view>
+      </view>
+      <view wx:if="{{!isSelf}}" class="chat-btn" bindtap="startChat">
+        <view class="icon icon-message" style="width:32rpx;height:32rpx;"></view>
+        <text>发私信</text>
+      </view>
+    </view>
+
+    <!-- Posts section -->
+    <view class="posts-section-header">
+      <text class="posts-section-title">{{isSelf ? '我的帖子' : 'Ta的帖子'}}</text>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-spinner"></view>
+    <view wx:elif="{{posts.length === 0}}" class="empty-state">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无公开帖子</text>
+    </view>
+    <block wx:else>
+      <view wx:for="{{posts}}" wx:key="id" class="post-row" bindtap="goPost" data-id="{{item.id}}">
+        <view class="post-row-content">{{item.content}}</view>
+        <view class="post-row-meta">
+          <text class="meta-item">{{item.board === 'market' ? '闲置' : item.board === 'circle' ? '圈子' : '帖子'}}</text>
+          <text class="meta-item">{{item.created_at}}</text>
+          <text class="meta-item">💬 {{item.comment_count || 0}}</text>
+          <text class="meta-item">🤍 {{item.like_count || 0}}</text>
+        </view>
+      </view>
+      <view wx:if="{{loadingMore}}" class="loading-spinner"></view>
+      <view wx:if="{{!hasMore && posts.length > 0}}" class="no-more">没有更多了</view>
+    </block>
+  </block>
+
+  <view wx:else class="empty-state">
+    <text class="empty-text">用户不存在</text>
+  </view>
+</view>

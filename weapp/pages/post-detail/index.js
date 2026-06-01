@@ -102,20 +102,10 @@ Page({
         commentText: '',
         post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
       });
-    } catch (e) { /* ignore */ }
-    this.setData({ submitting: false });
-  },
-
-  async startChat(e) {
-    const peerId = e.currentTarget.dataset.uid;
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
+    } catch (e) {
+      wx.showToast({ title: e.message || '评论失败', icon: 'none' });
     }
-    try {
-      const res = await api.getConversation(peerId);
-      wx.navigateTo({ url: `/pages/messages/index?convId=${res.conversation._id}` });
-    } catch (e) { /* ignore */ }
+    this.setData({ submitting: false });
   },
 
   handleDelete() {
@@ -161,6 +151,12 @@ Page({
       query: `id=${this.postId}`,
       imageUrl,
     };
+  },
+
+  goUserProfile(e) {
+    const { uid, anon } = e.currentTarget.dataset;
+    if (!uid || anon) return;
+    wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
   },
 
   goBack() { wx.navigateBack(); },

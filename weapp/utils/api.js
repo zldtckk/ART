@@ -14,19 +14,27 @@ function mapDocs(docs) {
 
 // ── Enrichment (fetch user profiles for display) ──
 
+// 通过云函数批量获取公开资料（users 集合已锁为仅创建者可读写，客户端无法读他人）
+async function fetchUserMap(openids) {
+  const unique = [...new Set((openids || []).filter(Boolean))];
+  if (!unique.length) return {};
+  const userMap = {};
+  try {
+    const res = await wx.cloud.callFunction({ name: 'getUserProfiles', data: { openids: unique } });
+    (res.result && res.result.users || []).forEach(u => { userMap[u._openid] = u; });
+  } catch (e) { /* 失败时回退为空，展示兜底名称 */ }
+  return userMap;
+}
+
 async function enrichPosts(posts) {
   if (!posts || !posts.length) return posts;
-  const openids = [...new Set(posts.filter(p => !p.is_anonymous).map(p => p._openid).filter(Boolean))];
-  const userMap = {};
-  if (openids.length) {
-    const usersRes = await db.collection('users').where({ _openid: _.in(openids) }).get();
-    usersRes.data.forEach(u => { userMap[u._openid] = u; });
-  }
+  const openids = posts.filter(p => !p.is_anonymous).map(p => p._openid);
+  const userMap = await fetchUserMap(openids);
   return posts.map(p => {
     const author = userMap[p._openid] || {};
     return {
       ...p,
-      display_name: p.is_anonymous ? '匿名用户' : (author.nickname || '未知用户'),
+      display_name: p.is_anonymous ? '匿名用户' : (author.nickname || '新用户'),
       display_avatar: p.is_anonymous ? '' : (author.avatar_url || ''),
       user_id: p._openid,
     };
@@ -35,11 +43,7 @@ async function enrichPosts(posts) {
 
 async function enrichComments(comments) {
   if (!comments || !comments.length) return comments;
-  const openids = [...new Set(comments.map(c => c._openid).filter(Boolean))];
-  if (!openids.length) return comments;
-  const usersRes = await db.collection('users').where({ _openid: _.in(openids) }).get();
-  const userMap = {};
-  usersRes.data.forEach(u => { userMap[u._openid] = u; });
+  const userMap = await fetchUserMap(comments.map(c => c._openid));
   return comments.map(c => {
     const author = userMap[c._openid] || {};
     return {
@@ -142,10 +146,11 @@ async function createPost(data) {
 }
 
 async function deletePost(id) {
-  await db.collection('posts').doc(id).remove();
-  await db.collection('comments').where({ post_id: id }).remove();
-  await db.collection('likes').where({ post_id: id }).remove();
-  await db.collection('favorites').where({ post_id: id }).remove();
+  // 走云函数：校验作者/管理员，一次删净所有用户的关联数据
+  const res = await wx.cloud.callFunction({ name: 'deletePost', data: { postId: id } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '删除失败');
+  return result;
 }
 
 // ── Comments ──
@@ -160,19 +165,15 @@ async function getComments(postId) {
 }
 
 async function addComment(postId, content) {
-  const data = {
-    post_id: postId,
-    content,
-    createTime: db.serverDate(),
-  };
-  const res = await db.collection('comments').add({ data });
-  await db.collection('posts').doc(postId).update({
-    data: { comment_count: _.inc(1) },
-  });
+  // 走云函数：校验帖子存在、原子更新评论数、给作者发通知
+  const res = await wx.cloud.callFunction({ name: 'addComment', data: { postId, content } });
+  const result = res.result || {};
+  if (result.code !== 0 || !result.comment) {
+    throw new Error(result.msg || '评论失败');
+  }
   const user = (getApp().globalData.user) || {};
   return mapDoc({
-    ...data,
-    _id: res._id,
+    ...result.comment,
     display_name: user.nickname || '用户',
     display_avatar: user.avatar_url || '',
   });
@@ -195,8 +196,10 @@ async function toggleFavorite(postId) {
 // ── Users ──
 
 async function getUserProfile(userId) {
-  const res = await db.collection('users').where({ _openid: userId }).get();
-  return mapDoc(res.data[0]);
+  // 走云函数取公开资料（users 集合客户端只能读自己）
+  const map = await fetchUserMap([userId]);
+  const u = map[userId];
+  return u ? mapDoc(u) : null;
 }
 
 async function getMyProfile() {
@@ -239,11 +242,9 @@ async function submitVerification(data) {
 }
 
 async function getPendingVerifications() {
-  const res = await db.collection('users')
-    .where({ verification_status: 'pending' })
-    .orderBy('createTime', 'desc')
-    .get();
-  return mapDocs(res.data);
+  // 走云函数（含管理员校验，users 集合客户端只能读自己）
+  const res = await wx.cloud.callFunction({ name: 'getPendingVerifications' });
+  return mapDocs((res.result && res.result.users) || []);
 }
 
 async function approveVerification(userId) {
@@ -257,15 +258,6 @@ async function rejectVerification(userId, reason) {
 }
 
 // ── Admin ──
-
-async function becomeAdmin() {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return null;
-  await db.collection('users').where({ _openid: openid }).update({
-    data: { role: 'circle_master' },
-  });
-  return getMyProfile();
-}
 
 async function addStudio(name, district) {
   const res = await db.collection('studios').add({
@@ -333,32 +325,20 @@ async function getMyFavorites({ page = 1, limit = 20 } = {}) {
   return enrichPosts(posts);
 }
 
-// ── Conversations & Messages (client-side queries) ──
+// ── Conversations & Messages (云函数，集合已锁为仅管理端可读写) ──
 
 async function getConversationList() {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return [];
-  const res = await db.collection('conversations')
-    .where(_.or([{ user1: openid }, { user2: openid }]))
-    .orderBy('last_message_at', 'desc')
-    .get();
-  return mapDocs(res.data);
+  const res = await wx.cloud.callFunction({ name: 'getConversationList' });
+  return mapDocs((res.result && res.result.conversations) || []);
 }
 
 async function getConversationMessages(conversationId) {
-  const res = await db.collection('messages')
-    .where({ conversation_id: conversationId })
-    .orderBy('createTime', 'asc')
-    .get();
-  return mapDocs(res.data);
+  const res = await wx.cloud.callFunction({ name: 'getConversationMessages', data: { conversationId } });
+  return mapDocs((res.result && res.result.messages) || []);
 }
 
 async function markConversationRead(conversationId) {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return;
-  await db.collection('messages')
-    .where({ conversation_id: conversationId, sender_id: _.neq(openid), is_read: false })
-    .update({ data: { is_read: true } });
+  await wx.cloud.callFunction({ name: 'markConversationRead', data: { conversationId } }).catch(() => {});
 }
 
 // ── Messages (cloud functions) ──
@@ -444,7 +424,6 @@ module.exports = {
   getPendingVerifications,
   approveVerification,
   rejectVerification,
-  becomeAdmin,
   addStudio,
   getMyPosts,
   getMyComments,

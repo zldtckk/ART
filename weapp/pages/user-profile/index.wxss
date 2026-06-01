@@ -1,0 +1,113 @@
+/* User card */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+  padding: 40rpx 32rpx;
+  background: var(--card);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.user-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar-img { width: 100%; height: 100%; }
+.avatar-placeholder-lg {
+  width: 128rpx;
+  height: 128rpx;
+  background: var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: var(--text2);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.user-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+.user-sub {
+  font-size: 26rpx;
+  color: var(--text2);
+}
+.user-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+}
+.badge-approved { background: rgba(52,199,89,0.1); color: var(--success); }
+.badge-pending  { background: rgba(255,149,0,0.1);  color: var(--warning); }
+.badge-rejected { background: rgba(255,59,48,0.1);  color: var(--danger); }
+.badge-none     { background: rgba(255,149,0,0.1);  color: var(--warning); }
+
+/* Chat button */
+.chat-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background: rgba(0,122,255,0.08);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+/* Posts section */
+.posts-section-header {
+  padding: 32rpx 32rpx 16rpx;
+}
+.posts-section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+.post-row {
+  background: var(--card);
+  padding: 28rpx 32rpx;
+  border-bottom: 0.5px solid var(--border);
+}
+.post-row-content {
+  font-size: 30rpx;
+  color: var(--text);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-row-meta {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 12rpx;
+}
+.meta-item {
+  font-size: 24rpx;
+  color: var(--text3);
+}
+
+.no-more {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--text3);
+  padding: 32rpx;
+}

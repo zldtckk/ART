@@ -2,6 +2,7 @@ App({
   globalData: {
     user: null,
     feedNeedsRefresh: false,
+    pendingConvId: null,
   },
 
   onLaunch() {

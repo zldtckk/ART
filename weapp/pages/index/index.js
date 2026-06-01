@@ -159,20 +159,10 @@ Page({
     wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` });
   },
 
-  async startChat(e) {
-    const peerId = e.currentTarget.dataset.uid;
-    if (!auth.isLoggedIn()) {
-      wx.navigateTo({ url: '/pages/login/index' });
-      return;
-    }
-    wx.showLoading({ title: '加载中' });
-    try {
-      const res = await api.getConversation(peerId);
-      wx.hideLoading();
-      wx.navigateTo({ url: `/pages/messages/index?convId=${res.conversation._id}` });
-    } catch (e) {
-      wx.hideLoading();
-    }
+  goUserProfile(e) {
+    const { uid, anon } = e.currentTarget.dataset;
+    if (!uid || anon) return;
+    wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
   },
 
   goBoard(e) {

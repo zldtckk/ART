@@ -57,22 +57,6 @@ Page({
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goAdmin() { wx.navigateTo({ url: '/pages/admin-verify/index' }); },
 
-  async becomeAdmin() {
-    wx.showLoading({ title: '设置中' });
-    try {
-      const user = await api.becomeAdmin();
-      if (user) {
-        auth.setUser(user);
-        this.setData({ user });
-        wx.hideLoading();
-        wx.showToast({ title: '已设为圈主', icon: 'success' });
-      }
-    } catch (e) {
-      wx.hideLoading();
-      wx.showToast({ title: '设置失败', icon: 'none' });
-    }
-  },
-
   logout() {
     wx.showModal({
       title: '提示',
