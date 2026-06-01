@@ -167,6 +167,10 @@ Page({
     wx.navigateTo({ url: `/pages/board-${board}/index` });
   },
 
+  goComingSoon() {
+    wx.showToast({ title: '功能开发中，敬请期待', icon: 'none' });
+  },
+
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
 

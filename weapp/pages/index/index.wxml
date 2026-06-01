@@ -39,9 +39,15 @@
         <text class="board-card-title">闲置交易</text>
         <text class="board-card-desc">画材·教材·好物</text>
       </view>
+    </view>
+    <view class="board-entrances">
       <view class="board-card board-card-fan" bindtap="goBoard" data-board="fan">
-        <text class="board-card-title">爱豆交流</text>
+        <text class="board-card-title">爱豆专区</text>
         <text class="board-card-desc">安利·求同好·八卦</text>
+      </view>
+      <view class="board-card board-card-coming" bindtap="goComingSoon">
+        <text class="board-card-title">更多功能</text>
+        <text class="board-card-desc">开发中，敬请期待</text>
       </view>
     </view>
 

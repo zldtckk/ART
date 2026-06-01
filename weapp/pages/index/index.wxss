@@ -98,6 +98,10 @@
 .board-card-fan {
   background: linear-gradient(135deg, #ff2d55 0%, #ff6b9d 100%);
 }
+.board-card-coming {
+  background: linear-gradient(135deg, #8e8e93 0%, #aeaeb2 100%);
+  opacity: 0.75;
+}
 .board-card-title {
   font-size: 30rpx;
   font-weight: 600;
