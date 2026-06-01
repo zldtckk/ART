@@ -190,10 +190,9 @@ Page({
     }
     const id = e.currentTarget.dataset.id;
     try {
-      const post = this.data.posts.find(p => p._id === id || p.id === id);
-      const res = await api.toggleLike(id, post && post.user_id);
+      const res = await api.toggleLike(id);
       const posts = this.data.posts.map((p) => {
-        if (p._id === id || p.id === id) return { ...p, is_liked: res.liked, like_count: p.like_count + (res.liked ? 1 : -1) };
+        if (p._id === id || p.id === id) return { ...p, is_liked: res.liked, like_count: res.like_count !== undefined ? res.like_count : p.like_count };
         return p;
       });
       this.setData({ posts });

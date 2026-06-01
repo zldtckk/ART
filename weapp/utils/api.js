@@ -82,14 +82,44 @@ async function getPosts({ board, studio_id, circle_type, market_category, market
 
   const res = await query.get();
   const posts = mapDocs(res.data);
-  return enrichPosts(posts);
+  const enriched = await enrichPosts(posts);
+
+  const openid = getApp().globalData.user && getApp().globalData.user._openid;
+  if (openid && enriched.length > 0) {
+    try {
+      const postIds = enriched.map(p => p._id);
+      const [myLikes, myFavs] = await Promise.all([
+        db.collection('likes').where({ post_id: _.in(postIds) }).get(),
+        db.collection('favorites').where({ post_id: _.in(postIds) }).get(),
+      ]);
+      const likedSet = new Set(myLikes.data.map(l => l.post_id));
+      const favSet = new Set(myFavs.data.map(f => f.post_id));
+      return enriched.map(p => ({ ...p, is_liked: likedSet.has(p._id), is_favorited: favSet.has(p._id) }));
+    } catch (e) {
+      return enriched;
+    }
+  }
+  return enriched;
 }
 
 async function getPost(id) {
   const res = await db.collection('posts').doc(id).get();
   const post = mapDoc(res.data);
   const enriched = await enrichPosts([post]);
-  return enriched[0] || post;
+  const p = enriched[0] || post;
+
+  const openid = getApp().globalData.user && getApp().globalData.user._openid;
+  if (openid) {
+    try {
+      const [likeRes, favRes] = await Promise.all([
+        db.collection('likes').where({ post_id: id }).get(),
+        db.collection('favorites').where({ post_id: id }).get(),
+      ]);
+      p.is_liked = likeRes.data.some(l => l._openid === openid);
+      p.is_favorited = favRes.data.some(f => f._openid === openid);
+    } catch (e) { /* 查询失败不影响帖子展示 */ }
+  }
+  return p;
 }
 
 async function createPost(data) {
@@ -139,25 +169,6 @@ async function addComment(postId, content) {
   await db.collection('posts').doc(postId).update({
     data: { comment_count: _.inc(1) },
   });
-  // 给帖子作者发通知
-  const myOpenid = getApp().globalData.user._openid;
-  db.collection('posts').doc(postId).get().then(postDoc => {
-    const post = postDoc.data;
-    if (post && post._openid && post._openid !== myOpenid) {
-      const user = getApp().globalData.user || {};
-      db.collection('notifications').add({
-        data: {
-          user_id: post._openid,
-          type: 'comment',
-          title: '有人评论了你的帖子',
-          content: content.slice(0, 30),
-          related_post_id: postId,
-          is_read: false,
-          createTime: db.serverDate(),
-        },
-      }).catch(() => {});
-    }
-  }).catch(() => {});
   const user = (getApp().globalData.user) || {};
   return mapDoc({
     ...data,
@@ -169,71 +180,16 @@ async function addComment(postId, content) {
 
 // ── Likes ──
 
-async function toggleLike(postId, authorOpenid) {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return { liked: false };
-
-  const existing = await db.collection('likes')
-    .where({ post_id: postId, _openid: openid })
-    .get();
-
-  if (existing.data.length > 0) {
-    await db.collection('likes').doc(existing.data[0]._id).remove();
-    await db.collection('posts').doc(postId).update({
-      data: { like_count: _.inc(-1) },
-    });
-    return { liked: false };
-  }
-  await db.collection('likes').add({
-    data: { post_id: postId, createTime: db.serverDate() },
-  });
-  await db.collection('posts').doc(postId).update({
-    data: { like_count: _.inc(1) },
-  });
-  // 给作者发通知（不给自己发）
-  if (authorOpenid && authorOpenid !== openid) {
-    const user = getApp().globalData.user || {};
-    db.collection('notifications').add({
-      data: {
-        user_id: authorOpenid,
-        type: 'like',
-        title: '有人赞了你的帖子',
-        content: `${user.nickname || '有人'} 赞了你的帖子`,
-        related_post_id: postId,
-        is_read: false,
-        createTime: db.serverDate(),
-      },
-    }).catch(() => {});
-  }
-  return { liked: true };
+async function toggleLike(postId) {
+  const res = await wx.cloud.callFunction({ name: 'toggleLike', data: { postId } });
+  return res.result;
 }
 
 // ── Favorites ──
 
 async function toggleFavorite(postId) {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return { favorited: false };
-
-  const existing = await db.collection('favorites')
-    .where({ post_id: postId, _openid: openid })
-    .get();
-
-  if (existing.data.length > 0) {
-    // Remove all matching records (clean up duplicates)
-    const tasks = existing.data.map(d => db.collection('favorites').doc(d._id).remove());
-    await Promise.all(tasks);
-    await db.collection('posts').doc(postId).update({
-      data: { favorite_count: _.inc(-existing.data.length) },
-    });
-    return { favorited: false };
-  }
-  await db.collection('favorites').add({
-    data: { post_id: postId, createTime: db.serverDate() },
-  });
-  await db.collection('posts').doc(postId).update({
-    data: { favorite_count: _.inc(1) },
-  });
-  return { favorited: true };
+  const res = await wx.cloud.callFunction({ name: 'toggleFavorite', data: { postId } });
+  return res.result;
 }
 
 // ── Users ──

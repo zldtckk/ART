@@ -15,6 +15,8 @@
     { "name": "deleteConversation", "runtime": "Nodejs16.13" },
     { "name": "markNotificationsRead", "runtime": "Nodejs16.13" },
     { "name": "approveVerification", "runtime": "Nodejs16.13" },
-    { "name": "rejectVerification", "runtime": "Nodejs16.13" }
+    { "name": "rejectVerification", "runtime": "Nodejs16.13" },
+    { "name": "toggleLike", "runtime": "Nodejs16.13" },
+    { "name": "toggleFavorite", "runtime": "Nodejs16.13" }
   ]
 }

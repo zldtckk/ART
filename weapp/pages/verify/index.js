@@ -69,6 +69,10 @@ Page({
       wx.showToast({ title: '请填写完整信息', icon: 'none' });
       return;
     }
+    if (!this.data.studentIdImage) {
+      wx.showToast({ title: '请上传学生证/校园卡', icon: 'none' });
+      return;
+    }
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     this.setData({ submitting: true });
     try {

@@ -47,7 +47,7 @@
     <text class="form-label">班级（选填）</text>
     <input class="input-field" placeholder="如：高三一班" value="{{className}}" bindinput="onClassInput" />
 
-    <text class="form-label">学生证/校园卡（选填）</text>
+    <text class="form-label">学生证/校园卡</text>
     <view class="upload-section">
       <view wx:if="{{studentIdImage}}" class="upload-preview">
         <image src="{{studentIdImage}}" mode="aspectFill" class="preview-img" />

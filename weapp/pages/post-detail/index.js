@@ -65,10 +65,10 @@ Page({
     }
     try {
       const post = this.data.post;
-      const res = await api.toggleLike(this.postId, post && post.user_id);
+      const res = await api.toggleLike(this.postId);
       if (post) {
         this.setData({
-          post: { ...post, is_liked: res.liked, like_count: post.like_count + (res.liked ? 1 : -1) },
+          post: { ...post, is_liked: res.liked, like_count: res.like_count !== undefined ? res.like_count : post.like_count },
         });
       }
     } catch (e) { /* ignore */ }
