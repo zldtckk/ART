@@ -22,24 +22,8 @@ Page({
   onNicknameInput(e) { this.setData({ nickname: e.detail.value }); },
   onPhoneInput(e) { this.setData({ phone: e.detail.value }); },
 
-  uploadAvatar() {
-    wx.chooseImage({ count: 1, sizeType: ['compressed'] }).then(res => {
-      if (!res.tempFilePaths.length) return;
-      wx.showLoading({ title: '上传中' });
-      api.uploadImage(res.tempFilePaths[0]).then(fileID => {
-        this.setData({ avatarUrl: fileID });
-        const user = { ...this.data.user, avatar_url: fileID };
-        auth.setUser(user);
-        this.setData({ user });
-        // Persist to database
-        api.updateUser({ avatar_url: fileID }).catch(() => {});
-        wx.hideLoading();
-        wx.showToast({ title: '头像已更新', icon: 'success' });
-      }).catch(() => {
-        wx.hideLoading();
-        wx.showToast({ title: '上传失败', icon: 'none' });
-      });
-    }).catch(() => {});
+  goAvatarPicker() {
+    wx.navigateTo({ url: '/pages/avatar-picker/index' });
   },
 
   saveProfile() {

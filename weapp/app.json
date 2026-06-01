@@ -16,7 +16,8 @@
     "pages/my-comments/index",
     "pages/my-favorites/index",
     "pages/user-profile/index",
-    "pages/board-fan/index"
+    "pages/board-fan/index",
+    "pages/avatar-picker/index"
   ],
   "window": {
     "navigationStyle": "custom",

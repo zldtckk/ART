@@ -12,12 +12,17 @@ exports.main = async () => {
     return { user: existing.data[0] };
   }
 
+  // 新用户随机分配一个生肖系统头像
+  const ZODIAC = ['rat','ox','tiger','rabbit','dragon','snake','horse','goat','monkey','rooster','dog','pig'];
+  const pick = ZODIAC[Math.floor(Math.random() * ZODIAC.length)];
+
   // 新建用户
   const user = {
     _openid: openid,
     role: 'student',
     is_verified: false,
     verification_status: 'none',
+    avatar_url: `/assets/avatars/${pick}.png`,
     createTime: db.serverDate(),
   };
   await db.collection('users').add({ data: user });

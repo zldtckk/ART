@@ -6,7 +6,7 @@
 
   <view class="settings-form">
     <!-- Avatar -->
-    <view class="settings-row" bindtap="uploadAvatar">
+    <view class="settings-row" bindtap="goAvatarPicker">
       <text class="settings-label">头像</text>
       <view class="settings-right">
         <view class="settings-avatar">

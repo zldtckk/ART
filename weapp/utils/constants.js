@@ -36,6 +36,20 @@ const MARKET_TAGS = [
 
 const PAGE_SIZE = 20;
 
+// 系统像素头像（12 生肖），PNG 打包在 /assets/avatars/
+const SYSTEM_AVATARS = [
+  { key: 'rat', name: '鼠' }, { key: 'ox', name: '牛' },
+  { key: 'tiger', name: '虎' }, { key: 'rabbit', name: '兔' },
+  { key: 'dragon', name: '龙' }, { key: 'snake', name: '蛇' },
+  { key: 'horse', name: '马' }, { key: 'goat', name: '羊' },
+  { key: 'monkey', name: '猴' }, { key: 'rooster', name: '鸡' },
+  { key: 'dog', name: '狗' }, { key: 'pig', name: '猪' },
+];
+
+function avatarPath(key) {
+  return key ? `/assets/avatars/${key}.png` : '';
+}
+
 function resolveImageUrl(url) {
   if (!url) return '';
   return url;
@@ -57,6 +71,8 @@ module.exports = {
   MARKET_CATEGORIES,
   MARKET_TAGS,
   PAGE_SIZE,
+  SYSTEM_AVATARS,
+  avatarPath,
   resolveImageUrl,
   resolvePostImages,
 };

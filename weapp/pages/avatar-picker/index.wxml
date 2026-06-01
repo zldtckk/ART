@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">选择头像</text>
+    <view class="header-right"></view>
+  </view>
+
+  <view class="section-title">系统头像</view>
+  <view class="avatar-grid">
+    <view
+      wx:for="{{avatars}}"
+      wx:key="key"
+      class="avatar-cell {{currentAvatar === item.path ? 'avatar-cell-active' : ''}}"
+      bindtap="selectSystem"
+      data-path="{{item.path}}"
+    >
+      <image src="{{item.path}}" class="avatar-img" mode="aspectFill" />
+      <view wx:if="{{currentAvatar === item.path}}" class="avatar-check">✓</view>
+    </view>
+  </view>
+
+  <view class="upload-tip">想用自己的照片？</view>
+  <button class="upload-btn" bindtap="uploadCustom">上传照片</button>
+</view>
