@@ -24,6 +24,7 @@ const MARKET_CATEGORIES = [
 const FAN_TYPES = [
   { key: 'share', name: '安利' },
   { key: 'findmate', name: '求同好' },
+  { key: 'activity', name: '活动' },
   { key: 'gossip', name: '八卦' },
 ];
 
