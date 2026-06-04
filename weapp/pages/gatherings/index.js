@@ -84,7 +84,8 @@ Page({
 
   goCreate() {
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
-    wx.navigateTo({ url: '/pages/create-post/index?gathering=1' });
+    getApp().globalData.openGathering = true;
+    wx.switchTab({ url: '/pages/create-post/index' });
   },
 
   goPost(e) {

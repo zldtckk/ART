@@ -36,7 +36,17 @@ Page({
 
   onLoad(options) {
     if (options.board) this.setData({ selectedBoard: options.board });
-    if (options.gathering === '1') this.setData({ isGathering: true, selectedBoard: 'circle' });
+  },
+
+  onShow() {
+    const app = getApp();
+    if (app.globalData.openGathering) {
+      app.globalData.openGathering = false;
+      this.setData({ isGathering: true, selectedBoard: 'circle' });
+    }
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 2 });
+    }
   },
 
   onShow() {

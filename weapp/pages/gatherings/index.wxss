@@ -32,5 +32,5 @@
 .spots-closed { color: #999; font-weight: 400; }
 .item-joined-badge { font-size: 24rpx; color: #34c759; font-weight: 600; }
 
-.launch-bar { background: #ff9500; margin: 0 24rpx 16rpx; border-radius: 20rpx; padding: 28rpx 0; text-align: center; box-shadow: 0 4rpx 16rpx rgba(255,149,0,0.35); }
+.launch-bar { background: #ff9500; padding: 28rpx 0; text-align: center; flex-shrink: 0; }
 .launch-bar-text { font-size: 30rpx; font-weight: 600; color: #fff; }
