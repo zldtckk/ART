@@ -186,6 +186,12 @@ Page({
     wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
   },
 
-  goBack() { wx.navigateBack(); },
+  goBack() {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+    } else {
+      wx.switchTab({ url: '/pages/index/index' });
+    }
+  },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
 });
