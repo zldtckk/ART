@@ -5,12 +5,12 @@ const BOARDS = [
 ];
 
 const CIRCLE_TYPES = [
-  { key: 'general', name: '闲聊' },
-  { key: 'help', name: '求助' },
-  { key: 'treehole', name: '树洞' },
-  { key: 'carpool', name: '拼车' },
-  { key: 'lunch', name: '拼饭' },
-  { key: 'other', name: '其他' },
+  { key: 'general', name: '闲聊', hint: '随便聊，什么都行' },
+  { key: 'artwork', name: '作品', hint: '自己的习作、老师范画都能晒' },
+  { key: 'help', name: '求助', hint: '有问题？问大家' },
+  { key: 'food', name: '觅食', hint: '发现好吃的，快来安利' },
+  { key: 'fun', name: '放风', hint: '发现好玩的，快来安利' },
+  { key: 'pinduo', name: '拼单', hint: '拼车 / 拼饭都在这里' },
 ];
 
 const MARKET_CATEGORIES = [

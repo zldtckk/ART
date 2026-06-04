@@ -19,6 +19,7 @@
 .image-remove { position: absolute; top: -12rpx; right: -12rpx; width: 36rpx; height: 36rpx; background: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24rpx; }
 .image-add { width: 160rpx; height: 160rpx; background: #f2f2f7; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; border: 2rpx dashed var(--border); }
 .add-icon { font-size: 64rpx; color: var(--text3); }
+.type-hint { font-size: 24rpx; color: var(--text3); background: #f2f2f7; padding: 12rpx 20rpx; border-radius: var(--radius-sm); display: block; }
 .anonymous-row { display: flex; align-items: center; gap: 16rpx; }
 .form-row:last-child { display: flex; align-items: center; justify-content: space-between; }
 .submit-btn { font-size: 28rpx; color: #fff; font-weight: 500; background: var(--accent); padding: 16rpx 40rpx; border-radius: 40rpx; flex-shrink: 0; }

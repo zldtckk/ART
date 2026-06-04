@@ -68,8 +68,13 @@
       </view>
     </view>
 
-    <!-- Anonymous toggle (only for treehole) -->
-    <view wx:if="{{selectedBoard === 'circle' && circleType === 'treehole'}}" class="form-row">
+    <!-- Type hint (e.g. 拼单) -->
+    <view wx:if="{{selectedBoard === 'circle' && circleTypeHint}}" class="form-row">
+      <text class="type-hint">💡 {{circleTypeHint}}</text>
+    </view>
+
+    <!-- Anonymous toggle (only for 闲聊) -->
+    <view wx:if="{{selectedBoard === 'circle' && circleType === 'general'}}" class="form-row">
       <view class="anonymous-row">
         <text class="form-label" style="margin-bottom:0;">匿名发布</text>
         <switch checked="{{isAnonymous}}" bindchange="toggleAnonymous" />

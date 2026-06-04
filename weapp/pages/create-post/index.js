@@ -52,9 +52,12 @@ Page({
 
   selectCircleType(e) {
     const key = e.currentTarget.dataset.key;
+    const types = this.data.circleTypes;
+    const selected = types.find(t => t.key === key) || {};
     this.setData({
       circleType: key,
-      isAnonymous: key === 'treehole',
+      circleTypeHint: selected.hint || '',
+      isAnonymous: false,
       showTypePicker: false,
     });
   },
@@ -135,5 +138,11 @@ Page({
     }
   },
 
-  goBack() { wx.navigateBack(); },
+  goBack() {
+    if (getCurrentPages().length > 1) {
+      wx.navigateBack();
+    } else {
+      wx.switchTab({ url: '/pages/index/index' });
+    }
+  },
 });
