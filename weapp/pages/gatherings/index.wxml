@@ -5,45 +5,87 @@
     <view class="header-right"></view>
   </view>
 
-  <view class="verified-badge">🔒 仅限认证画室成员参与</view>
+  <!-- 两个主按钮 -->
+  <view class="main-tabs">
+    <view class="main-tab {{tab === 'all' ? 'main-tab-active' : ''}}" bindtap="switchTab" data-tab="all">全部局</view>
+    <view class="main-tab {{tab === 'joined' ? 'main-tab-active' : ''}}" bindtap="switchTab" data-tab="joined">我加入的</view>
+  </view>
 
-  <!-- 类目筛选 -->
-  <scroll-view scroll-x class="type-scroll">
-    <view wx:for="{{types}}" wx:key="key" class="type-chip {{currentType === item.key ? 'type-chip-active' : ''}}" bindtap="switchType" data-type="{{item.key}}">
-      {{item.name}}
-    </view>
-  </scroll-view>
+  <!-- 全部局：类目筛选 -->
+  <block wx:if="{{tab === 'all'}}">
+    <scroll-view scroll-x class="type-scroll">
+      <view wx:for="{{types}}" wx:key="key" class="type-chip {{currentType === item.key ? 'type-chip-active' : ''}}" bindtap="switchType" data-type="{{item.key}}">
+        {{item.name}}
+      </view>
+    </scroll-view>
+  </block>
 
   <!-- 列表 -->
   <scroll-view scroll-y class="list-scroll" bindscrolltolower="loadMore" lower-threshold="100">
     <view wx:if="{{loading}}" class="loading-wrap"><view class="loading-spinner"></view></view>
-    <view wx:elif="{{gatherings.length === 0}}" class="empty-state">
-      <text class="empty-icon">🎯</text>
-      <text class="empty-text">还没有局，去发起一个吧</text>
-    </view>
     <block wx:else>
-      <view wx:for="{{gatherings}}" wx:key="id" class="gathering-item {{item.gather_closed ? 'item-closed' : ''}}" bindtap="goPost" data-id="{{item.id}}">
-        <view class="item-header">
-          <text class="item-type-tag">🎯 {{item.gather_type_name}}</text>
-          <text class="item-status {{item.gather_closed ? 'status-closed' : 'status-open'}}">{{item.gather_closed ? '已结束' : '招募中'}}</text>
+      <!-- 全部局 -->
+      <block wx:if="{{tab === 'all'}}">
+        <view wx:if="{{gatherings.length === 0}}" class="empty-state">
+          <text class="empty-icon">🎯</text>
+          <text class="empty-text">还没有局，去发起一个吧</text>
         </view>
-        <text class="item-content">{{item.content}}</text>
-        <view class="item-meta">
-          <text class="item-meta-text">📅 {{item.gather_time}}</text>
-          <text class="item-meta-text">📍 {{item.gather_place}}</text>
-        </view>
-        <view class="item-footer">
-          <view class="item-author">
-            <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="item-avatar" />
-            <view wx:else class="item-avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
-            <text class="item-author-name">{{item.display_name || '用户'}}</text>
+        <view wx:for="{{gatherings}}" wx:key="id" class="gathering-item {{item.gather_closed ? 'item-closed' : ''}}" bindtap="goPost" data-id="{{item.id}}">
+          <view class="item-header">
+            <text class="item-type-tag">🎯 {{item.gather_type_name}}</text>
+            <text class="item-status {{item.gather_closed ? 'status-closed' : 'status-open'}}">{{item.gather_closed ? '已结束' : '招募中'}}</text>
           </view>
-          <text class="item-spots {{item.gather_closed ? 'spots-closed' : ''}}">
-            {{item.gather_closed ? '已结束' : '还差' + item.gather_spots_left + '人'}}
-          </text>
+          <text class="item-content">{{item.content}}</text>
+          <view class="item-meta">
+            <text class="item-meta-text">📅 {{item.gather_time}}</text>
+            <text class="item-meta-text">📍 {{item.gather_place}}</text>
+          </view>
+          <view class="item-footer">
+            <view class="item-author">
+              <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="item-avatar" />
+              <view wx:else class="item-avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
+              <text class="item-author-name">{{item.display_name || '用户'}}</text>
+            </view>
+            <text class="item-spots {{item.gather_closed ? 'spots-closed' : ''}}">
+              {{item.gather_closed ? '已结束' : '还差' + item.gather_spots_left + '人'}}
+            </text>
+          </view>
         </view>
-      </view>
-      <view wx:if="{{loadingMore}}" class="loading-wrap"><view class="loading-spinner"></view></view>
+        <view wx:if="{{loadingMore}}" class="loading-wrap"><view class="loading-spinner"></view></view>
+      </block>
+
+      <!-- 我加入的 -->
+      <block wx:elif="{{tab === 'joined'}}">
+        <view wx:if="{{joined.length === 0}}" class="empty-state">
+          <text class="empty-icon">🙋</text>
+          <text class="empty-text">还没有加入任何局</text>
+        </view>
+        <view wx:for="{{joined}}" wx:key="id" class="gathering-item {{item.gather_closed ? 'item-closed' : ''}}" bindtap="goPost" data-id="{{item.id}}">
+          <view class="item-header">
+            <text class="item-type-tag">🎯 {{item.gather_type_name}}</text>
+            <text class="item-status {{item.gather_closed ? 'status-closed' : 'status-open'}}">{{item.gather_closed ? '已结束' : '招募中'}}</text>
+          </view>
+          <text class="item-content">{{item.content}}</text>
+          <view class="item-meta">
+            <text class="item-meta-text">📅 {{item.gather_time}}</text>
+            <text class="item-meta-text">📍 {{item.gather_place}}</text>
+          </view>
+          <view class="item-footer">
+            <view class="item-author">
+              <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="item-avatar" />
+              <view wx:else class="item-avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
+              <text class="item-author-name">{{item.display_name || '用户'}}</text>
+            </view>
+            <text class="item-joined-badge">✅ 已报名</text>
+          </view>
+        </view>
+      </block>
     </block>
+    <view style="height:180rpx;"></view>
   </scroll-view>
+
+  <!-- 发起攒局 悬浮按钮 -->
+  <view class="fab-gather" bindtap="goCreate">
+    <text class="fab-gather-text">＋ 发起攒局</text>
+  </view>
 </view>

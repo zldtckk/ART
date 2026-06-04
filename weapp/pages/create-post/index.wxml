@@ -53,17 +53,6 @@
         <view wx:for="{{marketCategories}}" wx:key="key" class="type-option {{marketCategory === item.key ? 'type-selected' : ''}}" bindtap="selectMarketCategory" data-key="{{item.key}}">{{item.name}}</view>
       </scroll-view>
     </view>
-    <!-- Gathering toggle (only for circle board) -->
-    <view wx:if="{{selectedBoard === 'circle'}}" class="form-row">
-      <view class="gathering-toggle-row">
-        <view class="gathering-toggle-label">
-          <text class="gathering-icon">🎯</text>
-          <text class="form-label" style="margin-bottom:0;">攒个局？</text>
-        </view>
-        <switch checked="{{isGathering}}" bindchange="toggleGathering" />
-      </view>
-    </view>
-
     <!-- Gathering fields -->
     <view wx:if="{{selectedBoard === 'circle' && isGathering}}" class="gathering-section">
       <view class="form-row">

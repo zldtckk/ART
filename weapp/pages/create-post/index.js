@@ -36,6 +36,7 @@ Page({
 
   onLoad(options) {
     if (options.board) this.setData({ selectedBoard: options.board });
+    if (options.gathering === '1') this.setData({ isGathering: true, selectedBoard: 'circle' });
   },
 
   onShow() {
