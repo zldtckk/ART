@@ -168,7 +168,7 @@ Page({
   },
 
   goGatherings() {
-    wx.navigateTo({ url: '/pages/gatherings/index' });
+    wx.switchTab({ url: '/pages/gatherings/index' });
   },
 
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
