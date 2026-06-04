@@ -18,7 +18,8 @@
     "pages/user-profile/index",
     "pages/board-fan/index",
     "pages/avatar-picker/index",
-    "pages/gatherings/index"
+    "pages/gatherings/index",
+    "pages/create-gathering/index"
   ],
   "window": {
     "navigationStyle": "custom",

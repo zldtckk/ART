@@ -1,7 +1,7 @@
 <view class="page">
   <view class="header">
     <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
-    <text class="header-title">{{isGathering ? '发起攒局' : '发帖'}}</text>
+    <text class="header-title">发帖</text>
     <view class="header-right"></view>
   </view>
 
@@ -53,41 +53,6 @@
         <view wx:for="{{marketCategories}}" wx:key="key" class="type-option {{marketCategory === item.key ? 'type-selected' : ''}}" bindtap="selectMarketCategory" data-key="{{item.key}}">{{item.name}}</view>
       </scroll-view>
     </view>
-    <!-- Gathering fields -->
-    <view wx:if="{{selectedBoard === 'circle' && isGathering}}" class="gathering-section">
-      <view class="form-row">
-        <text class="form-label">类目</text>
-        <scroll-view scroll-x class="type-scroll">
-          <view wx:for="{{gatheringTypes}}" wx:key="key" class="type-option {{gatherType === item.key ? 'type-selected' : ''}}" bindtap="selectGatherType" data-key="{{item.key}}">
-            <text>{{item.name}}</text>
-          </view>
-        </scroll-view>
-      </view>
-      <view class="form-row">
-        <text class="form-label">时间</text>
-        <input class="gather-input" placeholder="例：今晚7点、周六下午" value="{{gatherTime}}" bindinput="onGatherTimeInput" maxlength="30" />
-      </view>
-      <view class="form-row">
-        <text class="form-label">地点</text>
-        <input class="gather-input" placeholder="填写具体地点" value="{{gatherPlace}}" bindinput="onGatherPlaceInput" maxlength="30" />
-      </view>
-      <view class="form-row">
-        <text class="form-label">人数上限（含你）</text>
-        <input class="gather-input gather-input-num" type="number" placeholder="4" value="{{gatherLimit}}" bindinput="onGatherLimitInput" maxlength="2" />
-      </view>
-      <view class="form-row">
-        <text class="form-label">你的微信二维码</text>
-        <view class="qr-tip">报名成功的人才能看到，请放心上传</view>
-        <view class="qr-upload" bindtap="chooseQrCode">
-          <image wx:if="{{gatherQr}}" src="{{gatherQr}}" mode="aspectFit" class="qr-preview" />
-          <view wx:else class="qr-placeholder">
-            <text class="qr-placeholder-icon">＋</text>
-            <text class="qr-placeholder-text">上传二维码</text>
-          </view>
-        </view>
-      </view>
-    </view>
-
     <!-- Content -->
     <textarea class="content-textarea" placeholder="说点什么..." value="{{content}}" bindinput="onContentInput" maxlength="2000" />
     <text class="char-count">{{content.length}}/2000</text>

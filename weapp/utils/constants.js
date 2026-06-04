@@ -14,11 +14,11 @@ const CIRCLE_TYPES = [
 ];
 
 const GATHERING_TYPES = [
-  { key: 'food', name: '约饭', desc: '吃饭·奶茶·探店' },
-  { key: 'play', name: '约玩', desc: '密室·网吧·KTV·桌游' },
-  { key: 'walk', name: '约逛', desc: '漫展·商场·步行街·景点' },
-  { key: 'photo', name: '约拍', desc: '一起出去拍照' },
-  { key: 'other', name: '其他', desc: '' },
+  { key: 'food', name: '约饭 🍜', desc: '火锅、烤肉、奶茶、探店...' },
+  { key: 'play', name: '约玩 🎮', desc: '密室逃脱、网吧开黑、KTV、桌游...' },
+  { key: 'walk', name: '约逛 🛍', desc: '漫展、商场、步行街、景点...' },
+  { key: 'photo', name: '约拍 📷', desc: '街拍、公园、复古风、氛围感...' },
+  { key: 'other', name: '其他 ✨', desc: '说说你想约什么' },
 ];
 
 const MARKET_CATEGORIES = [

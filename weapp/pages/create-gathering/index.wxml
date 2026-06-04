@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">{{step === 1 ? '攒个局' : '填写详情'}}</text>
+    <view class="header-right"></view>
+  </view>
+
+  <!-- Step 1：选类目 -->
+  <block wx:if="{{step === 1}}">
+    <text class="step-tip">选一个类型，开始发起</text>
+    <view class="type-grid">
+      <view wx:for="{{types}}" wx:key="key" class="type-card" bindtap="selectType" data-key="{{item.key}}">
+        <text class="type-card-name">{{item.name}}</text>
+        <text class="type-card-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- Step 2：填信息 -->
+  <scroll-view wx:elif="{{step === 2}}" scroll-y class="form-scroll">
+    <view class="form">
+
+      <view class="field">
+        <text class="field-label">时间</text>
+        <input class="field-input" placeholder="例：今晚 7 点、周六下午 2 点" value="{{gatherTime}}" bindinput="onTimeInput" maxlength="30" />
+      </view>
+
+      <view class="field">
+        <text class="field-label">地点</text>
+        <input class="field-input" placeholder="填写具体地点" value="{{gatherPlace}}" bindinput="onPlaceInput" maxlength="40" />
+      </view>
+
+      <view class="field">
+        <text class="field-label">人数上限（含你）</text>
+        <view class="limit-row">
+          <text class="limit-val">{{gatherLimit}} 人</text>
+          <slider min="2" max="20" value="{{gatherLimit}}" step="1" activeColor="#007aff" block-size="24" bindchange="onLimitInput" class="limit-slider" />
+        </view>
+      </view>
+
+      <view class="field">
+        <text class="field-label">描述一下</text>
+        <textarea class="field-textarea" placeholder="说说这个局的情况，让大家更想参与..." value="{{content}}" bindinput="onContentInput" maxlength="500" />
+        <text class="char-count">{{content.length}}/500</text>
+      </view>
+
+      <view class="field">
+        <text class="field-label">你的微信二维码</text>
+        <text class="field-tip">报名成功的人才能看到，请放心上传</text>
+        <view class="qr-upload" bindtap="chooseQrCode">
+          <image wx:if="{{gatherQr}}" src="{{gatherQr}}" mode="aspectFit" class="qr-preview" />
+          <view wx:else class="qr-placeholder">
+            <text class="qr-icon">＋</text>
+            <text class="qr-text">上传微信二维码</text>
+          </view>
+        </view>
+      </view>
+
+      <view style="height:40rpx;"></view>
+    </view>
+
+    <view class="submit-bar">
+      <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">
+        <text>{{submitting ? '发起中...' : '发起这个局'}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>
