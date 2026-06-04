@@ -399,6 +399,42 @@ async function verifyStudioCode(code) {
   return res.result;
 }
 
+// ── Gatherings ──
+
+async function getGatherings({ type, page = 1, limit = 20 } = {}) {
+  const conditions = { is_gathering: true };
+  if (type && type !== 'all') conditions.gather_type = type;
+  const res = await db.collection('posts')
+    .where(conditions)
+    .orderBy('createTime', 'desc')
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .get();
+  const posts = mapDocs(res.data);
+  const enriched = await enrichPosts(posts);
+  const openid = getApp().globalData.user && getApp().globalData.user._openid;
+  if (openid && enriched.length) {
+    const postIds = enriched.map(p => p._id);
+    const joinRes = await db.collection('gatherings').where({ post_id: _.in(postIds), _openid: openid }).get().catch(() => ({ data: [] }));
+    const joinedSet = new Set(joinRes.data.map(g => g.post_id));
+    return enriched.map(p => ({ ...p, is_joined: joinedSet.has(p._id) }));
+  }
+  return enriched;
+}
+
+async function joinGathering(postId) {
+  const res = await wx.cloud.callFunction({ name: 'joinGathering', data: { postId } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '操作失败');
+  return result;
+}
+
+async function uploadQrCode(filePath) {
+  const cloudPath = `qrcodes/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
+  const res = await wx.cloud.uploadFile({ cloudPath, filePath });
+  return res.fileID;
+}
+
 // ── Image Upload ──
 
 async function uploadImage(filePath) {
@@ -449,6 +485,9 @@ module.exports = {
   verifyStudioCode,
   uploadImage,
   uploadImages,
+  getGatherings,
+  joinGathering,
+  uploadQrCode,
   db,
   _,
 };

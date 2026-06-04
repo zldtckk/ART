@@ -1,0 +1,27 @@
+.page { display: flex; flex-direction: column; height: 100vh; background: #f5f5f7; }
+.verified-badge { font-size: 24rpx; color: #666; background: #f0f0f5; text-align: center; padding: 12rpx; }
+.type-scroll { white-space: nowrap; padding: 20rpx 24rpx; background: #fff; }
+.type-chip { display: inline-block; padding: 12rpx 28rpx; background: #f2f2f7; border-radius: 32rpx; font-size: 26rpx; margin-right: 12rpx; color: #333; }
+.type-chip-active { background: var(--accent, #007aff); color: #fff; }
+.list-scroll { flex: 1; overflow: hidden; }
+.loading-wrap { display: flex; justify-content: center; padding: 40rpx; }
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 120rpx 0; gap: 20rpx; }
+.empty-icon { font-size: 80rpx; }
+.empty-text { font-size: 28rpx; color: #999; }
+
+.gathering-item { background: #fff; border-radius: 20rpx; margin: 16rpx 24rpx; padding: 28rpx; box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06); }
+.item-closed { opacity: 0.6; }
+.item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
+.item-type-tag { font-size: 24rpx; font-weight: 600; color: #e65100; background: #fff3e0; padding: 4rpx 16rpx; border-radius: 8rpx; }
+.status-open { font-size: 22rpx; color: #007aff; }
+.status-closed { font-size: 22rpx; color: #999; }
+.item-content { font-size: 28rpx; color: #333; line-height: 1.6; margin-bottom: 16rpx; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.item-meta { display: flex; gap: 24rpx; margin-bottom: 20rpx; }
+.item-meta-text { font-size: 24rpx; color: #666; }
+.item-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16rpx; border-top: 2rpx solid #f0f0f0; }
+.item-author { display: flex; align-items: center; gap: 12rpx; }
+.item-avatar { width: 48rpx; height: 48rpx; border-radius: 50%; }
+.item-avatar-placeholder { width: 48rpx; height: 48rpx; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 20rpx; color: #999; }
+.item-author-name { font-size: 24rpx; color: #666; }
+.item-spots { font-size: 26rpx; font-weight: 600; color: #007aff; }
+.spots-closed { color: #999; font-weight: 400; }

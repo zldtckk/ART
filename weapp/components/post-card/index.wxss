@@ -114,6 +114,12 @@
   color: #e65100;
 }
 
+.gathering-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12rpx; background: #fff8f0; border-radius: 12rpx; padding: 16rpx 20rpx; margin-bottom: 20rpx; }
+.gathering-tag { font-size: 24rpx; font-weight: 600; color: #e65100; background: #ffe0c0; padding: 4rpx 14rpx; border-radius: 8rpx; }
+.gathering-info { font-size: 24rpx; color: #666; }
+.spots-full { color: #999; }
+.gathering-spots { font-size: 24rpx; font-weight: 600; color: #007aff; margin-left: auto; }
+
 .post-actions {
   display: flex;
   flex-direction: row;

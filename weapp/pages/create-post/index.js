@@ -1,6 +1,6 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
-const { BOARDS, CIRCLE_TYPES, FAN_TYPES, MARKET_CATEGORIES, MARKET_TAGS } = require('../../utils/constants');
+const { BOARDS, CIRCLE_TYPES, FAN_TYPES, MARKET_CATEGORIES, MARKET_TAGS, GATHERING_TYPES } = require('../../utils/constants');
 
 Page({
   data: {
@@ -23,8 +23,15 @@ Page({
     fanTypes: FAN_TYPES,
     marketCategories: MARKET_CATEGORIES,
     marketTags: MARKET_TAGS,
+    gatheringTypes: GATHERING_TYPES,
     showBoardPicker: false,
     showTypePicker: false,
+    isGathering: false,
+    gatherType: 'food',
+    gatherTime: '',
+    gatherPlace: '',
+    gatherLimit: 4,
+    gatherQr: '',
   },
 
   onLoad(options) {
@@ -64,6 +71,26 @@ Page({
 
   selectMarketTag(e) { this.setData({ marketTag: e.currentTarget.dataset.key }); },
   selectMarketCategory(e) { this.setData({ marketCategory: e.currentTarget.dataset.key }); },
+
+  toggleGathering() { this.setData({ isGathering: !this.data.isGathering }); },
+  selectGatherType(e) { this.setData({ gatherType: e.currentTarget.dataset.key }); },
+  onGatherTimeInput(e) { this.setData({ gatherTime: e.detail.value }); },
+  onGatherPlaceInput(e) { this.setData({ gatherPlace: e.detail.value }); },
+  onGatherLimitInput(e) {
+    const v = parseInt(e.detail.value, 10);
+    this.setData({ gatherLimit: (v >= 2 && v <= 50) ? v : this.data.gatherLimit });
+  },
+
+  async chooseQrCode() {
+    try {
+      const res = await wx.chooseImage({ count: 1, sizeType: ['original'] });
+      const fileID = await api.uploadQrCode(res.tempFilePaths[0]);
+      this.setData({ gatherQr: fileID });
+      wx.showToast({ title: '二维码已上传', icon: 'success' });
+    } catch (e) {
+      wx.showToast({ title: '上传失败', icon: 'none' });
+    }
+  },
 
   chooseImage() {
     const remaining = 9 - this.data.images.length;
@@ -114,6 +141,25 @@ Page({
 
       if (this.data.selectedBoard === 'circle') {
         postData.circle_type = this.data.circleType;
+        if (this.data.isGathering) {
+          if (!this.data.gatherTime || !this.data.gatherPlace) {
+            wx.showToast({ title: '请填写时间和地点', icon: 'none' });
+            this.setData({ submitting: false });
+            return;
+          }
+          if (!this.data.gatherQr) {
+            wx.showToast({ title: '请上传你的微信二维码', icon: 'none' });
+            this.setData({ submitting: false });
+            return;
+          }
+          postData.is_gathering = true;
+          postData.gather_type = this.data.gatherType;
+          postData.gather_time = this.data.gatherTime;
+          postData.gather_place = this.data.gatherPlace;
+          postData.gather_limit = this.data.gatherLimit;
+          postData.gather_qr = this.data.gatherQr;
+          postData.gather_count = 1;
+        }
       } else if (this.data.selectedBoard === 'fan') {
         postData.fan_type = this.data.fanType;
         if (this.data.idolTag.trim()) postData.idol_tag = this.data.idolTag.trim();

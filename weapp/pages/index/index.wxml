@@ -45,9 +45,9 @@
         <text class="board-card-title">爱豆专区</text>
         <text class="board-card-desc">安利·求同好·八卦</text>
       </view>
-      <view class="board-card board-card-coming" bindtap="goComingSoon">
-        <text class="board-card-title">更多功能</text>
-        <text class="board-card-desc">开发中，敬请期待</text>
+      <view class="board-card board-card-gathering" bindtap="goGatherings">
+        <text class="board-card-title">攒个局</text>
+        <text class="board-card-desc">约饭·约玩·约拍</text>
       </view>
     </view>
 

@@ -13,6 +13,14 @@ const CIRCLE_TYPES = [
   { key: 'pinduo', name: '拼单', hint: '拼车 / 拼饭都在这里' },
 ];
 
+const GATHERING_TYPES = [
+  { key: 'food', name: '约饭', desc: '吃饭·奶茶·探店' },
+  { key: 'play', name: '约玩', desc: '密室·网吧·KTV·桌游' },
+  { key: 'walk', name: '约逛', desc: '漫展·商场·步行街·景点' },
+  { key: 'photo', name: '约拍', desc: '一起出去拍照' },
+  { key: 'other', name: '其他', desc: '' },
+];
+
 const MARKET_CATEGORIES = [
   { key: 'art_supplies', name: '画材' },
   { key: 'textbooks', name: '教材' },
@@ -67,6 +75,7 @@ function resolvePostImages(post) {
 module.exports = {
   BOARDS,
   CIRCLE_TYPES,
+  GATHERING_TYPES,
   FAN_TYPES,
   MARKET_CATEGORIES,
   MARKET_TAGS,

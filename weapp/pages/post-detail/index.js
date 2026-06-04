@@ -42,6 +42,21 @@ Page({
       if (post) {
         post._parsedImages = this.parseImages(post.images);
         post.circle_type_name = getCircleTypeName(post.circle_type);
+        if (post.is_gathering) {
+          const gatherTypeMap = { food: '约饭', play: '约玩', walk: '约逛', photo: '约拍', other: '其他' };
+          post.gather_type_name = gatherTypeMap[post.gather_type] || '攒局';
+          const expireTime = new Date(post.createTime).getTime() + 7 * 24 * 60 * 60 * 1000;
+          const isFull = post.gather_count >= post.gather_limit;
+          post.gather_closed = Date.now() > expireTime || isFull;
+          post.gather_progress = Math.min(100, Math.round((post.gather_count / post.gather_limit) * 100));
+          // 检查当前用户是否已报名
+          const openid = getApp().globalData.user && getApp().globalData.user._openid;
+          if (openid) {
+            const joinRes = await api.db.collection('gatherings')
+              .where({ post_id: this.postId, _openid: openid }).get().catch(() => ({ data: [] }));
+            post.is_joined = joinRes.data.length > 0;
+          }
+        }
       }
       const user = auth.getAuth().user;
       this.setData({
@@ -53,6 +68,39 @@ Page({
     } catch (e) {
       wx.showToast({ title: '帖子不存在', icon: 'none' });
       wx.navigateBack();
+    }
+  },
+
+  async handleJoin() {
+    if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
+    const post = this.data.post;
+    if (!post || post.gather_closed) return;
+    const wasJoined = post.is_joined;
+    const delta = wasJoined ? -1 : 1;
+    this.setData({
+      post: { ...post, is_joined: !wasJoined, gather_count: post.gather_count + delta },
+    });
+    try {
+      await api.joinGathering(this.postId);
+      wx.showToast({ title: wasJoined ? '已取消报名' : '报名成功', icon: 'success' });
+    } catch (e) {
+      this.setData({ post: { ...this.data.post, is_joined: wasJoined, gather_count: post.gather_count } });
+      wx.showToast({ title: e.message || '操作失败', icon: 'none' });
+    }
+  },
+
+  async handleReplaceQr() {
+    try {
+      const res = await wx.chooseImage({ count: 1, sizeType: ['original'] });
+      wx.showLoading({ title: '上传中' });
+      const fileID = await api.uploadQrCode(res.tempFilePaths[0]);
+      await api.db.collection('posts').doc(this.postId).update({ data: { gather_qr: fileID } });
+      wx.hideLoading();
+      this.setData({ post: { ...this.data.post, gather_qr: fileID } });
+      wx.showToast({ title: '二维码已更新', icon: 'success' });
+    } catch (e) {
+      wx.hideLoading();
+      wx.showToast({ title: '更新失败', icon: 'none' });
     }
   },
 

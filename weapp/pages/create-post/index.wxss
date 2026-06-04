@@ -20,6 +20,18 @@
 .image-add { width: 160rpx; height: 160rpx; background: #f2f2f7; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; border: 2rpx dashed var(--border); }
 .add-icon { font-size: 64rpx; color: var(--text3); }
 .type-hint { font-size: 24rpx; color: var(--text3); background: #f2f2f7; padding: 12rpx 20rpx; border-radius: var(--radius-sm); display: block; }
+.gathering-toggle-row { display: flex; align-items: center; justify-content: space-between; }
+.gathering-toggle-label { display: flex; align-items: center; gap: 8rpx; }
+.gathering-icon { font-size: 32rpx; }
+.gathering-section { background: #f9f9fb; border-radius: var(--radius-sm); padding: 24rpx; margin-bottom: 24rpx; }
+.gather-input { width: 100%; background: #fff; border-radius: var(--radius-sm); padding: 18rpx 20rpx; font-size: 28rpx; height: 72rpx; line-height: 72rpx; }
+.gather-input-num { width: 120rpx; }
+.qr-tip { font-size: 22rpx; color: var(--text3); margin-bottom: 16rpx; }
+.qr-upload { width: 200rpx; height: 200rpx; }
+.qr-preview { width: 200rpx; height: 200rpx; border-radius: var(--radius-sm); }
+.qr-placeholder { width: 200rpx; height: 200rpx; background: #fff; border-radius: var(--radius-sm); border: 2rpx dashed var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx; }
+.qr-placeholder-icon { font-size: 48rpx; color: var(--text3); }
+.qr-placeholder-text { font-size: 24rpx; color: var(--text3); }
 .anonymous-row { display: flex; align-items: center; gap: 16rpx; }
 .form-row:last-child { display: flex; align-items: center; justify-content: space-between; }
 .submit-btn { font-size: 28rpx; color: #fff; font-weight: 500; background: var(--accent); padding: 16rpx 40rpx; border-radius: 40rpx; flex-shrink: 0; }
