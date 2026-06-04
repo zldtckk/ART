@@ -21,6 +21,10 @@
   </block>
 
   <!-- 列表 -->
+  <view class="launch-bar" bindtap="goCreate">
+    <text class="launch-bar-text">＋ 发起攒局</text>
+  </view>
+
   <scroll-view scroll-y class="list-scroll" bindscrolltolower="loadMore" lower-threshold="100">
     <view wx:if="{{loading}}" class="loading-wrap"><view class="loading-spinner"></view></view>
     <block wx:else>
@@ -84,8 +88,4 @@
     <view style="height:180rpx;"></view>
   </scroll-view>
 
-  <!-- 发起攒局 悬浮按钮 -->
-  <view class="fab-gather" bindtap="goCreate">
-    <text class="fab-gather-text">＋ 发起攒局</text>
-  </view>
 </view>
