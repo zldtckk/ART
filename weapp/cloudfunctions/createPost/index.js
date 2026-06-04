@@ -14,7 +14,8 @@ async function checkText(content, openid) {
 }
 
 exports.main = async (event) => {
-  const { board, content, images, is_anonymous, circle_type, market_tag, market_category, price } = event;
+  const { board, content, images, is_anonymous, circle_type, market_tag, market_category, price,
+    is_gathering, gather_type, gather_time, gather_place, gather_limit, gather_qr, gather_count } = event;
   const openid = cloud.getWXContext().OPENID;
 
   const text = (content || '').trim();
@@ -24,7 +25,6 @@ exports.main = async (event) => {
 
   if (await checkText(text, openid)) return { code: -1, msg: '内容违规，请修改后重试' };
 
-  // 读取发帖人资料补充 studio_id
   const userRes = await db.collection('users').where({ _openid: openid }).get();
   const user = userRes.data[0] || {};
 
@@ -47,6 +47,15 @@ exports.main = async (event) => {
     if (market_tag) doc.market_tag = market_tag;
     if (market_category) doc.market_category = market_category;
     if (price != null && price !== '') doc.price = parseFloat(price);
+  }
+  if (board === 'gathering') {
+    doc.is_gathering = true;
+    doc.gather_type = gather_type || 'other';
+    doc.gather_time = gather_time || '';
+    doc.gather_place = gather_place || '';
+    doc.gather_limit = parseInt(gather_limit, 10) || 4;
+    doc.gather_count = gather_count || 1;
+    if (gather_qr) doc.gather_qr = gather_qr;
   }
 
   const res = await db.collection('posts').add({ data: doc });

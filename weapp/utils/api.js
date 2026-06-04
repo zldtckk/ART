@@ -76,6 +76,7 @@ async function getStudios() {
 async function getPosts({ board, studio_id, circle_type, fan_type, market_category, market_tag, sort, page = 1, limit = 20 } = {}) {
   const conditions = {};
   if (board) conditions.board = board;
+  else conditions.board = _.neq('gathering'); // 主信息流不显示攒局帖
   if (studio_id) conditions.studio_id = studio_id;
   if (circle_type && circle_type !== 'all') conditions.circle_type = circle_type;
   if (fan_type && fan_type !== 'all') conditions.fan_type = fan_type;
@@ -402,7 +403,7 @@ async function verifyStudioCode(code) {
 // ── Gatherings ──
 
 async function getGatherings({ type, page = 1, limit = 20 } = {}) {
-  const conditions = { is_gathering: true };
+  const conditions = { board: 'gathering' };
   if (type && type !== 'all') conditions.gather_type = type;
   const res = await db.collection('posts')
     .where(conditions)

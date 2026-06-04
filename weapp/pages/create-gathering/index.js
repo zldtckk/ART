@@ -68,12 +68,10 @@ Page({
     this.setData({ submitting: true });
     try {
       await api.createPost({
-        board: 'circle',
-        circle_type: 'general',
+        board: 'gathering',
         content: this.data.content.trim(),
         images: [],
         is_anonymous: false,
-        is_gathering: true,
         gather_type: this.data.gatherType,
         gather_time: this.data.gatherTime.trim(),
         gather_place: this.data.gatherPlace.trim(),
