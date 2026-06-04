@@ -38,9 +38,9 @@
         <view wx:if="{{post.is_gathering}}" class="gathering-card">
           <view class="gathering-card-header">
             <text class="gathering-card-title">🎯 {{post.gather_type_name}} · 攒个局</text>
-            <text class="gathering-status {{post.gather_closed ? 'status-closed' : 'status-open'}}">
-              {{post.gather_closed ? '已结束' : '招募中'}}
-            </text>
+            <view class="gathering-status {{post.gather_closed ? 'status-closed' : 'status-open'}}">
+              <text>{{post.gather_closed ? '已结束' : '招募中'}}</text>
+            </view>
           </view>
           <view class="gathering-card-info">
             <view class="gathering-card-row"><text class="gathering-label">时间</text><text class="gathering-value">{{post.gather_time}}</text></view>
