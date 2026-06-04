@@ -34,7 +34,7 @@ exports.main = async (event, context) => {
 
     if (alreadyJoined) {
       await db.collection('gatherings').doc(joinRes.data[0]._id).remove();
-      await db.collection('posts').doc(postId).update({ data: { gather_count: _.increment(-1) } });
+      await db.collection('posts').doc(postId).update({ data: { gather_count: _.inc(-1) } });
       return { code: 0, action: 'cancel' };
     }
 
@@ -47,7 +47,7 @@ exports.main = async (event, context) => {
     await db.collection('gatherings').add({
       data: { post_id: postId, _openid: OPENID, createTime: db.serverDate() },
     });
-    await db.collection('posts').doc(postId).update({ data: { gather_count: _.increment(1) } });
+    await db.collection('posts').doc(postId).update({ data: { gather_count: _.inc(1) } });
 
     // 通知发起人
     if (post._openid && post._openid !== OPENID) {
