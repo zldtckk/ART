@@ -32,5 +32,5 @@
 .spots-closed { color: #999; font-weight: 400; }
 .item-joined-badge { font-size: 24rpx; color: #34c759; font-weight: 600; }
 
-.fab-gather { position: fixed; bottom: calc(160rpx + env(safe-area-inset-bottom) + 24rpx); left: 50%; transform: translateX(-50%); background: #ff9500; border-radius: 48rpx; padding: 24rpx 56rpx; box-shadow: 0 8rpx 24rpx rgba(255,149,0,0.4); }
+.fab-gather { position: fixed; bottom: calc(160rpx + env(safe-area-inset-bottom) + 24rpx); left: 50%; transform: translateX(-50%); background: #ff9500; border-radius: 48rpx; padding: 24rpx 56rpx; box-shadow: 0 8rpx 24rpx rgba(255,149,0,0.4); z-index: 100; }
 .fab-gather-text { font-size: 30rpx; font-weight: 600; color: #fff; white-space: nowrap; }
