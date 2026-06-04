@@ -111,6 +111,9 @@
   color: var(--text2);
 }
 
+.entry-unread-badge { background: #ff3b30; border-radius: 20rpx; min-width: 36rpx; height: 36rpx; display: flex; align-items: center; justify-content: center; padding: 0 8rpx; }
+.entry-unread-text { font-size: 20rpx; color: #fff; font-weight: 600; }
+
 /* Quick action buttons */
 .profile-actions {
   margin: 24rpx 32rpx;

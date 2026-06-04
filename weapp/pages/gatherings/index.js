@@ -15,9 +15,10 @@ Page({
   },
 
   onLoad() { this.loadGatherings(); },
-  goBack() {
-    if (getCurrentPages().length > 1) wx.navigateBack();
-    else wx.switchTab({ url: '/pages/index/index' });
+  onShow() {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 });
+    }
   },
 
   switchType(e) {

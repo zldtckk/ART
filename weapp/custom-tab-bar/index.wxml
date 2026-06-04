@@ -7,14 +7,11 @@
     </view>
   </view>
 
-  <!-- 消息 + 未读红点 -->
+  <!-- 攒局 -->
   <view class="tab-item {{selected === 1 ? 'active' : ''}}" data-index="1" bindtap="switchTab">
     <view class="tab-icon-wrap">
-      <view class="icon tab-icon icon-{{selected === 1 ? 'message-active' : 'message'}}"></view>
+      <text class="tab-emoji">🎯</text>
       <text class="tab-label">{{list[1].text}}</text>
-    </view>
-    <view wx:if="{{unreadCount > 0}}" class="unread-badge">
-      <text class="unread-text">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
     </view>
   </view>
 

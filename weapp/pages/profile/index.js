@@ -8,6 +8,7 @@ Page({
     postCount: 0,
     commentCount: 0,
     favoriteCount: 0,
+    unreadCount: 0,
   },
 
   onShow() {
@@ -19,7 +20,15 @@ Page({
     if (authData.isLoggedIn) {
       this.loadCounts();
       this.refreshUser();
+      this.loadUnread();
     }
+  },
+
+  async loadUnread() {
+    try {
+      const res = await api.getNotifications();
+      this.setData({ unreadCount: res.unread_count || 0 });
+    } catch (e) {}
   },
 
   async refreshUser() {
@@ -50,6 +59,7 @@ Page({
   },
 
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
+  goMessages() { wx.navigateTo({ url: '/pages/messages/index' }); },
   goSettings() { wx.navigateTo({ url: '/pages/settings/index' }); },
   goMyPosts() { wx.navigateTo({ url: '/pages/my-posts/index' }); },
   goMyComments() { wx.navigateTo({ url: '/pages/my-comments/index' }); },

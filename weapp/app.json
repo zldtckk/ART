@@ -33,7 +33,7 @@
     "borderStyle": "black",
     "list": [
       { "pagePath": "pages/index/index", "text": "首页" },
-      { "pagePath": "pages/messages/index", "text": "消息" },
+      { "pagePath": "pages/gatherings/index", "text": "攒局" },
       { "pagePath": "pages/create-post/index", "text": "发帖" },
       { "pagePath": "pages/boards/index", "text": "板块" },
       { "pagePath": "pages/profile/index", "text": "我的" }

@@ -90,6 +90,7 @@ Page({
   backToList() {
     this.setData({ convId: null, messages: [] });
   },
+  goBack() { wx.navigateBack(); },
 
   onMessageInput(e) { this.setData({ messageText: e.detail.value }); },
 

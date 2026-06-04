@@ -6,7 +6,7 @@ Component({
     unreadCount: 0,
     list: [
       { pagePath: '/pages/index/index', text: '首页', icon: 'home', iconActive: 'home-active' },
-      { pagePath: '/pages/messages/index', text: '消息', icon: 'message', iconActive: 'message-active' },
+      { pagePath: '/pages/gatherings/index', text: '攒局', icon: 'gathering', iconActive: 'gathering-active' },
       { pagePath: '/pages/boards/index', text: '板块', icon: 'boards', iconActive: 'boards-active' },
       { pagePath: '/pages/profile/index', text: '我的', icon: 'profile', iconActive: 'profile-active' },
     ],
