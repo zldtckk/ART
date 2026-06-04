@@ -15,13 +15,14 @@ function processItems(items) {
 
 Page({
   data: {
-    tab: 'all', // 'all' | 'joined'
+    tab: 'all',
     types: [{ key: 'all', name: '全部' }, ...GATHERING_TYPES],
     currentType: 'all',
     gatherings: [],
     joined: [],
     loading: true,
     loadingMore: false,
+    refreshing: false,
     page: 1,
     hasMore: true,
   },
@@ -30,7 +31,20 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
-    this.loadGatherings();
+    this.refresh();
+  },
+
+  refresh() {
+    this.setData({ page: 1, gatherings: [], joined: [], loading: true });
+    if (this.data.tab === 'all') this.loadGatherings();
+    else this.loadJoined();
+  },
+
+  onRefresh() {
+    this.setData({ refreshing: true, page: 1, gatherings: [], joined: [] });
+    const done = () => this.setData({ refreshing: false });
+    if (this.data.tab === 'all') this.loadGatherings().finally(done);
+    else this.loadJoined().finally(done);
   },
 
   switchTab(e) {
@@ -47,7 +61,8 @@ Page({
     this.loadGatherings();
   },
 
-  async loadGatherings() {
+  loadGatherings() { return this._loadGatherings(); },
+  async _loadGatherings() {
     const type = this.data.currentType !== 'all' ? this.data.currentType : undefined;
     try {
       const items = await api.getGatherings({ type, page: this.data.page, limit: 20 });
@@ -61,7 +76,8 @@ Page({
     }
   },
 
-  async loadJoined() {
+  loadJoined() { return this._loadJoined(); },
+  async _loadJoined() {
     try {
       const openid = getApp().globalData.user && getApp().globalData.user._openid;
       if (!openid) { this.setData({ loading: false }); return; }
