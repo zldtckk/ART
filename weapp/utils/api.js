@@ -402,6 +402,17 @@ async function verifyStudioCode(code) {
 
 // ── Gatherings ──
 
+async function getJoinedGatherings() {
+  const openid = getApp().globalData.user && getApp().globalData.user._openid;
+  if (!openid) return [];
+  const joinRes = await db.collection('gatherings').where({ _openid: openid }).orderBy('createTime', 'desc').get();
+  if (!joinRes.data.length) return [];
+  const postIds = joinRes.data.map(g => g.post_id);
+  const postsRes = await db.collection('posts').where({ _id: _.in(postIds) }).get();
+  const posts = mapDocs(postsRes.data);
+  return enrichPosts(posts);
+}
+
 async function getGatherings({ type, page = 1, limit = 20 } = {}) {
   const conditions = { board: 'gathering' };
   if (type && type !== 'all') conditions.gather_type = type;
@@ -487,6 +498,7 @@ module.exports = {
   uploadImage,
   uploadImages,
   getGatherings,
+  getJoinedGatherings,
   joinGathering,
   uploadQrCode,
   db,

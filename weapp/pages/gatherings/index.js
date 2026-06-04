@@ -79,14 +79,9 @@ Page({
   loadJoined() { return this._loadJoined(); },
   async _loadJoined() {
     try {
-      const openid = getApp().globalData.user && getApp().globalData.user._openid;
-      if (!openid) { this.setData({ loading: false }); return; }
-      const joinRes = await api.db.collection('gatherings').where({ _openid: openid }).orderBy('createTime', 'desc').get();
-      if (!joinRes.data.length) { this.setData({ joined: [], loading: false }); return; }
-      const postIds = joinRes.data.map(g => g.post_id);
-      const postsRes = await api.db.collection('posts').where({ _id: api._.in(postIds) }).get();
-      const processed = processItems(postsRes.data.map(p => ({ id: p._id, ...p })));
-      this.setData({ joined: processed.map(p => ({ ...p, is_joined: true })), loading: false });
+      const posts = await api.getJoinedGatherings();
+      const processed = processItems(posts).map(p => ({ ...p, is_joined: true }));
+      this.setData({ joined: processed, loading: false });
     } catch (e) {
       this.setData({ loading: false });
     }
