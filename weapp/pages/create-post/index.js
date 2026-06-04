@@ -49,12 +49,6 @@ Page({
     }
   },
 
-  onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 });
-    }
-  },
-
   onContentInput(e) { this.setData({ content: e.detail.value }); },
   onPriceInput(e) { this.setData({ price: e.detail.value }); },
   onIdolTagInput(e) { this.setData({ idolTag: e.detail.value }); },
