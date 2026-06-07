@@ -174,6 +174,16 @@ Page({
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
 
+  showMenu() {
+    wx.showActionSheet({
+      itemList: ['个人主页', '设置'],
+      success: (res) => {
+        if (res.tapIndex === 0) wx.switchTab({ url: '/pages/profile/index' });
+        if (res.tapIndex === 1) wx.navigateTo({ url: '/pages/settings/index' });
+      },
+    });
+  },
+
   onLike(e) {
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     const id = e.currentTarget.dataset.id;
