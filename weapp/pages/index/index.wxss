@@ -10,6 +10,13 @@
   top: 0;
   z-index: 100;
 }
+.idx-logo {
+  font-size: 36rpx;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -1rpx;
+  flex-shrink: 0;
+}
 .idx-menu-btn {
   flex-shrink: 0;
   width: 72rpx;
