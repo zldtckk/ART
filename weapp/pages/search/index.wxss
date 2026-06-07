@@ -1,0 +1,103 @@
+/* === Search page === */
+.page { display: flex; flex-direction: column; height: 100vh; background: #f4f5f9; }
+
+/* Header */
+.search-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 100rpx 24rpx 16rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--border);
+  flex-shrink: 0;
+}
+.back-btn {
+  flex-shrink: 0;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-bar {
+  flex: 1;
+  height: 68rpx;
+  background: #f4f5f9;
+  border-radius: 34rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  gap: 10rpx;
+}
+.search-bar-icon { font-size: 28rpx; flex-shrink: 0; }
+.search-bar-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--text);
+  height: 68rpx;
+  line-height: 68rpx;
+}
+.search-placeholder { color: var(--text3); }
+.search-clear {
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-cancel {
+  flex-shrink: 0;
+  font-size: 28rpx;
+  color: var(--accent);
+  padding: 8rpx 0 8rpx 8rpx;
+}
+
+/* Scroll */
+.search-scroll { flex: 1; overflow: hidden; }
+
+/* Hint */
+.search-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160rpx 0 0;
+  gap: 20rpx;
+}
+.search-hint-icon { font-size: 80rpx; }
+.search-hint-text { font-size: 28rpx; color: var(--text3); }
+
+/* Empty */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160rpx 0 0;
+  gap: 20rpx;
+}
+.empty-icon { font-size: 80rpx; }
+.empty-text { font-size: 28rpx; color: var(--text3); }
+
+/* Result count */
+.result-count {
+  font-size: 24rpx;
+  color: var(--text3);
+  padding: 20rpx 32rpx 8rpx;
+}
+
+/* Loading */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+.loading-spinner::after {
+  content: '';
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -393,6 +393,24 @@ async function markNotificationsRead() {
   await wx.cloud.callFunction({ name: 'markNotificationsRead' });
 }
 
+// ── Search ──
+
+async function searchPosts(keyword, limit = 20) {
+  if (!keyword || !keyword.trim()) return [];
+  const reg = db.RegExp({ regexp: keyword.trim(), options: 'i' });
+  const res = await db.collection('posts')
+    .where({ content: reg, board: _.neq('gathering') })
+    .orderBy('createTime', 'desc')
+    .limit(limit)
+    .get();
+  const posts = mapDocs(res.data).map(p => ({
+    ...p,
+    created_at: formatTime(p.createTime),
+    display_name: p.is_anonymous ? null : (p.display_name || null),
+  }));
+  return await enrichPosts(posts);
+}
+
 // ── Verification Code ──
 
 async function verifyStudioCode(code) {
@@ -497,6 +515,7 @@ module.exports = {
   markNotificationsRead,
   deleteNotification,
   deleteConversation,
+  searchPosts,
   verifyStudioCode,
   uploadImage,
   uploadImages,

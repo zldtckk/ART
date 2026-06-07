@@ -3,7 +3,7 @@
   <view class="top-area">
     <view class="idx-header">
       <text class="idx-logo">画室<text style="color:#FB7299">圈</text></text>
-      <view class="idx-search">
+      <view class="idx-search" bindtap="goSearch">
         <text class="idx-search-icon">🔍</text>
         <text class="idx-search-hint">搜作品、画室、同学…</text>
       </view>
