@@ -5,6 +5,7 @@ const { getCircleTypeName } = require('../../utils/formatter');
 
 Page({
   data: {
+    headerPaddingRight: 100,
     isLoggedIn: false,
     isVerified: false,
     currentUserId: null,
@@ -27,6 +28,15 @@ Page({
   },
 
   onLoad() {
+    // 计算胶囊按钮左边距，让搜索栏不被遮挡
+    try {
+      const capsule = wx.getMenuButtonBoundingClientRect();
+      const sys = wx.getSystemInfoSync();
+      const rightGap = sys.windowWidth - capsule.left + 8;
+      this.setData({ headerPaddingRight: rightGap });
+    } catch (e) {
+      this.setData({ headerPaddingRight: 100 });
+    }
     this.loadHotPosts();
     this.loadPosts();
   },

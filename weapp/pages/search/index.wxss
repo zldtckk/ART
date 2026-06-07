@@ -46,12 +46,6 @@
   align-items: center;
   justify-content: center;
 }
-.search-cancel {
-  flex-shrink: 0;
-  font-size: 28rpx;
-  color: var(--accent);
-  padding: 8rpx 0 8rpx 8rpx;
-}
 
 /* Scroll */
 .search-scroll { flex: 1; overflow: hidden; }

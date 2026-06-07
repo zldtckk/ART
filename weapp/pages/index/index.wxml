@@ -1,7 +1,7 @@
 <view class="page page-flex">
   <!-- 固定顶部区域 -->
   <view class="top-area">
-    <view class="idx-header">
+    <view class="idx-header" style="padding-right:{{headerPaddingRight}}px">
       <text class="idx-logo">画室<text style="color:#FB7299">圈</text></text>
       <view class="idx-search" bindtap="goSearch">
         <text class="idx-search-icon">🔍</text>

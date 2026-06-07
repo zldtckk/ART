@@ -7,9 +7,18 @@ Page({
     results: [],
     loading: false,
     searched: false,
+    headerPaddingRight: 100,
   },
 
   _timer: null,
+
+  onLoad() {
+    try {
+      const capsule = wx.getMenuButtonBoundingClientRect();
+      const sys = wx.getSystemInfoSync();
+      this.setData({ headerPaddingRight: sys.windowWidth - capsule.left + 8 });
+    } catch (e) {}
+  },
 
   onInput(e) {
     const keyword = e.detail.value;
