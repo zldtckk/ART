@@ -1,6 +1,11 @@
 <view class="page">
   <view class="header">
-    <view class="header-left"></view>
+    <view class="header-left">
+      <view class="back-btn" bindtap="goHome">
+        <view class="icon icon-back-arrow"></view>
+        <text>首页</text>
+      </view>
+    </view>
     <text class="header-title">攒个局</text>
     <view class="header-right"></view>
   </view>

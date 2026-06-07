@@ -93,6 +93,10 @@ Page({
     this.loadGatherings();
   },
 
+  goHome() {
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
   goCreate() {
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     wx.navigateTo({ url: '/pages/create-gathering/index' });
