@@ -17,25 +17,6 @@
   letter-spacing: -1rpx;
   flex-shrink: 0;
 }
-.idx-menu-btn {
-  flex-shrink: 0;
-  width: 72rpx;
-  height: 64rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10rpx;
-  border-radius: var(--radius-sm);
-}
-.idx-menu-btn:active { background: var(--bg); }
-.idx-menu-dot {
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background: var(--text);
-  display: block;
-}
 .idx-search {
   flex: 1;
   background: var(--bg);

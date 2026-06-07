@@ -7,11 +7,6 @@
         <text class="idx-search-icon">🔍</text>
         <text class="idx-search-hint">搜作品、画室、同学…</text>
       </view>
-      <view class="idx-menu-btn" bindtap="showMenu">
-        <text class="idx-menu-dot"></text>
-        <text class="idx-menu-dot"></text>
-        <text class="idx-menu-dot"></text>
-      </view>
     </view>
 
     <!-- Verification banner -->
