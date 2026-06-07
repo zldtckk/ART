@@ -173,6 +173,7 @@ Page({
 
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
+  goMessages() { wx.navigateTo({ url: '/pages/messages/index' }); },
 
   onLike(e) {
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }

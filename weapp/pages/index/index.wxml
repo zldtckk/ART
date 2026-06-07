@@ -1,10 +1,15 @@
 <view class="page page-flex">
   <!-- 固定顶部区域 -->
   <view class="top-area">
-    <view class="header">
-      <view class="header-left"></view>
-      <text class="header-title">首页</text>
-      <view class="header-right"></view>
+    <view class="idx-header">
+      <text class="idx-logo">画室<text style="color:#FB7299">圈</text></text>
+      <view class="idx-search">
+        <text class="idx-search-icon">🔍</text>
+        <text class="idx-search-hint">搜作品、画室、同学…</text>
+      </view>
+      <view class="idx-bell" bindtap="goMessages">
+        <text style="font-size:40rpx">🔔</text>
+      </view>
     </view>
 
     <!-- Verification banner -->
@@ -29,25 +34,23 @@
       </swiper>
     </view>
 
-    <!-- Board entrances -->
-    <view class="board-entrances">
-      <view class="board-card board-card-circle" bindtap="goBoard" data-board="circle">
-        <text class="board-card-title">画室圈子</text>
-        <text class="board-card-desc">闲聊·求助·树洞</text>
+    <!-- Board entrances — B站风快捷入口 -->
+    <view class="quick-entries">
+      <view class="quick-entry" bindtap="goBoard" data-board="circle">
+        <view class="quick-icon quick-icon-1">🖼</view>
+        <text class="quick-label">画室圈子</text>
       </view>
-      <view class="board-card board-card-market" bindtap="goBoard" data-board="market">
-        <text class="board-card-title">闲置交易</text>
-        <text class="board-card-desc">画材·教材·好物</text>
+      <view class="quick-entry" bindtap="goBoard" data-board="market">
+        <view class="quick-icon quick-icon-2">🛍</view>
+        <text class="quick-label">闲置交易</text>
       </view>
-    </view>
-    <view class="board-entrances">
-      <view class="board-card board-card-fan" bindtap="goBoard" data-board="fan">
-        <text class="board-card-title">爱豆专区</text>
-        <text class="board-card-desc">安利·求同好·八卦</text>
+      <view class="quick-entry" bindtap="goBoard" data-board="fan">
+        <view class="quick-icon quick-icon-3">⭐</view>
+        <text class="quick-label">爱豆专区</text>
       </view>
-      <view class="board-card board-card-gathering" bindtap="goGatherings">
-        <text class="board-card-title">攒个局</text>
-        <text class="board-card-desc">约饭·约玩·约拍</text>
+      <view class="quick-entry" bindtap="goGatherings">
+        <view class="quick-icon quick-icon-4">🎉</view>
+        <text class="quick-label">攒个局</text>
       </view>
     </view>
 

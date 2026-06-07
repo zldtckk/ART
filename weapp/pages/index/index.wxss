@@ -1,3 +1,69 @@
+/* === B站风顶部 Header === */
+.idx-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 100rpx 24rpx 16rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.idx-logo {
+  font-size: 36rpx;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -1rpx;
+  flex-shrink: 0;
+}
+.idx-search {
+  flex: 1;
+  background: var(--bg);
+  border-radius: 32rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  gap: 10rpx;
+}
+.idx-search-icon { font-size: 28rpx; }
+.idx-search-hint { font-size: 26rpx; color: var(--text3); }
+.idx-bell { flex-shrink: 0; padding: 8rpx; }
+
+/* === 快捷入口（B站风 1行4个） === */
+.quick-entries {
+  display: flex;
+  padding: 20rpx 16rpx 16rpx;
+  background: #fff;
+  border-bottom: 1rpx solid var(--border);
+}
+.quick-entry {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+.quick-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+.quick-icon-1 { background: #fff0f4; }
+.quick-icon-2 { background: #fff4e8; }
+.quick-icon-3 { background: #f0f0ff; }
+.quick-icon-4 { background: #f0fff4; }
+.quick-label {
+  font-size: 22rpx;
+  color: var(--text2);
+  font-weight: 500;
+}
+
 /* === Hot posts banner === */
 .hot-banner {
   margin: 16rpx 24rpx 8rpx;
@@ -59,7 +125,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,122,255,0.06);
+  background: rgba(251,114,153,0.06);
   margin: 16rpx 24rpx 8rpx;
   padding: 20rpx 28rpx;
   border-radius: var(--radius-sm);
