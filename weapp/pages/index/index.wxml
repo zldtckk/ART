@@ -7,9 +7,6 @@
         <text class="idx-search-icon">🔍</text>
         <text class="idx-search-hint">搜作品、画室、同学…</text>
       </view>
-      <view class="idx-bell" bindtap="goMessages">
-        <text style="font-size:40rpx">🔔</text>
-      </view>
     </view>
 
     <!-- Verification banner -->

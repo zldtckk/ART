@@ -29,7 +29,6 @@
 }
 .idx-search-icon { font-size: 28rpx; }
 .idx-search-hint { font-size: 26rpx; color: var(--text3); }
-.idx-bell { flex-shrink: 0; padding: 8rpx; }
 
 /* === 快捷入口（B站风 1行4个） === */
 .quick-entries {
