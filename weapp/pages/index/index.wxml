@@ -15,22 +15,6 @@
       <text class="verify-banner-link">去认证 ›</text>
     </view>
 
-    <!-- Hot posts banner -->
-    <view wx:if="{{hotPosts.length > 0}}" class="hot-banner" bindtap="goPost" data-id="{{hotPosts[bannerIdx].id}}">
-      <view class="hot-sidebar">
-        <text class="hot-sidebar-text">热帖</text>
-        <text class="hot-sidebar-text">排行</text>
-      </view>
-      <swiper class="hot-swiper" vertical autoplay interval="3500" duration="500" current="{{bannerIdx}}" bindchange="onBannerChange">
-        <swiper-item wx:for="{{hotPosts}}" wx:key="id" class="hot-item-swiper">
-          <view class="hot-content-wrap">
-            <text class="hot-title">{{item.content}}</text>
-            <text class="hot-meta">阅读量 {{item.like_count}}</text>
-          </view>
-        </swiper-item>
-      </swiper>
-    </view>
-
     <!-- Board entrances — B站风快捷入口 -->
     <view class="quick-entries">
       <view class="quick-entry" bindtap="goBoard" data-board="circle">
@@ -51,11 +35,6 @@
       </view>
     </view>
 
-    <!-- Latest posts header -->
-    <view class="section-header">
-      <view class="icon icon-trending" style="width:32rpx;height:32rpx;"></view>
-      <text class="section-title">最新动态</text>
-    </view>
   </view>
 
   <!-- 可下拉刷新的帖子列表 -->
@@ -68,6 +47,42 @@
     bindscrolltolower="loadMore"
     lower-threshold="100"
   >
+    <!-- 精选作品 双列 -->
+    <view wx:if="{{hotPosts.length > 0}}" class="featured-wrap">
+      <view class="section-header">
+        <text class="section-title">精选作品</text>
+      </view>
+      <view class="featured-grid">
+        <view
+          wx:for="{{hotPosts}}"
+          wx:key="id"
+          wx:for-index="idx"
+          class="featured-card"
+          bindtap="goPost"
+          data-id="{{item.id}}"
+        >
+          <view wx:if="{{item._imageCount > 0}}" class="featured-img">
+            <image src="{{item._parsedImages[0]}}" mode="aspectFill" style="width:100%;height:100%;" lazy-load />
+          </view>
+          <view wx:else class="featured-img featured-ph-{{idx % 4}}">
+            <text class="featured-ph-text">{{item.display_name ? item.display_name[0] : '画'}}</text>
+          </view>
+          <view class="featured-body">
+            <text class="featured-title">{{item.content}}</text>
+            <view class="featured-meta">
+              <text class="featured-name">{{item.is_anonymous ? '匿名' : (item.display_name || '用户')}}</text>
+              <text class="featured-like">❤ {{item.like_count || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最新动态 -->
+    <view class="section-header" style="background:#f4f5f9">
+      <text class="section-title">最新动态</text>
+    </view>
+
     <view wx:if="{{loading && posts.length === 0}}" class="loading-spinner"></view>
     <view wx:elif="{{posts.length === 0}}" class="empty-state">
       <text class="empty-icon">📭</text>
