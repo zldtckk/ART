@@ -50,7 +50,7 @@
 .tab-emoji { font-size: 40rpx; line-height: 1; margin-bottom: 4rpx; }
 
 .tab-item.active .tab-label {
-  color: #007aff;
+  color: #FB7299;
 }
 
 /* Unread badge on 消息 tab */
@@ -85,20 +85,20 @@
 }
 
 .tab-fab {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: #007aff;
+  width: 88rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #FB7299, #f54f8c);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 20rpx rgba(0,122,255,0.35);
+  box-shadow: 0 4rpx 20rpx rgba(251,114,153,0.4);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .tab-fab:active {
   transform: scale(0.92);
-  box-shadow: 0 2rpx 10rpx rgba(0,122,255,0.2);
+  box-shadow: 0 2rpx 10rpx rgba(251,114,153,0.2);
 }
 
 .tab-fab-icon {

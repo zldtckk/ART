@@ -2,11 +2,11 @@
 
 /* Apple 灰色系设计系统 */
 page {
-  --accent: #007aff;
+  --accent: #FB7299;
   --danger: #ff3b30;
   --warning: #ff9500;
   --success: #34c759;
-  --bg: #f5f5f7;
+  --bg: #f4f5f9;
   --card: #ffffff;
   --text: #1c1c1e;
   --text2: #6c6c70;
@@ -180,7 +180,7 @@ view, text, image, input, textarea, scroll-view, button, navigator {
 .tag {
   display: inline-block;
   padding: 4rpx 16rpx;
-  border-radius: 8rpx;
+  border-radius: 20rpx;
   font-size: 22rpx;
   background: #f2f2f7;
   color: var(--text2);

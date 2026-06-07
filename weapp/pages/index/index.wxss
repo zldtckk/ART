@@ -15,7 +15,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #e74c3c;
+  background: #FB7299;
 }
 .hot-sidebar-text {
   font-size: 24rpx;
@@ -83,14 +83,14 @@
 .board-card {
   flex: 1;
   height: 100rpx;
-  border-radius: var(--radius);
+  border-radius: 20rpx;
   padding: 0 28rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .board-card-circle {
-  background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+  background: linear-gradient(135deg, #FB7299 0%, #f54f8c 100%);
 }
 .board-card-market {
   background: linear-gradient(135deg, #ff9500 0%, #ff6b35 100%);
@@ -122,8 +122,10 @@
 }
 .section-title {
   font-size: 30rpx;
-  font-weight: 600;
-  color: var(--text2);
+  font-weight: 700;
+  color: var(--text);
+  padding-left: 16rpx;
+  border-left: 6rpx solid #FB7299;
 }
 
 /* === Post cards (web style: full width, border-bottom) === */
