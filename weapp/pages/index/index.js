@@ -99,7 +99,7 @@ Page({
 
   async loadHotPosts() {
     try {
-      const posts = await api.getPosts({ sort: 'hot', limit: 5 });
+      const posts = await api.getPosts({ sort: 'hot', limit: 6 });
       this.setData({ hotPosts: this.processPosts(posts) });
     } catch (e) { /* ignore */ }
   },

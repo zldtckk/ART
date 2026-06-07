@@ -83,6 +83,9 @@ async function getPosts({ board, studio_id, circle_type, fan_type, market_catego
   if (market_category && market_category !== 'all') conditions.market_category = market_category;
   if (market_tag && market_tag !== 'all') conditions.market_tag = market_tag;
 
+  if (sort === 'hot') {
+    conditions.createTime = _.gte(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+  }
   let query = db.collection('posts').where(conditions);
   if (sort === 'hot') {
     query = query.orderBy('like_count', 'desc').orderBy('comment_count', 'desc');
