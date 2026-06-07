@@ -33,7 +33,7 @@
     <!-- Entry cards -->
     <view class="profile-entries">
       <view class="profile-entry" bindtap="goMyPosts">
-        <view class="entry-icon-wrap" style="background:rgba(0,122,255,0.08);">
+        <view class="entry-icon-wrap" style="background:rgba(251,114,153,0.08);">
           <view class="icon icon-document" style="width:40rpx;height:40rpx;"></view>
         </view>
         <text class="entry-label">我的帖子</text>

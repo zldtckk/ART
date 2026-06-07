@@ -5,7 +5,7 @@
 
   <view class="boards-list">
     <view class="board-item" bindtap="goBoard" data-board="circle">
-      <view class="board-icon-wrap" style="background:rgba(0,122,255,0.08);">
+      <view class="board-icon-wrap" style="background:rgba(251,114,153,0.08);">
         <view class="icon icon-home-active" style="width:44rpx;height:44rpx;"></view>
       </view>
       <view class="board-item-body">

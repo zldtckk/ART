@@ -113,7 +113,7 @@
   font-weight: 500;
 }
 .market-tag.tag-buy { background: rgba(255,149,0,0.1); color: #ff9500; }
-.market-tag.tag-sell { background: rgba(0,122,255,0.1); color: var(--accent); }
+.market-tag.tag-sell { background: rgba(251,114,153,0.1); color: var(--accent); }
 
 /* Post footer actions */
 .post-footer {
@@ -255,16 +255,16 @@
   background: var(--border-light);
   color: var(--text2);
 }
-.tag-general { background: rgba(0,122,255,0.08); color: var(--accent); }
+.tag-general { background: rgba(251,114,153,0.08); color: var(--accent); }
 .tag-anonymous { background: rgba(255,59,48,0.08); color: var(--danger); }
-.tag-help { background: rgba(0,122,255,0.08); color: var(--accent); }
+.tag-help { background: rgba(251,114,153,0.08); color: var(--accent); }
 .tag-carpool { background: rgba(52,199,89,0.08); color: var(--success); }
 .tag-food { background: rgba(255,149,0,0.08); color: var(--warning); }
 .tag-other { background: rgba(0,0,0,0.04); color: var(--text2); }
 .studio-badge {
   font-size: 22rpx;
   color: var(--accent);
-  background: rgba(0,122,255,0.08);
+  background: rgba(251,114,153,0.08);
   padding: 2rpx 16rpx;
   border-radius: 20rpx;
 }
