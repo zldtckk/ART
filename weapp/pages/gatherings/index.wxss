@@ -17,7 +17,7 @@
 .gathering-item { background: #fff; border-radius: 20rpx; margin: 16rpx 24rpx; padding: 28rpx; box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06); }
 .item-closed { opacity: 0.6; }
 .item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
-.item-type-tag { font-size: 24rpx; font-weight: 600; color: #e65100; background: #fff3e0; padding: 4rpx 16rpx; border-radius: 8rpx; }
+.item-type-tag { font-size: 24rpx; font-weight: 600; color: #FB7299; background: #fff0f4; padding: 4rpx 16rpx; border-radius: 20rpx; }
 .status-open { font-size: 22rpx; color: #FB7299; }
 .status-closed { font-size: 22rpx; color: #999; }
 .item-content { font-size: 28rpx; color: #333; line-height: 1.6; margin-bottom: 16rpx; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
