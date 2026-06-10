@@ -25,6 +25,7 @@
     { "name": "getPendingVerifications", "runtime": "Nodejs16.13" },
     { "name": "addComment", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
     { "name": "deletePost", "runtime": "Nodejs16.13" },
-    { "name": "createPost", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } }
+    { "name": "createPost", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
+    { "name": "getUnreadCount", "runtime": "Nodejs16.13" }
   ]
 }
