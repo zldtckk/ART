@@ -109,9 +109,10 @@ Page({
 
   async loadHotPosts() {
     try {
-      const posts = await api.getPosts({ sort: 'hot', limit: 6 });
-      this.setData({ hotPosts: this.processPosts(posts) });
-    } catch (e) { /* ignore */ }
+      const posts = await api.getPosts({ sort: 'hot', limit: 20 });
+      const withImages = this.processPosts(posts).filter(p => p._imageCount > 0).slice(0, 6);
+      this.setData({ hotPosts: withImages });
+    } catch (e) { console.error('loadHotPosts failed', e); }
   },
 
   onBannerChange(e) {
