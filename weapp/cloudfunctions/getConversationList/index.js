@@ -3,11 +3,15 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 
-const PUBLIC_FIELDS = ['_openid', 'nickname', 'avatar_url'];
+const PUBLIC_FIELDS = ['_openid', 'nickname', 'avatar_url', 'sys_user_id'];
 function pickPublic(u) {
   const out = {};
   PUBLIC_FIELDS.forEach((k) => { if (u[k] !== undefined) out[k] = u[k]; });
   return out;
+}
+
+function displayName(u) {
+  return u.nickname || (u.sys_user_id ? `用户${u.sys_user_id}` : '用户');
 }
 
 exports.main = async () => {
@@ -50,7 +54,7 @@ exports.main = async () => {
     return {
       ...c,
       peer_id: peerId,
-      peer_name: peer.nickname || '用户',
+      peer_name: displayName(peer),
       peer_avatar: peer.avatar_url || '',
       unread_count: unreadMap[c._id] || 0,
     };
