@@ -36,7 +36,8 @@ Page({
     if (this._cellSizes) return this._cellSizes;
     const w = wx.getSystemInfoSync().windowWidth;
     const rpx = w / 750;
-    const pad = Math.round(64 * rpx);
+    // card margin 32rpx×2 + card padding 32rpx×2 = 128rpx
+    const pad = Math.round(128 * rpx);
     const gap = Math.round(4 * rpx);
     this._cellSizes = {
       one: w - pad,
