@@ -20,7 +20,11 @@ Page({
 
   onLoad(options) {
     if (options.convId) {
-      this.setData({ convId: options.convId });
+      const chatUser = {
+        name: options.peerName ? decodeURIComponent(options.peerName) : '用户',
+        avatar: options.peerAvatar ? decodeURIComponent(options.peerAvatar) : '',
+      };
+      this.setData({ convId: options.convId, chatUser });
       this.openChat(options.convId);
     }
   },
@@ -139,6 +143,10 @@ Page({
     if (this.data.swipeOpenId === id) {
       this.setData({ swipeOpenId: null });
       return;
+    }
+    const conv = this.data.conversations.find(c => (c._id || c.id) === id);
+    if (conv) {
+      this.setData({ chatUser: { name: conv.peer_name || '用户', avatar: conv.peer_avatar || '' } });
     }
     this.openChat(e);
   },

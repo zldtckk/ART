@@ -82,7 +82,10 @@ Page({
         wx.showToast({ title: '创建会话失败', icon: 'none' });
         return;
       }
-      wx.navigateTo({ url: `/pages/messages/index?convId=${convId}` });
+      const user = this.data.user || {};
+      const peerName = encodeURIComponent(user.nickname || '用户');
+      const peerAvatar = encodeURIComponent(user.avatar_url || '');
+      wx.navigateTo({ url: `/pages/messages/index?convId=${convId}&peerName=${peerName}&peerAvatar=${peerAvatar}` });
     } catch (e) {
       wx.hideLoading();
       console.error('startChat failed', e);
