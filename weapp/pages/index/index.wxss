@@ -98,6 +98,9 @@
   color: var(--text);
   line-height: 1.45;
   margin-bottom: 10rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .featured-meta {
   display: flex;
