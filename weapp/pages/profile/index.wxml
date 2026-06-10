@@ -61,9 +61,7 @@
           <view class="icon icon-message" style="width:40rpx;height:40rpx;"></view>
         </view>
         <text class="entry-label">消息</text>
-        <view wx:if="{{unreadCount > 0}}" class="entry-unread-badge">
-          <text class="entry-unread-text">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
-        </view>
+        <text class="entry-count">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
         <view class="icon icon-chevron-right" style="width:32rpx;height:32rpx;"></view>
       </view>
     </view>
