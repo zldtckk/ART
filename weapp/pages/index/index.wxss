@@ -107,7 +107,7 @@
   justify-content: space-between;
 }
 .featured-name { font-size: 20rpx; color: var(--text3); }
-.featured-like { font-size: 20rpx; color: rgba(251,114,153,0.5); }
+.featured-like { font-size: 26rpx; color: rgba(251,114,153,0.5); }
 .featured-liked { color: #FB7299; }
 
 /* === Hot posts banner === */
