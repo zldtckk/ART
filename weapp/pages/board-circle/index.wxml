@@ -32,6 +32,18 @@
         </view>
       </view>
       <view class="post-content">{{item.content}}</view>
+      <view wx:if="{{item._imageCount > 0}}" class="post-img-grid post-img-grid-{{item._imageCount}}">
+        <image
+          wx:for="{{item._parsedImages}}"
+          wx:for-item="imgUrl"
+          wx:key="*this"
+          src="{{imgUrl}}"
+          mode="aspectFill"
+          class="grid-img"
+          style="{{item._imgCellStyle}}"
+          lazy-load
+        />
+      </view>
       <view class="post-actions">
         <text class="action-btn" data-id="{{item.id}}" catchtap="onLike">{{item.is_liked ? '❤️' : '🤍'}} {{item.like_count || 0}}</text>
         <text class="action-btn">💬 {{item.comment_count || 0}}</text>

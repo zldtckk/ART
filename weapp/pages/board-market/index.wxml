@@ -36,6 +36,18 @@
         <text class="post-price">¥{{item.price}}</text>
       </view>
       <view class="post-content">{{item.content}}</view>
+      <view wx:if="{{item._imageCount > 0}}" class="post-img-grid post-img-grid-{{item._imageCount}}">
+        <image
+          wx:for="{{item._parsedImages}}"
+          wx:for-item="imgUrl"
+          wx:key="*this"
+          src="{{imgUrl}}"
+          mode="aspectFill"
+          class="grid-img"
+          style="{{item._imgCellStyle}}"
+          lazy-load
+        />
+      </view>
       <view class="post-tags-row">
         <text class="tag tag-primary">{{item._market_tag_name}}</text>
         <text class="tag">{{item._market_cat_name}}</text>

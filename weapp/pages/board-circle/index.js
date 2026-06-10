@@ -27,8 +27,37 @@ Page({
     this.loadPosts();
   },
 
+  _parseImages(imagesStr) {
+    if (Array.isArray(imagesStr)) return imagesStr;
+    try { return JSON.parse(imagesStr); } catch (e) { return []; }
+  },
+
+  _getCellSizes() {
+    if (this._cellSizes) return this._cellSizes;
+    const w = wx.getSystemInfoSync().windowWidth;
+    const rpx = w / 750;
+    const pad = Math.round(64 * rpx);
+    const gap = Math.round(4 * rpx);
+    this._cellSizes = {
+      one: w - pad,
+      two: Math.floor((w - pad - gap) / 2),
+      three: Math.floor((w - pad - gap * 2) / 3),
+    };
+    return this._cellSizes;
+  },
+
   processPosts(posts) {
-    return (posts || []).map((p) => ({ ...p, circle_type_name: getCircleTypeName(p.circle_type) }));
+    const sizes = this._getCellSizes();
+    return (posts || []).map((p) => {
+      const allImages = this._parseImages(p.images);
+      const displayImages = allImages.slice(0, 9);
+      const count = displayImages.length;
+      let cellStyle = '';
+      if (count === 1) cellStyle = `width:${sizes.one}px;height:${sizes.one}px;`;
+      else if (count === 2) cellStyle = `width:${sizes.two}px;height:${sizes.two}px;`;
+      else if (count >= 3) cellStyle = `width:${sizes.three}px;height:${sizes.three}px;`;
+      return { ...p, circle_type_name: getCircleTypeName(p.circle_type), _parsedImages: displayImages, _imageCount: count, _imgCellStyle: cellStyle };
+    });
   },
 
   async loadPosts() {
