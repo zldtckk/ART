@@ -26,8 +26,8 @@ Page({
 
   async loadUnread() {
     try {
-      const res = await api.getNotifications();
-      this.setData({ unreadCount: res.unread_count || 0 });
+      const res = await api.getUnreadCount();
+      this.setData({ unreadCount: res.total_unread || 0 });
     } catch (e) {}
   },
 

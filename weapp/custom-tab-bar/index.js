@@ -44,8 +44,8 @@ Component({
       const user = wx.getStorageSync('user')
       if (!user) { this.setData({ unreadCount: 0 }); return }
       const api = require('../utils/api')
-      api.getNotifications().then(res => {
-        this.setData({ unreadCount: res.unread_count || 0 })
+      api.getUnreadCount().then(res => {
+        this.setData({ unreadCount: res.total_unread || 0 })
       }).catch(() => {})
     },
     switchTab(e) {

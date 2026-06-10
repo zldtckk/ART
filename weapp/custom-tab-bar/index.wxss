@@ -75,6 +75,19 @@
   font-size: 18rpx;
 }
 
+/* 我的 tab 红点 */
+.tab-badge {
+  position: absolute;
+  top: 4rpx;
+  right: 10rpx;
+  width: 16rpx;
+  height: 16rpx;
+  background: #FB7299;
+  border-radius: 50%;
+  border: 2rpx solid #fff;
+  pointer-events: none;
+}
+
 /* FAB button - 等宽居中 */
 .tab-fab-wrapper {
   flex: 1;

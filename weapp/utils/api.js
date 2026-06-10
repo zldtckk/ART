@@ -378,6 +378,11 @@ async function getNotifications() {
   return res.result;
 }
 
+async function getUnreadCount() {
+  const res = await wx.cloud.callFunction({ name: 'getUnreadCount' });
+  return res.result || { notification_unread: 0, message_unread: 0, total_unread: 0 };
+}
+
 async function deleteNotification(notificationId) {
   const res = await wx.cloud.callFunction({ name: 'deleteNotification', data: { notificationId } });
   return res.result;
@@ -513,6 +518,7 @@ module.exports = {
   getConversation,
   sendMessage,
   getNotifications,
+  getUnreadCount,
   markNotificationsRead,
   deleteNotification,
   deleteConversation,
