@@ -76,6 +76,8 @@
   border-radius: 16rpx;
   overflow: hidden;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
 }
 .featured-img {
   width: 100%;
@@ -90,7 +92,7 @@
 .featured-ph-2 { background: linear-gradient(135deg, #f0fff4, #b0f0cc); }
 .featured-ph-3 { background: linear-gradient(135deg, #fff8e0, #ffe0a0); }
 .featured-ph-text { font-size: 64rpx; font-weight: 900; color: rgba(0,0,0,0.12); }
-.featured-body { padding: 12rpx 14rpx 14rpx; }
+.featured-body { padding: 12rpx 14rpx 14rpx; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 .featured-title {
   font-size: 24rpx;
   color: var(--text);
