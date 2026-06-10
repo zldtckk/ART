@@ -71,7 +71,7 @@
             <text class="featured-title">{{item.content}}</text>
             <view class="featured-meta">
               <text class="featured-name">{{item.is_anonymous ? '匿名' : (item.display_name || '用户')}}</text>
-              <text class="featured-like">❤ {{item.like_count || 0}}</text>
+              <text class="featured-like">♡ {{item.like_count || 0}}</text>
             </view>
           </view>
         </view>
