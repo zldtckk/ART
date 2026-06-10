@@ -108,7 +108,7 @@
           <text>暂无评论，来聊点什么吧</text>
         </view>
         <view wx:for="{{comments}}" wx:key="id" class="comment-item {{item._pending ? 'comment-pending' : ''}}">
-          <view class="comment-avatar">
+          <view class="comment-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
             <image wx:if="{{item.display_avatar || item.avatar_url}}" src="{{item.display_avatar || item.avatar_url}}" mode="aspectFill" class="avatar-img" />
             <view wx:else class="avatar-placeholder" style="width:56rpx;height:56rpx;font-size:24rpx;">{{item.display_name ? item.display_name[0] : '匿'}}</view>
           </view>

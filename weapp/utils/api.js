@@ -52,6 +52,8 @@ async function enrichComments(comments) {
       ...c,
       display_name: displayName(author),
       display_avatar: author.avatar_url || '',
+      user_id: c._openid,
+      is_anonymous: false,
       created_at: formatTime(c.createTime),
     };
   });

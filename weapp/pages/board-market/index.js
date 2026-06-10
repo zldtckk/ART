@@ -75,4 +75,10 @@ Page({
       query: '',
     };
   },
+
+  goUserProfile(e) {
+    const { uid, anon } = e.currentTarget.dataset;
+    if (!uid || anon) return;
+    wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
+  },
 });

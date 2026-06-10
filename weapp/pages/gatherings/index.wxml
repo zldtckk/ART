@@ -47,7 +47,7 @@
             <text class="item-meta-text">📍 {{item.gather_place}}</text>
           </view>
           <view class="item-footer">
-            <view class="item-author">
+            <view class="item-author" catchtap="goUserProfile" data-uid="{{item.user_id}}">
               <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="item-avatar" />
               <view wx:else class="item-avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
               <text class="item-author-name">{{item.display_name || '用户'}}</text>
@@ -77,7 +77,7 @@
             <text class="item-meta-text">📍 {{item.gather_place}}</text>
           </view>
           <view class="item-footer">
-            <view class="item-author">
+            <view class="item-author" catchtap="goUserProfile" data-uid="{{item.user_id}}">
               <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="item-avatar" />
               <view wx:else class="item-avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
               <text class="item-author-name">{{item.display_name || '用户'}}</text>

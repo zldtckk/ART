@@ -105,4 +105,10 @@ Page({
   goPost(e) {
     wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` });
   },
+
+  goUserProfile(e) {
+    const { uid } = e.currentTarget.dataset;
+    if (!uid) return;
+    wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
+  },
 });
