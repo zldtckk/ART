@@ -26,9 +26,14 @@
           </view>
           <view class="conv-body">
             <text class="conv-name">{{item.peer_name || '用户'}}</text>
-            <text class="conv-preview">{{item.last_message}}</text>
+            <text class="conv-preview {{item.unread_count > 0 ? 'conv-preview-unread' : ''}}">{{item.last_message}}</text>
           </view>
-          <text class="conv-time">{{item.last_message_at}}</text>
+          <view class="conv-right">
+            <text class="conv-time">{{item.last_message_at}}</text>
+            <view wx:if="{{item.unread_count > 0}}" class="conv-unread-badge">
+              <text class="conv-unread-text">{{item.unread_count > 99 ? '99+' : item.unread_count}}</text>
+            </view>
+          </view>
         </view>
       </view>
       <view class="swipe-del" bindtap="deleteConv" data-id="{{item._id || item.id}}">

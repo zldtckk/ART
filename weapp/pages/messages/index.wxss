@@ -12,7 +12,11 @@
 .conv-body { flex: 1; overflow: hidden; }
 .conv-name { display: block; font-size: 28rpx; font-weight: 500; margin-bottom: 4rpx; }
 .conv-preview { display: block; font-size: 24rpx; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.conv-time { font-size: 20rpx; color: var(--text3); flex-shrink: 0; }
+.conv-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8rpx; flex-shrink: 0; }
+.conv-time { font-size: 20rpx; color: var(--text3); }
+.conv-unread-badge { background: #FB7299; border-radius: 20rpx; padding: 2rpx 10rpx; min-width: 32rpx; text-align: center; }
+.conv-unread-text { color: #fff; font-size: 18rpx; line-height: 1.8; }
+.conv-preview-unread { color: var(--text); font-weight: 500; }
 .notif-item { padding: 24rpx 32rpx; border-bottom: 0.5px solid var(--border); background: var(--card); }
 .notif-header { display: flex; align-items: center; margin-bottom: 8rpx; }
 .notif-type { font-size: 32rpx; margin-right: 12rpx; }

@@ -28,10 +28,32 @@ exports.main = async () => {
   const userMap = {};
   usersRes.data.forEach((u) => { userMap[u._openid] = pickPublic(u); });
 
+  // 批量查每个会话里对方发给我的未读消息数
+  const convIds = conversations.map(c => c._id);
+  const unreadRes = await db.collection('messages')
+    .where({
+      conversation_id: _.in(convIds),
+      sender_id: _.neq(openid),
+      is_read: false,
+    })
+    .get();
+
+  // 按 conversation_id 统计未读数
+  const unreadMap = {};
+  unreadRes.data.forEach(m => {
+    unreadMap[m.conversation_id] = (unreadMap[m.conversation_id] || 0) + 1;
+  });
+
   const enriched = conversations.map((c) => {
     const peerId = c.user1 === openid ? c.user2 : c.user1;
     const peer = userMap[peerId] || {};
-    return { ...c, peer_id: peerId, peer_name: peer.nickname || '用户', peer_avatar: peer.avatar_url || '' };
+    return {
+      ...c,
+      peer_id: peerId,
+      peer_name: peer.nickname || '用户',
+      peer_avatar: peer.avatar_url || '',
+      unread_count: unreadMap[c._id] || 0,
+    };
   });
 
   return { conversations: enriched };

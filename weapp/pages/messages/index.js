@@ -152,7 +152,12 @@ Page({
     }
     const conv = this.data.conversations.find(c => (c._id || c.id) === id);
     if (conv) {
-      this.setData({ chatUser: { name: conv.peer_name || '用户', avatar: conv.peer_avatar || '' } });
+      this.setData({
+        chatUser: { name: conv.peer_name || '用户', avatar: conv.peer_avatar || '' },
+        conversations: this.data.conversations.map(c =>
+          (c._id || c.id) === id ? { ...c, unread_count: 0 } : c
+        ),
+      });
     }
     this.openChat(e);
   },
