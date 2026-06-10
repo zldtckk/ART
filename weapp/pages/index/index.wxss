@@ -333,7 +333,7 @@
   display: flex;
   align-items: center;
   gap: 40rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: var(--text3);
   padding-top: 16rpx;
   border-top: 0.5rpx solid var(--border);
@@ -345,7 +345,7 @@
   padding: 8rpx 0;
 }
 .post-action-active {
-  color: var(--accent);
+  color: #FB7299;
 }
 
 /* Tags */
