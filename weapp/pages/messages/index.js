@@ -84,7 +84,11 @@ Page({
       const messages = (rawMessages || []).map(m => ({ ...m, created_at: formatTime(m.createTime || m.created_at) }));
       this.setData({ messages, loading: false });
       api.markConversationRead(convId).catch(() => {});
-    }).catch(() => this.setData({ loading: false }));
+    }).catch((e) => {
+      console.error('openChat failed', e);
+      this.setData({ loading: false, convId: null });
+      wx.showToast({ title: '加载失败，请重试', icon: 'none' });
+    });
   },
 
   backToList() {

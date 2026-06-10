@@ -72,13 +72,23 @@ Page({
 
   async startChat() {
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
+    if (!this.uid) { wx.showToast({ title: '用户信息缺失', icon: 'none' }); return; }
     wx.showLoading({ title: '加载中' });
     try {
       const res = await api.getConversation(this.uid);
       wx.hideLoading();
-      getApp().globalData.pendingConvId = res.conversation._id;
+      const convId = res && res.conversation && res.conversation._id;
+      if (!convId) {
+        wx.showToast({ title: '创建会话失败', icon: 'none' });
+        return;
+      }
+      getApp().globalData.pendingConvId = convId;
       wx.switchTab({ url: '/pages/messages/index' });
-    } catch (e) { wx.hideLoading(); }
+    } catch (e) {
+      wx.hideLoading();
+      console.error('startChat failed', e);
+      wx.showToast({ title: '私信失败，请重试', icon: 'none' });
+    }
   },
 
   goBack() { wx.navigateBack(); },
