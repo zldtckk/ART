@@ -82,8 +82,7 @@ Page({
         wx.showToast({ title: '创建会话失败', icon: 'none' });
         return;
       }
-      getApp().globalData.pendingConvId = convId;
-      wx.switchTab({ url: '/pages/messages/index' });
+      wx.navigateTo({ url: `/pages/messages/index?convId=${convId}` });
     } catch (e) {
       wx.hideLoading();
       console.error('startChat failed', e);
