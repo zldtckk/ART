@@ -13,6 +13,8 @@ Page({
     loading: true,
     convId: null,
     currentUserId: null,
+    selfAvatar: '',
+    selfName: '我',
     swipeOpenId: null,
   },
   _touchStartX: 0,
@@ -35,7 +37,11 @@ Page({
     }
     const authData = auth.getAuth();
     const user = authData.user;
-    this.setData({ currentUserId: (user && user._openid) || null });
+    this.setData({
+      currentUserId: (user && user._openid) || null,
+      selfAvatar: (user && user.avatar_url) || '',
+      selfName: (user && user.nickname) || '我',
+    });
     this.loadConversations();
     this.loadNotifications();
 

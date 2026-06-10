@@ -75,6 +75,10 @@
           <view wx:else class="msg-avatar-placeholder">{{chatUser.name ? chatUser.name[0] : '?'}}</view>
         </view>
         <view class="msg-bubble">{{item.content}}</view>
+        <view wx:if="{{item.sender_id === currentUserId}}" class="msg-avatar">
+          <image wx:if="{{selfAvatar}}" src="{{selfAvatar}}" mode="aspectFill" class="msg-avatar-img" />
+          <view wx:else class="msg-avatar-placeholder">{{selfName ? selfName[0] : '我'}}</view>
+        </view>
       </view>
       <view id="msg-bottom"></view>
     </scroll-view>
