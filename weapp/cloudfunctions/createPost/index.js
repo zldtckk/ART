@@ -14,7 +14,7 @@ async function checkText(content, openid) {
 }
 
 exports.main = async (event) => {
-  const { board, content, images, is_anonymous, circle_type, market_tag, market_category, price,
+  const { board, content, images, is_anonymous, city, circle_type, market_tag, market_category, price,
     is_gathering, gather_type, gather_time, gather_place, gather_limit, gather_qr, gather_count } = event;
   const openid = cloud.getWXContext().OPENID;
 
@@ -31,6 +31,7 @@ exports.main = async (event) => {
   const doc = {
     board,
     content: text,
+    city: city || 'hangzhou',
     _openid: openid,
     images: images || [],
     is_anonymous: false,

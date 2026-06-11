@@ -2,6 +2,7 @@ const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { BOARDS, PAGE_SIZE } = require('../../utils/constants');
 const { getCircleTypeName } = require('../../utils/formatter');
+const { CITIES } = require('../../config/city');
 
 Page({
   data: {
@@ -25,6 +26,9 @@ Page({
     page: 1,
     hasMore: true,
     refreshing: false,
+    currentCity: 'hangzhou',
+    currentCityName: '杭州',
+    cities: CITIES,
   },
 
   onLoad() {
@@ -49,6 +53,17 @@ Page({
       isVerified: !!(user && user.is_verified),
       currentUserId: (user && user._openid) || null,
     });
+    const app = getApp();
+    const city = app.getCurrentCity();
+    const cityName = app.getCityName();
+    if (city !== this.data.currentCity) {
+      this.setData({ currentCity: city, currentCityName: cityName, posts: [], page: 1, hasMore: true });
+      this.loadHotPosts();
+      this.loadPosts();
+    } else {
+      this.setData({ currentCity: city, currentCityName: cityName });
+    }
+
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
@@ -229,20 +244,40 @@ Page({
     });
   },
 
+  switchCity() {
+    const cities = this.data.cities;
+    const current = this.data.currentCity;
+    const names = cities.map(c => c.name);
+    wx.showActionSheet({
+      itemList: names,
+      success: (res) => {
+        const city = cities[res.tapIndex];
+        if (city && city.slug !== current) {
+          getApp().setCurrentCity(city.slug);
+          this.setData({ currentCity: city.slug, currentCityName: city.name, posts: [], page: 1, hasMore: true });
+          this.loadHotPosts();
+          this.loadPosts();
+        }
+      },
+    });
+  },
+
   onReachBottom() {
     this.loadMore();
   },
 
   onShareAppMessage() {
+    const city = CITIES.find(c => c.slug === this.data.currentCity);
     return {
-      title: '画室圈 - 杭州美术集训生社区',
+      title: city ? city.shareTitle : '画室圈',
       path: '/pages/index/index',
     };
   },
 
   onShareTimeline() {
+    const city = CITIES.find(c => c.slug === this.data.currentCity);
     return {
-      title: '画室圈 - 杭州美术集训生社区',
+      title: city ? city.shareTitle : '画室圈',
       query: '',
     };
   },

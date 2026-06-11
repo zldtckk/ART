@@ -1,6 +1,12 @@
 const db = wx.cloud.database();
 const _ = db.command;
 const { formatTime, displayName } = require('./formatter');
+const { CITIES } = require('../config/city');
+
+function getCurrentCity() {
+  const app = getApp();
+  return (app && app.globalData && app.globalData.currentCity) || CITIES[0].slug;
+}
 
 // ── Helpers ──
 
@@ -68,7 +74,7 @@ async function login() {
 // ── Studios ──
 
 async function getStudios() {
-  const res = await db.collection('studios').get();
+  const res = await db.collection('studios').where({ city: getCurrentCity() }).get();
   return mapDocs(res.data);
 }
 
@@ -83,6 +89,8 @@ async function getPosts({ board, studio_id, circle_type, fan_type, market_catego
   if (fan_type && fan_type !== 'all') conditions.fan_type = fan_type;
   if (market_category && market_category !== 'all') conditions.market_category = market_category;
   if (market_tag && market_tag !== 'all') conditions.market_tag = market_tag;
+
+  conditions.city = getCurrentCity();
 
   let query = db.collection('posts').where(conditions);
   if (sort === 'hot') {
@@ -135,7 +143,7 @@ async function getPost(id) {
 }
 
 async function createPost(data) {
-  const res = await wx.cloud.callFunction({ name: 'createPost', data });
+  const res = await wx.cloud.callFunction({ name: 'createPost', data: { ...data, city: getCurrentCity() } });
   const result = res.result || {};
   if (result.code !== 0) throw new Error(result.msg || '发布失败');
   return mapDoc(result.post);
@@ -257,7 +265,7 @@ async function rejectVerification(userId, reason) {
 
 async function addStudio(name, district) {
   const res = await db.collection('studios').add({
-    data: { name, district, description: '', cover_url: '', createTime: db.serverDate() },
+    data: { name, district, city: getCurrentCity(), description: '', cover_url: '', createTime: db.serverDate() },
   });
   return mapDoc({ _id: res._id, name, district });
 }
@@ -404,7 +412,7 @@ async function searchPosts(keyword, limit = 20) {
   if (!keyword || !keyword.trim()) return [];
   const reg = db.RegExp({ regexp: keyword.trim(), options: 'i' });
   const res = await db.collection('posts')
-    .where({ content: reg, board: _.neq('gathering') })
+    .where({ content: reg, board: _.neq('gathering'), city: getCurrentCity() })
     .orderBy('createTime', 'desc')
     .limit(limit)
     .get();
@@ -440,7 +448,7 @@ async function getJoinedGatherings() {
 }
 
 async function getGatherings({ type, page = 1, limit = 20 } = {}) {
-  const conditions = { board: 'gathering' };
+  const conditions = { board: 'gathering', city: getCurrentCity() };
   if (type && type !== 'all') conditions.gather_type = type;
   const res = await db.collection('posts')
     .where(conditions)

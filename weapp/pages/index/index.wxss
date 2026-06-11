@@ -10,12 +10,23 @@
   top: 0;
   z-index: 100;
 }
+.idx-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
 .idx-logo {
   font-size: 36rpx;
   font-weight: 900;
   color: var(--text);
   letter-spacing: -1rpx;
-  flex-shrink: 0;
+}
+.idx-city {
+  font-size: 18rpx;
+  color: #FB7299;
+  margin-top: 2rpx;
 }
 .idx-search {
   flex: 1;
