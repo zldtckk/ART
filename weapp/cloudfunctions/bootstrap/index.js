@@ -13,6 +13,7 @@ exports.main = async () => {
   if (!(await isAdmin(cloud.getWXContext().OPENID))) return { code: -1, msg: '仅管理员可操作' };
 
   const results = {};
+  const _ = db.command;
 
   // 多城市画室数据
   const allStudios = {
@@ -75,7 +76,7 @@ exports.main = async () => {
 
   // 2. 为没有 city 字段的旧 studio 补上 city（兼容旧数据）
   try {
-    const noCity = await db.collection('studios').where({ city: db.command.exists(false) }).get();
+    const noCity = await db.collection('studios').where({ city: _.exists(false) }).get();
     for (const s of noCity.data) {
       await db.collection('studios').doc(s._id).update({ data: { city: 'hangzhou' } });
     }
@@ -84,7 +85,18 @@ exports.main = async () => {
     results.studios_migrated = 'skipped (field may not exist yet)';
   }
 
-  // 3. 去掉画室名里的"画室"/"学堂"等后缀，生成认证码
+  // 2.5. 给没有 city 字段的旧帖子补上 city（兼容旧数据）
+  try {
+    const noCityPosts = await db.collection('posts').where({ city: _.exists(false) }).get();
+    results.posts_no_city = noCityPosts.data.length;
+    for (const p of noCityPosts.data) {
+      await db.collection('posts').doc(p._id).update({ data: { city: 'hangzhou' } });
+    }
+  } catch (e) {
+    results.posts_migrated = 'skipped (' + (e.message || e) + ')';
+  }
+
+  // 3. 生成认证码
   const allStudioList = await db.collection('studios').get();
   results.total_studios = allStudioList.data.length;
 
