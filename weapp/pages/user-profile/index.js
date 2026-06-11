@@ -42,7 +42,7 @@ Page({
     try {
       const db = api.db;
       const res = await db.collection('posts')
-        .where({ _openid: this.uid, is_anonymous: false })
+        .where({ _openid: this.uid })
         .orderBy('createTime', 'desc')
         .skip((page - 1) * PAGE_LIMIT)
         .limit(PAGE_LIMIT)

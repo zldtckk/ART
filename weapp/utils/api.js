@@ -29,14 +29,14 @@ async function fetchUserMap(openids) {
 
 async function enrichPosts(posts) {
   if (!posts || !posts.length) return posts;
-  const openids = posts.filter(p => !p.is_anonymous).map(p => p._openid);
+  const openids = posts.map(p => p._openid);
   const userMap = await fetchUserMap(openids);
   return posts.map(p => {
     const author = userMap[p._openid] || {};
     return {
       ...p,
-      display_name: p.is_anonymous ? '匿名用户' : displayName(author),
-      display_avatar: p.is_anonymous ? '' : (author.avatar_url || ''),
+      display_name: displayName(author),
+      display_avatar: author.avatar_url || '',
       user_id: p._openid,
       created_at: formatTime(p.createTime),
     };
@@ -53,7 +53,6 @@ async function enrichComments(comments) {
       display_name: displayName(author),
       display_avatar: author.avatar_url || '',
       user_id: c._openid,
-      is_anonymous: false,
       created_at: formatTime(c.createTime),
     };
   });
@@ -412,7 +411,7 @@ async function searchPosts(keyword, limit = 20) {
   const posts = mapDocs(res.data).map(p => ({
     ...p,
     created_at: formatTime(p.createTime),
-    display_name: p.is_anonymous ? null : (p.display_name || null),
+    display_name: p.display_name || null,
   }));
   return await enrichPosts(posts);
 }

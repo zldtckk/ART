@@ -14,12 +14,12 @@
       <!-- Post body -->
       <view class="post-card" wx:if="{{post}}" style="border-bottom:none;">
         <view class="post-header">
-          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{post.user_id}}" data-anon="{{post.is_anonymous}}">
+          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{post.user_id}}">
             <image wx:if="{{post.display_avatar}}" src="{{post.display_avatar}}" mode="aspectFill" class="avatar-img" />
-            <view wx:else class="avatar-placeholder">{{post.is_anonymous ? '匿' : (post.display_name ? post.display_name[0] : '用')}}</view>
+            <view wx:else class="avatar-placeholder">{{post.display_name ? post.display_name[0] : '用'}}</view>
           </view>
           <view class="post-author">
-            <text class="post-author-name">{{post.is_anonymous ? '匿名用户' : (post.display_name || '未知用户')}}</text>
+            <text class="post-author-name">{{post.display_name || '未知用户'}}</text>
             <view class="post-meta">
               <text class="post-meta-time">{{post.created_at}}</text>
               <text wx:if="{{post.circle_type}}" class="tag tag-{{post.circle_type}}">{{post.circle_type_name || post.circle_type}}</text>
@@ -108,12 +108,12 @@
           <text>暂无评论，来聊点什么吧</text>
         </view>
         <view wx:for="{{comments}}" wx:key="id" class="comment-item {{item._pending ? 'comment-pending' : ''}}">
-          <view class="comment-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
+          <view class="comment-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}">
             <image wx:if="{{item.display_avatar || item.avatar_url}}" src="{{item.display_avatar || item.avatar_url}}" mode="aspectFill" class="avatar-img" />
-            <view wx:else class="avatar-placeholder" style="width:56rpx;height:56rpx;font-size:24rpx;">{{item.display_name ? item.display_name[0] : '匿'}}</view>
+            <view wx:else class="avatar-placeholder" style="width:56rpx;height:56rpx;font-size:24rpx;">{{item.display_name ? item.display_name[0] : '用'}}</view>
           </view>
           <view class="comment-body">
-            <text class="comment-name">{{item.display_name || item.nickname || '匿名用户'}}</text>
+            <text class="comment-name">{{item.display_name || item.nickname || '用户'}}</text>
             <text class="comment-text">{{item.content}}</text>
             <text class="comment-time">{{item.created_at}}</text>
           </view>

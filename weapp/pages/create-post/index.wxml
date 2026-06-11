@@ -73,13 +73,6 @@
       <text class="type-hint">💡 {{circleTypeHint}}</text>
     </view>
 
-    <!-- Anonymous toggle (only for 闲聊) -->
-    <view wx:if="{{selectedBoard === 'circle' && circleType === 'general'}}" class="form-row">
-      <view class="anonymous-row">
-        <text class="form-label" style="margin-bottom:0;">匿名发布</text>
-        <switch checked="{{isAnonymous}}" bindchange="toggleAnonymous" />
-      </view>
-    </view>
     <view class="form-row" style="display:flex;justify-content:flex-end;">
       <text class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">{{submitting ? '发布中...' : '发布'}}</text>
     </view>

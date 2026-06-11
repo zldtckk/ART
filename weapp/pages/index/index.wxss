@@ -360,7 +360,6 @@
   color: var(--text2);
 }
 .tag-general { background: rgba(251,114,153,0.08); color: var(--accent); }
-.tag-anonymous { background: rgba(255,59,48,0.08); color: var(--danger); }
 .tag-help { background: rgba(251,114,153,0.08); color: var(--accent); }
 .tag-carpool { background: rgba(52,199,89,0.08); color: var(--success); }
 .tag-food { background: rgba(255,149,0,0.08); color: var(--warning); }

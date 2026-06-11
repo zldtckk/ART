@@ -33,7 +33,7 @@ exports.main = async (event) => {
     content: text,
     _openid: openid,
     images: images || [],
-    is_anonymous: !!is_anonymous,
+    is_anonymous: false,
     is_public: true,
     like_count: 0,
     comment_count: 0,

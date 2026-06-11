@@ -2,10 +2,10 @@
   <view class="post-header">
     <view class="post-avatar">
       <image wx:if="{{post.display_avatar}}" src="{{post.display_avatar}}" mode="aspectFill" class="avatar-img" />
-      <view wx:else class="avatar-placeholder">{{post.is_anonymous ? '匿' : (post.display_name ? post.display_name[0] : '用')}}</view>
+      <view wx:else class="avatar-placeholder">{{post.display_name ? post.display_name[0] : '用'}}</view>
     </view>
     <view class="post-meta">
-      <text class="post-name">{{post.is_anonymous ? '匿名用户' : (post.display_name || '用户')}}</text>
+      <text class="post-name">{{post.display_name || '用户'}}</text>
       <text class="post-time">{{post.created_at}}</text>
     </view>
     <text wx:if="{{post.board === 'market' && post.price != null}}" class="post-price">¥{{post.price}}</text>

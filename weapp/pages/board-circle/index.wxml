@@ -22,12 +22,12 @@
   <block wx:else>
     <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
       <view class="post-header">
-        <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
+        <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}">
           <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" lazy-load />
-          <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
+          <view wx:else class="avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
         </view>
         <view class="post-meta">
-          <text class="post-name">{{item.is_anonymous ? '匿名用户' : (item.display_name || '用户')}}</text>
+          <text class="post-name">{{item.display_name || '用户'}}</text>
           <text class="post-tag tag tag-warning">{{item.circle_type_name || '闲聊'}}</text>
         </view>
       </view>

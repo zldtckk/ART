@@ -70,7 +70,7 @@
           <view class="featured-body">
             <text class="featured-title">{{item.content}}</text>
             <view class="featured-meta">
-              <text class="featured-name">{{item.is_anonymous ? '匿名' : (item.display_name || '用户')}}</text>
+              <text class="featured-name">{{item.display_name || '用户'}}</text>
               <text class="featured-like {{item.is_liked ? 'featured-liked' : ''}}">{{item.is_liked ? '♥' : '♡'}} {{item.like_count || 0}}</text>
             </view>
           </view>
@@ -91,12 +91,12 @@
     <block wx:else>
       <view wx:for="{{posts}}" wx:key="id" class="post-card" bindtap="goPost" data-id="{{item.id}}">
         <view class="post-header">
-          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}" data-anon="{{item.is_anonymous}}">
+          <view class="post-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}">
             <image wx:if="{{item.display_avatar}}" src="{{item.display_avatar}}" mode="aspectFill" class="avatar-img" lazy-load />
-            <view wx:else class="avatar-placeholder">{{item.is_anonymous ? '匿' : (item.display_name ? item.display_name[0] : '用')}}</view>
+            <view wx:else class="avatar-placeholder">{{item.display_name ? item.display_name[0] : '用'}}</view>
           </view>
           <view class="post-author">
-            <view class="post-author-name">{{item.is_anonymous ? '匿名用户' : (item.display_name || '未知用户')}}</view>
+            <view class="post-author-name">{{item.display_name || '未知用户'}}</view>
             <view class="post-meta">
               <text class="post-meta-time">{{item.created_at}}</text>
               <text wx:if="{{item.circle_type}}" class="tag tag-{{item.circle_type}}">{{item.circle_type_name || item.circle_type}}</text>

@@ -141,7 +141,7 @@ Page({
         board: this.data.selectedBoard,
         content: this.data.content.trim(),
         images: imageUrls,
-        is_anonymous: this.data.isAnonymous,
+        is_anonymous: false,
       };
 
       if (this.data.selectedBoard === 'circle') {

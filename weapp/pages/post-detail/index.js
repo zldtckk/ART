@@ -62,7 +62,7 @@ Page({
       this.setData({
         post,
         comments: comments || [],
-        isSelf: post && !post.is_anonymous && user && post._openid === user._openid,
+        isSelf: post && user && post._openid === user._openid,
         loading: false,
       });
     } catch (e) {
@@ -229,8 +229,8 @@ Page({
   },
 
   goUserProfile(e) {
-    const { uid, anon } = e.currentTarget.dataset;
-    if (!uid || anon) return;
+    const { uid } = e.currentTarget.dataset;
+    if (!uid) return;
     wx.navigateTo({ url: `/pages/user-profile/index?uid=${uid}` });
   },
 
