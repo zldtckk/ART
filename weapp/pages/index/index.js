@@ -64,6 +64,12 @@ Page({
       this.setData({ currentCity: city, currentCityName: cityName });
     }
 
+    // 新用户首次进入，弹城市选择
+    if (!wx.getStorageSync('currentCity') && !this._cityPickerShown) {
+      this._cityPickerShown = true;
+      this.switchCity();
+    }
+
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
@@ -248,9 +254,11 @@ Page({
     const cities = this.data.cities;
     const current = this.data.currentCity;
     const names = cities.map(c => c.name);
+    let picked = false;
     wx.showActionSheet({
       itemList: names,
       success: (res) => {
+        picked = true;
         const city = cities[res.tapIndex];
         if (city && city.slug !== current) {
           getApp().setCurrentCity(city.slug);
@@ -258,6 +266,10 @@ Page({
           this.loadHotPosts();
           this.loadPosts();
         }
+      },
+      complete: () => {
+        // 用户取消了选择，reset 标记让下次还能弹
+        if (!picked) this._cityPickerShown = false;
       },
     });
   },
