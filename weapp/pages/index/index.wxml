@@ -4,7 +4,7 @@
     <view class="idx-header" style="padding-right:{{headerPaddingRight}}px">
       <view class="idx-logo-wrap" bindtap="switchCity">
         <text class="idx-logo">画室<text style="color:#FB7299">圈</text></text>
-        <text class="idx-city">{{currentCityName}} ⌄</text>
+        <text class="idx-city">· {{currentCityName}} ⌄</text>
       </view>
       <view class="idx-search" bindtap="goSearch">
         <text class="idx-search-icon">🔍</text>

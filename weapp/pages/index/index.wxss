@@ -12,10 +12,9 @@
 }
 .idx-logo-wrap {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: baseline;
   flex-shrink: 0;
-  line-height: 1;
+  gap: 4rpx;
 }
 .idx-logo {
   font-size: 36rpx;
@@ -26,10 +25,11 @@
 .idx-city {
   font-size: 18rpx;
   color: #FB7299;
-  margin-top: 2rpx;
+  white-space: nowrap;
 }
 .idx-search {
   flex: 1;
+  max-width: 380rpx;
   background: var(--bg);
   border-radius: 32rpx;
   height: 64rpx;
@@ -37,9 +37,10 @@
   align-items: center;
   padding: 0 24rpx;
   gap: 10rpx;
+  margin-left: auto;
 }
 .idx-search-icon { font-size: 28rpx; }
-.idx-search-hint { font-size: 26rpx; color: var(--text3); }
+.idx-search-hint { font-size: 26rpx; color: var(--text3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* === 快捷入口（B站风 1行4个） === */
 .quick-entries {
