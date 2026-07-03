@@ -51,15 +51,21 @@ async function enrichPosts(posts) {
 
 async function enrichComments(comments) {
   if (!comments || !comments.length) return comments;
-  const userMap = await fetchUserMap(comments.map(c => c._openid));
+  const allOpenIds = comments.map(c => c._openid);
+  // 也拉取被回复者的信息
+  const replyToIds = comments.filter(c => c.reply_to_user_id).map(c => c.reply_to_user_id);
+  const uniqueIds = [...new Set([...allOpenIds, ...replyToIds])].filter(Boolean);
+  const userMap = await fetchUserMap(uniqueIds);
   return comments.map(c => {
     const author = userMap[c._openid] || {};
+    const replyToUser = c.reply_to_user_id ? userMap[c.reply_to_user_id] : null;
     return {
       ...c,
       display_name: displayName(author),
       display_avatar: author.avatar_url || '',
       user_id: c._openid,
       created_at: formatTime(c.createTime),
+      reply_to_name: replyToUser ? displayName(replyToUser) : null,
     };
   });
 }
@@ -168,9 +174,17 @@ async function getComments(postId) {
   return enrichComments(comments);
 }
 
-async function addComment(postId, content) {
-  // 走云函数：校验帖子存在、原子更新评论数、给作者发通知
-  const res = await wx.cloud.callFunction({ name: 'addComment', data: { postId, content } });
+async function addComment(postId, content, opts = {}) {
+  // 走云函数：校验帖子存在、原子更新评论数、发通知
+  const res = await wx.cloud.callFunction({
+    name: 'addComment',
+    data: {
+      postId,
+      content,
+      parent_comment_id: opts.parentCommentId || undefined,
+      reply_to_user_id: opts.replyToUserId || undefined,
+    },
+  });
   const result = res.result || {};
   if (result.code !== 0 || !result.comment) {
     throw new Error(result.msg || '评论失败');
@@ -245,6 +259,10 @@ async function submitVerification(data) {
   return res;
 }
 
+async function incrementViewCount(postId) {
+  wx.cloud.callFunction({ name: 'incrementViewCount', data: { postId } }).catch(() => {});
+}
+
 async function getPendingVerifications() {
   // 走云函数（含管理员校验，users 集合客户端只能读自己）
   const res = await wx.cloud.callFunction({ name: 'getPendingVerifications' });
@@ -264,10 +282,9 @@ async function rejectVerification(userId, reason) {
 // ── Admin ──
 
 async function addStudio(name, district) {
-  const res = await db.collection('studios').add({
-    data: { name, district, city: getCurrentCity(), description: '', cover_url: '', createTime: db.serverDate() },
-  });
-  return mapDoc({ _id: res._id, name, district });
+  const res = await wx.cloud.callFunction({ name: 'addStudio', data: { name, district, city: getCurrentCity() } });
+  if (res.result.code !== 0) throw new Error(res.result.msg || '添加失败');
+  return res.result.studio;
 }
 
 // ── My Content ──
@@ -372,10 +389,10 @@ async function getConversation(peerId) {
   return res.result;
 }
 
-async function sendMessage(conversationId, content) {
+async function sendMessage(conversationId, content, extra = {}) {
   const res = await wx.cloud.callFunction({
     name: 'sendMessage',
-    data: { conversationId, content },
+    data: { conversationId, content, ...extra },
   });
   return res.result;
 }
@@ -516,6 +533,7 @@ module.exports = {
   approveVerification,
   rejectVerification,
   addStudio,
+  incrementViewCount,
   getMyPosts,
   getMyComments,
   getMyFavorites,

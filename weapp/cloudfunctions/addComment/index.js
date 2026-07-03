@@ -10,12 +10,12 @@ async function checkText(content, openid) {
     const res = await cloud.openapi.security.msgSecCheck({ content, version: 2, scene: 1, openid });
     return res.result && res.result.suggest === 'risky';
   } catch (e) {
-    return false; // 检测接口异常时放行，不影响正常使用
+    return false;
   }
 }
 
 exports.main = async (event) => {
-  const { postId, content } = event;
+  const { postId, content, parent_comment_id, reply_to_user_id } = event;
   const openid = cloud.getWXContext().OPENID;
 
   if (!postId) return { code: -1, msg: '参数错误' };
@@ -25,9 +25,16 @@ exports.main = async (event) => {
 
   if (await checkText(text, openid)) return { code: -1, msg: '评论内容违规，请修改后重试' };
 
-  // 校验帖子存在，避免孤儿评论
+  // 校验帖子存在
   const postRes = await db.collection('posts').doc(postId).get().catch(() => null);
   if (!postRes || !postRes.data) return { code: -1, msg: '帖子不存在' };
+  const post = postRes.data;
+
+  // 如果是回复，校验被回复的评论存在
+  if (parent_comment_id) {
+    const parentComment = await db.collection('comments').doc(parent_comment_id).get().catch(() => null);
+    if (!parentComment || !parentComment.data) return { code: -1, msg: '该评论已被删除' };
+  }
 
   const data = {
     post_id: postId,
@@ -35,14 +42,30 @@ exports.main = async (event) => {
     _openid: openid,
     createTime: db.serverDate(),
   };
+  if (parent_comment_id) data.parent_comment_id = parent_comment_id;
+  if (reply_to_user_id) data.reply_to_user_id = reply_to_user_id;
+
   const res = await db.collection('comments').add({ data });
 
-  // 云函数有管理员写权限，可更新他人帖子的评论数
+  // 原子递增评论数
   await db.collection('posts').doc(postId).update({ data: { comment_count: _.inc(1) } });
 
-  // 给帖子作者发评论通知（非自己评论自己时）
-  const post = postRes.data;
-  if (post._openid && post._openid !== openid) {
+  // 通知逻辑
+  if (parent_comment_id && reply_to_user_id && reply_to_user_id !== openid) {
+    // 回复评论 → 通知被回复者
+    await db.collection('notifications').add({
+      data: {
+        user_id: reply_to_user_id,
+        type: 'comment_reply',
+        title: '有人回复了你的评论',
+        content: text.slice(0, 50),
+        related_post_id: postId,
+        is_read: false,
+        createTime: db.serverDate(),
+      },
+    });
+  } else if (!parent_comment_id && post._openid && post._openid !== openid) {
+    // 顶级评论 → 通知帖子作者
     await db.collection('notifications').add({
       data: {
         user_id: post._openid,

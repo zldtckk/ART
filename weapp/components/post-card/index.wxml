@@ -41,5 +41,8 @@
     <view class="action-btn" bindtap="onTap">
       <text>💬 {{post.comment_count || 0}}</text>
     </view>
+    <view wx:if="{{post.view_count > 0}}" class="action-btn action-view-count">
+      <text>👁 {{post.view_count}}</text>
+    </view>
   </view>
 </view>

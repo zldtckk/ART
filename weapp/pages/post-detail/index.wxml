@@ -22,6 +22,7 @@
             <text class="post-author-name">{{post.display_name || '未知用户'}}</text>
             <view class="post-meta">
               <text class="post-meta-time">{{post.created_at}}</text>
+              <text wx:if="{{post.view_count > 0}}" class="post-meta-views">👁 {{post.view_count}}</text>
               <text wx:if="{{post.circle_type}}" class="tag tag-{{post.circle_type}}">{{post.circle_type_name || post.circle_type}}</text>
               <text wx:if="{{post.studio_name}}" class="studio-badge">{{post.studio_name}}</text>
             </view>
@@ -107,15 +108,21 @@
         <view wx:if="{{comments.length === 0}}" class="comments-empty">
           <text>暂无评论，来聊点什么吧</text>
         </view>
-        <view wx:for="{{comments}}" wx:key="id" class="comment-item {{item._pending ? 'comment-pending' : ''}}">
+        <view wx:for="{{comments}}" wx:key="id" class="comment-item {{item._pending ? 'comment-pending' : ''}} {{item.parent_comment_id ? 'comment-reply' : ''}}">
           <view class="comment-avatar" catchtap="goUserProfile" data-uid="{{item.user_id}}">
             <image wx:if="{{item.display_avatar || item.avatar_url}}" src="{{item.display_avatar || item.avatar_url}}" mode="aspectFill" class="avatar-img" />
             <view wx:else class="avatar-placeholder" style="width:56rpx;height:56rpx;font-size:24rpx;">{{item.display_name ? item.display_name[0] : '用'}}</view>
           </view>
           <view class="comment-body">
             <text class="comment-name">{{item.display_name || item.nickname || '用户'}}</text>
-            <text class="comment-text">{{item.content}}</text>
-            <text class="comment-time">{{item.created_at}}</text>
+            <view class="comment-text-wrap">
+              <text wx:if="{{item.reply_to_name}}" class="reply-to" catchtap="goUserProfile" data-uid="{{item.reply_to_user_id}}">回复 @{{item.reply_to_name}}：</text>
+              <text class="comment-text">{{item.content}}</text>
+            </view>
+            <view class="comment-footer">
+              <text class="comment-time">{{item.created_at}}</text>
+              <text class="comment-reply-btn" catchtap="onReply" data-id="{{item._id || item.id}}" data-name="{{item.display_name || item.nickname || '用户'}}">回复</text>
+            </view>
           </view>
         </view>
       </view>
@@ -126,7 +133,11 @@
     <!-- Comment input bar -->
     <view wx:if="{{currentUser}}" class="comment-input-bar">
       <block wx:if="{{currentUser.is_verified}}">
-        <input class="comment-input" placeholder="写评论..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="handleComment" />
+        <view wx:if="{{replyingTo}}" class="reply-indicator">
+          <text class="reply-indicator-text">回复 @{{replyingTo.name}}</text>
+          <text class="reply-cancel" bindtap="cancelReply">✕</text>
+        </view>
+        <input class="comment-input" placeholder="{{replyingTo ? '回复 @' + replyingTo.name + '...' : '写评论...'}}" value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="handleComment" />
         <text class="comment-send-btn {{commentValid && !submitting ? '' : 'disabled'}}" bindtap="handleComment">发送</text>
       </block>
       <text wx:else class="btn btn-secondary btn-block" bindtap="goVerify" style="border-radius:40rpx;font-size:28rpx;text-align:center;">认证后即可评论</text>

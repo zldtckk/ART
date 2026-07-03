@@ -16,6 +16,7 @@ Page({
     selfAvatar: '',
     selfName: '我',
     swipeOpenId: null,
+    sendingImage: false,
   },
   _touchStartX: 0,
   _touchItemId: null,
@@ -108,11 +109,18 @@ Page({
 
   onMessageInput(e) { this.setData({ messageText: e.detail.value }); },
 
-  sendMessage() {
-    if (!this.data.messageText.trim()) return;
+  sendMessage(imageUrl) {
     const text = this.data.messageText.trim();
+    // 纯图片发送
+    if (!text && imageUrl) {
+      this._sendImageMsg(imageUrl);
+      return;
+    }
+    // 纯文字发送
+    if (!text) return;
     this.setData({ messageText: '' });
-    api.sendMessage(this.data.convId, text).then(res => {
+    const extra = imageUrl ? { type: 'mixed', image_url: imageUrl } : {};
+    api.sendMessage(this.data.convId, text, extra).then(res => {
       if (res && res.message) {
         this.setData({ messages: [...this.data.messages, res.message] });
       } else {
@@ -122,6 +130,40 @@ Page({
     }).catch(() => {
       this.setData({ messageText: text });
       wx.showToast({ title: '发送失败，请重试', icon: 'none' });
+    });
+  },
+
+  _sendImageMsg(imageUrl) {
+    this.setData({ sendingImage: true });
+    api.sendMessage(this.data.convId, '', { type: 'image', image_url: imageUrl }).then(res => {
+      this.setData({ sendingImage: false });
+      if (res && res.message) {
+        this.setData({ messages: [...this.data.messages, res.message] });
+      } else {
+        wx.showToast({ title: (res && res.msg) || '发送失败', icon: 'none' });
+      }
+    }).catch(() => {
+      this.setData({ sendingImage: false });
+      wx.showToast({ title: '发送失败，请重试', icon: 'none' });
+    });
+  },
+
+  chooseImage() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const filePath = res.tempFilePaths[0];
+        wx.showLoading({ title: '上传中' });
+        api.uploadImage(filePath).then(cloudId => {
+          wx.hideLoading();
+          this.sendMessage(cloudId);
+        }).catch(() => {
+          wx.hideLoading();
+          wx.showToast({ title: '上传失败', icon: 'none' });
+        });
+      },
     });
   },
 

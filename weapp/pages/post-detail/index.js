@@ -10,6 +10,7 @@ Page({
     commentText: '',
     commentValid: false,
     submitting: false,
+    replyingTo: null,
     currentUser: null,
     isLoggedIn: false,
     isSelf: false,
@@ -23,8 +24,19 @@ Page({
       currentUser: authData.user || null,
       isLoggedIn: !!authData.isLoggedIn,
     });
-    if (this.postId) this.loadPost();
-    else wx.navigateBack();
+    if (this.postId) {
+      // 去重：同用户同帖子 30 分钟内不重复计数
+      const key = 'viewed_' + this.postId;
+      const lastViewed = wx.getStorageSync(key);
+      const now = Date.now();
+      if (!lastViewed || now - lastViewed > 30 * 60 * 1000) {
+        wx.setStorageSync(key, now);
+        api.incrementViewCount(this.postId);
+      }
+      this.loadPost();
+    } else {
+      wx.navigateBack();
+    }
   },
 
   parseImages(imagesStr) {
@@ -133,6 +145,24 @@ Page({
   onCommentInput(e) {
     const val = e.detail.value;
     this.setData({ commentText: val, commentValid: val.trim().length > 0 });
+    // 输入框清空时取消回复状态
+    if (!val && this.data.replyingTo) {
+      this.setData({ replyingTo: null });
+    }
+  },
+
+  onReply(e) {
+    const { id, name } = e.currentTarget.dataset;
+    this.setData({
+      replyingTo: { commentId: id, name },
+      commentText: '',
+      commentValid: false,
+    });
+    // 聚焦输入框
+  },
+
+  cancelReply() {
+    this.setData({ replyingTo: null, commentText: '' });
   },
 
   handleComment() {
@@ -145,25 +175,43 @@ Page({
 
     const user = this.data.currentUser || {};
     const tempId = `temp_${Date.now()}`;
+    const replyTarget = this.data.replyingTo;
 
-    // 乐观插入：立刻显示评论，输入框清空
+    // 乐观插入
+    const tempComment = {
+      _id: tempId,
+      id: tempId,
+      content: text,
+      display_name: user.nickname || '我',
+      display_avatar: user.avatar_url || '',
+      created_at: '刚刚',
+      _pending: true,
+    };
+    if (replyTarget) {
+      tempComment.parent_comment_id = replyTarget.commentId;
+      tempComment.reply_to_name = replyTarget.name;
+    }
+
     this.setData({
-      comments: [...this.data.comments, {
-        _id: tempId,
-        id: tempId,
-        content: text,
-        display_name: user.nickname || '我',
-        display_avatar: user.avatar_url || '',
-        created_at: '刚刚',
-        _pending: true,
-      }],
+      comments: [...this.data.comments, tempComment],
       commentText: '',
       commentValid: false,
       submitting: true,
+      replyingTo: null,
       post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
     });
 
-    api.addComment(this.postId, text).then(comment => {
+    const addOpts = {};
+    if (replyTarget) {
+      addOpts.parentCommentId = replyTarget.commentId;
+      // 从被回复的评论中找到它的作者 openid
+      const parentComment = this.data.comments.find(c => c._id === replyTarget.commentId || c.id === replyTarget.commentId);
+      if (parentComment) {
+        addOpts.replyToUserId = parentComment.user_id || parentComment._openid;
+      }
+    }
+
+    api.addComment(this.postId, text, addOpts).then(comment => {
       // 用真实数据替换临时评论
       this.setData({
         comments: this.data.comments.map(c => c._id === tempId ? { ...comment, _pending: false } : c),

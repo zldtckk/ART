@@ -39,6 +39,7 @@ exports.main = async (event) => {
     like_count: 0,
     comment_count: 0,
     favorite_count: 0,
+    view_count: 0,
     createTime: db.serverDate(),
     updateTime: db.serverDate(),
   };

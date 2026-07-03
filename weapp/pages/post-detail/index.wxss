@@ -62,6 +62,10 @@
   font-size: 24rpx;
   color: var(--text3);
 }
+.post-meta-views {
+  font-size: 22rpx;
+  color: var(--text3);
+}
 .post-chat-btn {
   width: 56rpx;
   height: 56rpx;
@@ -79,6 +83,7 @@
   color: var(--text);
   margin-bottom: 20rpx;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 
 /* Detail images */
@@ -187,20 +192,60 @@
   margin-bottom: 4rpx;
 }
 .comment-text {
-  display: block;
   font-size: 28rpx;
   color: var(--text);
   line-height: 1.5;
 }
+.comment-text-wrap {
+  display: inline;
+}
+.reply-to {
+  font-size: 28rpx;
+  color: var(--accent);
+  font-weight: 500;
+}
+.comment-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
 .comment-time {
-  display: block;
   font-size: 22rpx;
   color: var(--text3);
-  margin-top: 8rpx;
+}
+.comment-reply-btn {
+  font-size: 22rpx;
+  color: var(--accent);
+  padding: 4rpx 12rpx;
+}
+
+.comment-reply {
+  padding-left: 40rpx;
+  background: var(--bg);
 }
 
 .comment-pending {
   opacity: 0.5;
+}
+
+.reply-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 24rpx;
+  background: rgba(251,114,153,0.08);
+  border-radius: 20rpx 20rpx 0 0;
+  margin-bottom: -4rpx;
+}
+.reply-indicator-text {
+  font-size: 24rpx;
+  color: var(--accent);
+}
+.reply-cancel {
+  font-size: 24rpx;
+  color: var(--text2);
+  padding: 4rpx 12rpx;
 }
 
 /* Comment input bar */

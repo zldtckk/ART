@@ -54,7 +54,7 @@
       <view class="swipe-inner {{swipeOpenId === (item._id || item.id) ? 'swiped' : ''}}">
         <view class="notif-item" bindtap="onNotifTap" data-postid="{{item.related_post_id}}" data-id="{{item._id || item.id}}">
           <view class="notif-header">
-            <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : '📢'}}</text>
+            <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : item.type === 'comment_reply' ? '↩️' : '📢'}}</text>
             <text class="notif-title">{{item.title}}</text>
           </view>
           <text class="notif-content">{{item.content}}</text>
@@ -79,7 +79,10 @@
           <image wx:if="{{chatUser.avatar}}" src="{{chatUser.avatar}}" mode="aspectFill" class="msg-avatar-img" />
           <view wx:else class="msg-avatar-placeholder">{{chatUser.name ? chatUser.name[0] : '?'}}</view>
         </view>
-        <view class="msg-bubble">{{item.content}}</view>
+        <view class="msg-bubble">
+          <text wx:if="{{item.content}}" class="msg-text">{{item.content}}</text>
+          <image wx:if="{{item.image_url}}" src="{{item.image_url}}" mode="widthFix" class="msg-image" />
+        </view>
         <view wx:if="{{item.sender_id === currentUserId}}" class="msg-avatar">
           <image wx:if="{{selfAvatar}}" src="{{selfAvatar}}" mode="aspectFill" class="msg-avatar-img" />
           <view wx:else class="msg-avatar-placeholder">{{selfName ? selfName[0] : '我'}}</view>
@@ -88,6 +91,10 @@
       <view id="msg-bottom"></view>
     </scroll-view>
     <view class="chat-input-bar">
+      <view class="chat-img-btn" bindtap="chooseImage">
+        <text wx:if="{{!sendingImage}}">📷</text>
+        <text wx:else>⏳</text>
+      </view>
       <input class="chat-input" placeholder="输入消息..." value="{{messageText}}" bindinput="onMessageInput" confirm-type="send" bindconfirm="sendMessage" />
       <text class="chat-send" bindtap="sendMessage">发送</text>
     </view>
