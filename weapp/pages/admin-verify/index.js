@@ -22,7 +22,7 @@ Page({
   switchTab(e) { this.setData({ tab: e.currentTarget.dataset.tab }); },
 
   loadPending() {
-    Promise.all([api.getPendingVerifications(), api.getAllStudios()]).then(([users, studios]) => {
+    Promise.all([api.getPendingVerifications(), api.getStudios()]).then(([users, studios]) => {
       const studioMap = {};
       (studios || []).forEach(s => { studioMap[s._id] = s.name; studioMap[s.id] = s.name; });
       const list = (users || []).map(v => ({
@@ -35,7 +35,7 @@ Page({
   },
 
   loadStudios() {
-    api.getAllStudios().then(studios => {
+    api.getStudios().then(studios => {
       this.setData({ studios });
     }).catch((e) => { console.error('loadStudios failed', e); });
   },
