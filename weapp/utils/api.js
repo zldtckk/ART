@@ -198,11 +198,20 @@ async function addComment(postId, content, opts = {}) {
     throw new Error(result.msg || '评论失败');
   }
   const user = (getApp().globalData.user) || {};
-  return mapDoc({
+  const comment = {
     ...result.comment,
     display_name: displayName(user),
     display_avatar: user.avatar_url || '',
-  });
+    user_id: result.comment._openid || user._openid,
+    created_at: formatTime(result.comment.createTime),
+  };
+  // 如果是回复，解析被回复者昵称
+  if (comment.reply_to_user_id) {
+    const replyUserMap = await fetchUserMap([comment.reply_to_user_id]);
+    const replyToUser = replyUserMap[comment.reply_to_user_id];
+    comment.reply_to_name = replyToUser ? displayName(replyToUser) : null;
+  }
+  return mapDoc(comment);
 }
 
 // ── Likes ──
