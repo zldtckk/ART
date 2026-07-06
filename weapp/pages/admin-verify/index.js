@@ -22,7 +22,7 @@ Page({
   switchTab(e) { this.setData({ tab: e.currentTarget.dataset.tab }); },
 
   loadPending() {
-    Promise.all([api.getPendingVerifications(), api.getStudios()]).then(([users, studios]) => {
+    Promise.all([api.getPendingVerifications(), api.getAllStudios()]).then(([users, studios]) => {
       const studioMap = {};
       (studios || []).forEach(s => { studioMap[s._id] = s.name; studioMap[s.id] = s.name; });
       const list = (users || []).map(v => ({
@@ -35,9 +35,9 @@ Page({
   },
 
   loadStudios() {
-    api.getStudios().then(studios => {
+    api.getAllStudios().then(studios => {
       this.setData({ studios });
-    }).catch(() => {});
+    }).catch((e) => { console.error('loadStudios failed', e); });
   },
 
   previewImage(e) {
@@ -90,10 +90,15 @@ Page({
       wx.showToast({ title: '请输入画室名称', icon: 'none' });
       return;
     }
+    wx.showLoading({ title: '添加中' });
     api.addStudio(this.data.newStudioName.trim(), this.data.newStudioDistrict.trim()).then(() => {
+      wx.hideLoading();
       wx.showToast({ title: '添加成功', icon: 'success' });
       this.setData({ newStudioName: '', newStudioDistrict: '' });
       this.loadStudios();
-    }).catch(() => wx.showToast({ title: '添加失败', icon: 'none' }));
+    }).catch((e) => {
+      wx.hideLoading();
+      wx.showToast({ title: e.message || '添加失败', icon: 'none', duration: 3000 });
+    });
   },
 });

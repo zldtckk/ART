@@ -84,6 +84,12 @@ async function getStudios() {
   return mapDocs(res.data);
 }
 
+// 管理后台用，查全部画室
+async function getAllStudios() {
+  const res = await db.collection('studios').get();
+  return mapDocs(res.data);
+}
+
 // ── Posts ──
 
 async function getPosts({ board, studio_id, circle_type, fan_type, market_category, market_tag, sort, page = 1, limit = 20 } = {}) {
@@ -516,6 +522,7 @@ async function uploadImages(filePaths) {
 module.exports = {
   login,
   getStudios,
+  getAllStudios,
   getPosts,
   getPost,
   createPost,
