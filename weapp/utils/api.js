@@ -80,14 +80,16 @@ async function login() {
 // ── Studios ──
 
 async function getStudios() {
-  const res = await db.collection('studios').where({ city: getCurrentCity() }).get();
-  return mapDocs(res.data);
+  const res = await wx.cloud.callFunction({ name: 'getStudios', data: { city: getCurrentCity() } });
+  if (res.result.code !== 0) return [];
+  return mapDocs(res.result.studios || []);
 }
 
 // 管理后台用，查全部画室
 async function getAllStudios() {
-  const res = await db.collection('studios').get();
-  return mapDocs(res.data);
+  const res = await wx.cloud.callFunction({ name: 'getStudios', data: { city: null } });
+  if (res.result.code !== 0) return [];
+  return mapDocs(res.result.studios || []);
 }
 
 // ── Posts ──
