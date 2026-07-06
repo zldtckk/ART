@@ -19,9 +19,10 @@ exports.main = async (event) => {
   const trimmedName = name.trim();
   const trimmedDistrict = (district || '').trim();
 
-  // 检查同城市是否已存在同名画室
   const city = event.city || 'hangzhou';
-  const existing = await db.collection('studios').where({ name: trimmedName, city }).get();
+
+  // 检查是否已存在同名画室（跨城市也不允许重名，避免混淆）
+  const existing = await db.collection('studios').where({ name: trimmedName }).get();
   if (existing.data.length > 0) return { code: -1, msg: '该画室已存在' };
 
   const res = await db.collection('studios').add({
