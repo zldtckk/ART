@@ -42,7 +42,7 @@
       <text>💬 {{post.comment_count || 0}}</text>
     </view>
     <view wx:if="{{post.view_count > 0}}" class="action-btn action-view-count">
-      <text>👁 {{post.view_count}}</text>
+      <text>浏览 {{post.view_count}}</text>
     </view>
   </view>
 </view>

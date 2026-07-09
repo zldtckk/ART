@@ -22,7 +22,7 @@
             <text class="post-author-name">{{post.display_name || '未知用户'}}</text>
             <view class="post-meta">
               <text class="post-meta-time">{{post.created_at}}</text>
-              <text wx:if="{{post.view_count > 0}}" class="post-meta-views">👁 {{post.view_count}}</text>
+              <text wx:if="{{post.view_count > 0}}" class="post-meta-views">浏览 {{post.view_count}}</text>
               <text wx:if="{{post.circle_type}}" class="tag tag-{{post.circle_type}}">{{post.circle_type_name || post.circle_type}}</text>
               <text wx:if="{{post.studio_name}}" class="studio-badge">{{post.studio_name}}</text>
             </view>
