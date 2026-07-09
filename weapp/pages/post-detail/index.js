@@ -32,6 +32,7 @@ Page({
       if (!lastViewed || now - lastViewed > 30 * 60 * 1000) {
         wx.setStorageSync(key, now);
         api.incrementViewCount(this.postId);
+        this._newView = true;
       }
       this.loadPost();
     } else {
@@ -69,6 +70,11 @@ Page({
             post.is_joined = joinRes.data.length > 0;
           }
         }
+      }
+      // 本次是新访问，乐观 +1 显示（云端已异步递增）
+      if (this._newView && post) {
+        post.view_count = (post.view_count || 0) + 1;
+        this._newView = false;
       }
       const user = auth.getAuth().user;
       this.setData({
