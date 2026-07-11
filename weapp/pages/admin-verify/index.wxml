@@ -7,6 +7,8 @@
   <view class="tab-bar-inline">
     <view class="tab {{tab === 'verify' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="verify"><text>认证审核 ({{pendingList.length}})</text></view>
     <view class="tab {{tab === 'studio' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="studio"><text>画室管理</text></view>
+    <view class="tab {{tab === 'dishes' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="dishes"><text>代购菜品</text></view>
+    <view class="tab {{tab === 'orders' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="orders"><text>代购订单</text></view>
   </view>
 
   <!-- Verifications tab -->
@@ -62,6 +64,67 @@
     <view wx:for="{{studios}}" wx:key="id" class="studio-card">
       <text class="studio-card-name">{{item.name}}</text>
       <text wx:if="{{item.district}}" class="studio-card-district">{{item.district}}</text>
+    </view>
+  </view>
+
+  <!-- Dishes management tab -->
+  <view wx:if="{{tab === 'dishes'}}" class="studio-mgmt">
+    <view class="add-dish-form">
+      <input class="input-field" placeholder="菜品名称" value="{{newDish.name}}" bindinput="onDishNameInput" />
+      <view class="dish-form-row">
+        <input class="input-field" style="flex:1;" type="digit" placeholder="价格" value="{{newDish.price}}" bindinput="onDishPriceInput" />
+        <input class="input-field" style="flex:1;" placeholder="单位（如：份/斤）" value="{{newDish.unit}}" bindinput="onDishUnitInput" />
+      </view>
+      <view class="dish-image-picker" bindtap="chooseDishImage">
+        <image wx:if="{{newDish.image}}" src="{{newDish.image}}" mode="aspectFill" class="dish-image-preview" />
+        <view wx:else class="dish-image-placeholder"><text>📷 上传图片</text></view>
+      </view>
+      <button class="btn" bindtap="addDish" loading="{{dishSubmitting}}" disabled="{{dishSubmitting}}">添加菜品</button>
+    </view>
+
+    <view wx:for="{{dishes}}" wx:key="id" class="dish-mgmt-card">
+      <view class="dish-mgmt-img-wrap" bindtap="previewDishImage" data-url="{{item.image}}">
+        <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="dish-mgmt-img" />
+        <view wx:else class="dish-mgmt-img-ph">🛒</view>
+      </view>
+      <view class="dish-mgmt-body">
+        <text class="dish-mgmt-name">{{item.name}}</text>
+        <text class="dish-mgmt-price">¥{{item.price}}/{{item.unit}}</text>
+      </view>
+      <view class="dish-mgmt-actions">
+        <text class="dish-toggle {{item.is_available ? 'dish-toggle-on' : ''}}" bindtap="toggleDishAvailable" data-id="{{item.id}}" data-available="{{item.is_available}}">{{item.is_available ? '上架中' : '已下架'}}</text>
+        <text class="dish-delete" bindtap="deleteDish" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+    <view wx:if="{{dishes.length === 0}}" class="empty-state">
+      <text class="empty-icon">🛒</text>
+      <text class="empty-text">还没有添加菜品</text>
+    </view>
+  </view>
+
+  <!-- Orders management tab -->
+  <view wx:if="{{tab === 'orders'}}" class="studio-mgmt">
+    <view class="order-filter-bar">
+      <text class="order-filter {{orderFilter === 'pending' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="pending">待采购</text>
+      <text class="order-filter {{orderFilter === 'done' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="done">已完成</text>
+      <text class="order-filter {{orderFilter === 'all' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="all">全部</text>
+    </view>
+
+    <view wx:for="{{orders}}" wx:key="id" class="order-mgmt-card" bindtap="viewOrder" data-id="{{item.id}}">
+      <view class="order-mgmt-main">
+        <text class="order-mgmt-title">{{item.buyer_name}} · 共{{item._count}}件</text>
+        <text class="order-mgmt-time">{{item._createdAt}}</text>
+        <text wx:if="{{item.note}}" class="order-mgmt-note">备注：{{item.note}}</text>
+      </view>
+      <view class="order-mgmt-side">
+        <text class="order-mgmt-price">¥{{item.total}}</text>
+        <text wx:if="{{item.status === 'pending'}}" class="btn-approve" catchtap="markOrderDone" data-id="{{item.id}}">标记完成</text>
+        <text wx:else class="order-mgmt-status">{{item._statusText}}</text>
+      </view>
+    </view>
+    <view wx:if="{{orders.length === 0}}" class="empty-state">
+      <text class="empty-icon">🧾</text>
+      <text class="empty-text">暂无订单</text>
     </view>
   </view>
 </view>

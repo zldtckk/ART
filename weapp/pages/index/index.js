@@ -203,6 +203,10 @@ Page({
     wx.switchTab({ url: '/pages/gatherings/index' });
   },
 
+  goSamShop() {
+    wx.navigateTo({ url: '/pages/sam-shop/index' });
+  },
+
   goSearch() { wx.navigateTo({ url: '/pages/search/index' }); },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },

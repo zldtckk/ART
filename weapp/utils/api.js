@@ -530,6 +530,83 @@ async function uploadImages(filePaths) {
   return Promise.all(tasks);
 }
 
+// ── 山姆代购 ──
+
+async function getDishes() {
+  const res = await wx.cloud.callFunction({ name: 'getDishes' });
+  const result = res.result || {};
+  if (result.code !== 0) return [];
+  return mapDocs(result.dishes || []);
+}
+
+// 管理后台用，查全部菜品（含已下架）
+async function getAllDishes() {
+  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'list' } });
+  const result = res.result || {};
+  if (result.code !== 0) return [];
+  return mapDocs(result.dishes || []);
+}
+
+async function addDish(data) {
+  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'create', ...data } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '添加失败');
+  return mapDoc(result.dish);
+}
+
+async function updateDish(id, data) {
+  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'update', id, ...data } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '更新失败');
+  return result;
+}
+
+async function deleteDish(id) {
+  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'delete', id } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '删除失败');
+  return result;
+}
+
+async function createOrder(items, note) {
+  const res = await wx.cloud.callFunction({ name: 'createOrder', data: { items, note } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '下单失败');
+  return {
+    ...mapDoc(result.order),
+    _skipped: result.skipped || [],
+    _capped: result.capped || [],
+  };
+}
+
+async function getOrder(id) {
+  const res = await wx.cloud.callFunction({ name: 'getOrder', data: { id } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '订单不存在');
+  return mapDoc(result.order);
+}
+
+async function getMyOrders() {
+  const res = await wx.cloud.callFunction({ name: 'getMyOrders' });
+  const result = res.result || {};
+  if (result.code !== 0) return [];
+  return mapDocs(result.orders || []);
+}
+
+async function getOrders(status) {
+  const res = await wx.cloud.callFunction({ name: 'getOrders', data: { status } });
+  const result = res.result || {};
+  if (result.code !== 0) return [];
+  return mapDocs(result.orders || []);
+}
+
+async function updateOrderStatus(id, status) {
+  const res = await wx.cloud.callFunction({ name: 'updateOrderStatus', data: { id, status } });
+  const result = res.result || {};
+  if (result.code !== 0) throw new Error(result.msg || '操作失败');
+  return result;
+}
+
 module.exports = {
   login,
   getStudios,
@@ -573,6 +650,16 @@ module.exports = {
   getJoinedGatherings,
   joinGathering,
   uploadQrCode,
+  getDishes,
+  getAllDishes,
+  addDish,
+  updateDish,
+  deleteDish,
+  createOrder,
+  getOrder,
+  getMyOrders,
+  getOrders,
+  updateOrderStatus,
   db,
   _,
 };

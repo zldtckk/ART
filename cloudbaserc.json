@@ -26,6 +26,13 @@
     { "name": "addComment", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
     { "name": "deletePost", "runtime": "Nodejs16.13" },
     { "name": "createPost", "runtime": "Nodejs16.13", "permissions": { "openapi": ["security.msgSecCheck"] } },
-    { "name": "getUnreadCount", "runtime": "Nodejs16.13" }
+    { "name": "getUnreadCount", "runtime": "Nodejs16.13" },
+    { "name": "getDishes", "runtime": "Nodejs16.13" },
+    { "name": "manageDish", "runtime": "Nodejs16.13" },
+    { "name": "createOrder", "runtime": "Nodejs16.13" },
+    { "name": "getOrder", "runtime": "Nodejs16.13" },
+    { "name": "getMyOrders", "runtime": "Nodejs16.13" },
+    { "name": "getOrders", "runtime": "Nodejs16.13" },
+    { "name": "updateOrderStatus", "runtime": "Nodejs16.13" }
   ]
 }

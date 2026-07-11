@@ -64,6 +64,7 @@ Page({
   goMyPosts() { wx.navigateTo({ url: '/pages/my-posts/index' }); },
   goMyComments() { wx.navigateTo({ url: '/pages/my-comments/index' }); },
   goMyFavorites() { wx.navigateTo({ url: '/pages/my-favorites/index' }); },
+  goSamOrders() { wx.navigateTo({ url: '/pages/sam-my-orders/index' }); },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goAdmin() { wx.navigateTo({ url: '/pages/admin-verify/index' }); },
 

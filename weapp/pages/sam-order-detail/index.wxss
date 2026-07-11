@@ -1,0 +1,28 @@
+.order-card { margin: 16rpx 32rpx; padding: 32rpx; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.order-status { display: inline-block; padding: 6rpx 20rpx; border-radius: 20rpx; font-size: 22rpx; font-weight: 500; margin-bottom: 16rpx; }
+.status-pending { background: #fff3e0; color: var(--warning); }
+.status-done { background: #e6f7ed; color: var(--success); }
+.status-cancelled { background: #f2f2f7; color: var(--text3); }
+.order-buyer { display: block; font-size: 26rpx; color: var(--text); margin-bottom: 4rpx; }
+.order-time { display: block; font-size: 22rpx; color: var(--text3); }
+
+.order-items { margin: 16rpx 32rpx; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.order-item { display: flex; align-items: center; padding: 20rpx 24rpx; border-bottom: 0.5px solid var(--border); }
+.order-item:last-child { border-bottom: none; }
+.order-item-img-wrap { width: 80rpx; height: 80rpx; border-radius: var(--radius-sm); overflow: hidden; background: #f2f2f7; flex-shrink: 0; }
+.order-item-img { width: 100%; height: 100%; }
+.order-item-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32rpx; }
+.order-item-body { flex: 1; min-width: 0; margin-left: 20rpx; }
+.order-item-name { display: block; font-size: 26rpx; color: var(--text); margin-bottom: 6rpx; }
+.order-item-price { font-size: 22rpx; color: var(--text3); }
+.order-item-subtotal { font-size: 26rpx; font-weight: 600; color: var(--text); }
+
+.order-note { margin: 16rpx 32rpx; padding: 24rpx; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.order-note-label { display: block; font-size: 22rpx; color: var(--text3); margin-bottom: 8rpx; }
+.order-note-text { font-size: 26rpx; color: var(--text); }
+
+.order-total-row { display: flex; justify-content: flex-end; align-items: baseline; gap: 12rpx; margin: 24rpx 32rpx; }
+.order-total-label { font-size: 26rpx; color: var(--text2); }
+.order-total-price { font-size: 40rpx; font-weight: 700; color: var(--danger); }
+
+.order-actions { margin: 32rpx 32rpx; display: flex; flex-direction: column; gap: 16rpx; }

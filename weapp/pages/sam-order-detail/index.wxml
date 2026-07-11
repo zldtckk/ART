@@ -1,0 +1,46 @@
+<view class="page">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">订单详情</text>
+    <view class="header-right"></view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-spinner"></view>
+
+  <block wx:elif="{{order}}">
+    <view class="order-card">
+      <view class="order-status status-{{order.status}}">{{order._statusText}}</view>
+      <text class="order-buyer">下单人：{{order.buyer_name}}</text>
+      <text class="order-time">{{order._createdAt}}</text>
+    </view>
+
+    <view class="order-items">
+      <view wx:for="{{order.items}}" wx:key="dish_id" class="order-item">
+        <view class="order-item-img-wrap" bindtap="previewImage" data-url="{{item.image}}">
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="order-item-img" />
+          <view wx:else class="order-item-img-ph">🛒</view>
+        </view>
+        <view class="order-item-body">
+          <text class="order-item-name">{{item.name}}</text>
+          <text class="order-item-price">¥{{item.price}}/{{item.unit}} × {{item.qty}}</text>
+        </view>
+        <text class="order-item-subtotal">¥{{item.price * item.qty}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{order.note}}" class="order-note">
+      <text class="order-note-label">备注</text>
+      <text class="order-note-text">{{order.note}}</text>
+    </view>
+
+    <view class="order-total-row">
+      <text class="order-total-label">合计</text>
+      <text class="order-total-price">¥{{order.total}}</text>
+    </view>
+
+    <view class="order-actions">
+      <button wx:if="{{isAdmin && order.status === 'pending'}}" class="btn btn-secondary" bindtap="markDone">标记为已完成</button>
+      <button class="btn" open-type="share">转发给工作人员</button>
+    </view>
+  </block>
+</view>

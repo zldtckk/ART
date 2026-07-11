@@ -1,0 +1,42 @@
+.header-link { font-size: 24rpx; color: var(--accent); }
+
+.shop-scroll { flex: 1; }
+
+.dish-grid { display: flex; flex-wrap: wrap; padding: 16rpx 24rpx; gap: 16rpx; }
+.dish-card { width: calc(50% - 8rpx); background: var(--card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.dish-img-wrap { width: 100%; height: 220rpx; background: #f2f2f7; }
+.dish-img { width: 100%; height: 100%; }
+.dish-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; }
+.dish-body { padding: 16rpx 20rpx 20rpx; }
+.dish-name { font-size: 26rpx; font-weight: 500; color: var(--text); display: block; margin-bottom: 12rpx; }
+.dish-footer { display: flex; align-items: center; justify-content: space-between; }
+.dish-price { font-size: 28rpx; font-weight: 700; color: var(--danger); }
+.dish-unit { font-size: 20rpx; font-weight: 400; color: var(--text3); }
+.dish-add { width: 48rpx; height: 48rpx; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28rpx; line-height: 1; }
+.dish-add:active { opacity: 0.8; }
+
+.shop-bottom-spacer { height: 140rpx; }
+
+.cart-bar {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 24rpx;
+  height: 100rpx;
+  background: #1c1c1e;
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 16rpx 0 32rpx;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.cart-icon-wrap { position: relative; margin-right: 20rpx; }
+.cart-icon { font-size: 44rpx; }
+.cart-badge { position: absolute; top: -12rpx; right: -16rpx; background: var(--danger); color: #fff; font-size: 18rpx; min-width: 28rpx; height: 28rpx; line-height: 28rpx; text-align: center; border-radius: 14rpx; padding: 0 4rpx; }
+.cart-total { flex: 1; color: #fff; font-size: 30rpx; font-weight: 600; }
+.cart-submit { background: var(--accent); color: #fff; font-size: 26rpx; font-weight: 500; padding: 20rpx 40rpx; border-radius: 44rpx; }
+
+.empty-state { text-align: center; padding: 160rpx 0; }
+.empty-icon { font-size: 96rpx; display: block; }
+.empty-text { font-size: 28rpx; color: var(--text2); margin-top: 16rpx; display: block; }
+.empty-hint { font-size: 24rpx; color: var(--text3); margin-top: 8rpx; display: block; }

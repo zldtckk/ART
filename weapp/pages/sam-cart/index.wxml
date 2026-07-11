@@ -1,0 +1,42 @@
+<view class="page page-flex">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">购物车</text>
+    <view class="header-right"></view>
+  </view>
+
+  <scroll-view scroll-y class="cart-scroll">
+    <view wx:if="{{items.length === 0}}" class="empty-state">
+      <text class="empty-icon">🛒</text>
+      <text class="empty-text">购物车是空的</text>
+    </view>
+    <block wx:else>
+      <view wx:for="{{items}}" wx:key="dish_id" class="cart-item">
+        <view class="cart-item-img-wrap">
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="cart-item-img" />
+          <view wx:else class="cart-item-img-ph">🛒</view>
+        </view>
+        <view class="cart-item-body">
+          <text class="cart-item-name">{{item.name}}</text>
+          <text class="cart-item-price">¥{{item.price}}<text class="cart-item-unit">/{{item.unit}}</text></text>
+        </view>
+        <view class="cart-stepper">
+          <view class="stepper-btn" bindtap="decr" data-id="{{item.dish_id}}">－</view>
+          <text class="stepper-num">{{item.qty}}</text>
+          <view class="stepper-btn" bindtap="incr" data-id="{{item.dish_id}}">＋</view>
+        </view>
+        <view class="cart-remove" bindtap="remove" data-id="{{item.dish_id}}">✕</view>
+      </view>
+
+      <view class="note-card">
+        <text class="note-label">备注（选填）</text>
+        <textarea class="note-input" placeholder="比如：要冰的 / 帮忙挑新鲜的" value="{{note}}" bindinput="onNoteInput" maxlength="200" />
+      </view>
+    </block>
+  </scroll-view>
+
+  <view wx:if="{{items.length > 0}}" class="cart-footer">
+    <text class="cart-footer-total">合计 <text class="cart-footer-price">¥{{total}}</text></text>
+    <button class="btn cart-footer-btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">生成订单并分享</button>
+  </view>
+</view>

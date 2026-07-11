@@ -1,0 +1,41 @@
+<view class="page page-flex">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">山姆代购</text>
+    <view class="header-right"><text class="header-link" bindtap="goMyOrders">我的订单</text></view>
+  </view>
+
+  <scroll-view scroll-y class="shop-scroll">
+    <view wx:if="{{loading}}" class="loading-spinner"></view>
+    <view wx:elif="{{dishes.length === 0}}" class="empty-state">
+      <text class="empty-icon">🛒</text>
+      <text class="empty-text">暂无可代购的商品</text>
+      <text class="empty-hint">工作人员上新后会在这里出现</text>
+    </view>
+    <view wx:else class="dish-grid">
+      <view wx:for="{{dishes}}" wx:key="id" class="dish-card">
+        <view class="dish-img-wrap" bindtap="previewImage" data-url="{{item.image}}">
+          <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" class="dish-img" lazy-load />
+          <view wx:else class="dish-img-ph">🛒</view>
+        </view>
+        <view class="dish-body">
+          <text class="dish-name">{{item.name}}</text>
+          <view class="dish-footer">
+            <text class="dish-price">¥{{item.price}}<text class="dish-unit">/{{item.unit}}</text></text>
+            <view class="dish-add" bindtap="addToCart" data-id="{{item.id}}">＋</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="shop-bottom-spacer"></view>
+  </scroll-view>
+
+  <view wx:if="{{cartCount > 0}}" class="cart-bar" bindtap="goCart">
+    <view class="cart-icon-wrap">
+      <text class="cart-icon">🛒</text>
+      <text class="cart-badge">{{cartCount}}</text>
+    </view>
+    <text class="cart-total">¥{{cartTotal}}</text>
+    <text class="cart-submit">去结算</text>
+  </view>
+</view>

@@ -28,9 +28,9 @@
         <view class="quick-icon quick-icon-2">🛍</view>
         <text class="quick-label">闲置交易</text>
       </view>
-      <view class="quick-entry" bindtap="goBoard" data-board="fan">
-        <view class="quick-icon quick-icon-3">⭐</view>
-        <text class="quick-label">爱豆专区</text>
+      <view class="quick-entry" bindtap="goSamShop">
+        <view class="quick-icon quick-icon-3">🛒</view>
+        <text class="quick-label">山姆代购</text>
       </view>
       <view class="quick-entry" bindtap="goGatherings">
         <view class="quick-icon quick-icon-4">🎉</view>
