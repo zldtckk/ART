@@ -28,8 +28,15 @@ exports.main = async (event) => {
   const userRes = await db.collection('users').where({ _openid: openid }).get();
   const user = userRes.data[0] || {};
 
+  if (is_gathering && !user.is_verified) {
+    return { code: -2, msg: '仅认证画室学生可发起攒局，请先完成认证' };
+  }
+
+  // 攒局帖固定存为 board:'gathering'，与 getGatherings() 的查询条件对齐
+  const finalBoard = is_gathering ? 'gathering' : board;
+
   const doc = {
-    board,
+    board: finalBoard,
     content: text,
     city: city || 'hangzhou',
     _openid: openid,
@@ -44,13 +51,13 @@ exports.main = async (event) => {
     updateTime: db.serverDate(),
   };
   if (user.studio_id) doc.studio_id = user.studio_id;
-  if (board === 'circle' && circle_type) doc.circle_type = circle_type;
-  if (board === 'market') {
+  if (finalBoard === 'circle' && circle_type) doc.circle_type = circle_type;
+  if (finalBoard === 'market') {
     if (market_tag) doc.market_tag = market_tag;
     if (market_category) doc.market_category = market_category;
     if (price != null && price !== '') doc.price = parseFloat(price);
   }
-  if (board === 'gathering') {
+  if (is_gathering) {
     doc.is_gathering = true;
     doc.gather_type = gather_type || 'other';
     doc.gather_time = gather_time || '';

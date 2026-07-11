@@ -26,13 +26,24 @@
       <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
     </view>
 
-    <view class="board-item" bindtap="goBoard" data-board="sam">
+    <view wx:if="{{currentCity === 'guangzhou'}}" class="board-item" bindtap="goBoard" data-board="sam">
       <view class="board-icon-wrap" style="background:rgba(255,149,0,0.08);">
         <view class="icon icon-shopping" style="width:44rpx;height:44rpx;"></view>
       </view>
       <view class="board-item-body">
         <text class="board-item-label">山姆代购</text>
         <text class="board-item-desc">选好菜品下单，分享给工作人员代买</text>
+      </view>
+      <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
+    </view>
+
+    <view wx:else class="board-item" bindtap="goBoard" data-board="fan">
+      <view class="board-icon-wrap" style="background:rgba(255,45,85,0.08);">
+        <view class="icon icon-heart-active" style="width:44rpx;height:44rpx;"></view>
+      </view>
+      <view class="board-item-body">
+        <text class="board-item-label">爱豆专区</text>
+        <text class="board-item-desc">安利·求同好·活动·八卦</text>
       </view>
       <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>
     </view>

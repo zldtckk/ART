@@ -159,7 +159,11 @@ async function getPost(id) {
 async function createPost(data) {
   const res = await wx.cloud.callFunction({ name: 'createPost', data: { ...data, city: getCurrentCity() } });
   const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '发布失败');
+  if (result.code !== 0) {
+    const err = new Error(result.msg || '发布失败');
+    err.code = result.code;
+    throw err;
+  }
   return mapDoc(result.post);
 }
 
@@ -505,7 +509,11 @@ async function getGatherings({ type, page = 1, limit = 20 } = {}) {
 async function joinGathering(postId) {
   const res = await wx.cloud.callFunction({ name: 'joinGathering', data: { postId } });
   const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '操作失败');
+  if (result.code !== 0) {
+    const err = new Error(result.msg || '操作失败');
+    err.code = result.code;
+    throw err;
+  }
   return result;
 }
 
@@ -571,7 +579,11 @@ async function deleteDish(id) {
 async function createOrder(items, note) {
   const res = await wx.cloud.callFunction({ name: 'createOrder', data: { items, note } });
   const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '下单失败');
+  if (result.code !== 0) {
+    const err = new Error(result.msg || '下单失败');
+    err.code = result.code;
+    throw err;
+  }
   return {
     ...mapDoc(result.order),
     _skipped: result.skipped || [],

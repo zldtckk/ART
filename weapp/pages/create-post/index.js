@@ -183,7 +183,18 @@ Page({
         wx.switchTab({ url: '/pages/index/index' });
       }, 800);
     } catch (e) {
-      wx.showToast({ title: e.message || '发布失败', icon: 'none' });
+      if (e.code === -2) {
+        wx.showModal({
+          title: '需要先完成认证',
+          content: e.message,
+          confirmText: '去认证',
+          success: (res) => {
+            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
+          },
+        });
+      } else {
+        wx.showToast({ title: e.message || '发布失败', icon: 'none' });
+      }
     } finally {
       this.setData({ submitting: false });
     }

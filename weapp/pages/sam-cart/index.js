@@ -77,7 +77,18 @@ Page({
         wx.redirectTo({ url: `/pages/sam-order-detail/index?id=${order.id}` });
       }
     } catch (e) {
-      wx.showToast({ title: e.message || '下单失败', icon: 'none' });
+      if (e.code === -2) {
+        wx.showModal({
+          title: '需要先完成认证',
+          content: e.message,
+          confirmText: '去认证',
+          success: (res) => {
+            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
+          },
+        });
+      } else {
+        wx.showToast({ title: e.message || '下单失败', icon: 'none' });
+      }
     } finally {
       this.setData({ submitting: false });
     }

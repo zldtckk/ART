@@ -12,6 +12,9 @@ exports.main = async (event, context) => {
     if (!postId) return { code: 1, msg: '参数错误' };
     if (!OPENID) return { code: 1, msg: '未获取到用户身份' };
 
+    const userRes = await db.collection('users').where({ _openid: OPENID }).get();
+    const user = userRes.data[0] || {};
+
     // 获取帖子
     let post;
     try {
@@ -38,6 +41,8 @@ exports.main = async (event, context) => {
       return { code: 0, action: 'cancel' };
     }
 
+    if (!user.is_verified) return { code: 2, msg: '仅认证画室学生可报名攒局，请先完成认证' };
+
     // 校验未满员
     if ((post.gather_count || 1) >= (post.gather_limit || 4)) {
       return { code: 6, msg: '该局已满员' };
@@ -51,8 +56,6 @@ exports.main = async (event, context) => {
 
     // 通知发起人
     if (post._openid && post._openid !== OPENID) {
-      const userRes = await db.collection('users').where({ _openid: OPENID }).get();
-      const user = userRes.data[0] || {};
       await db.collection('notifications').add({
         data: {
           _openid: post._openid,

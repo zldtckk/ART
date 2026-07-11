@@ -33,6 +33,7 @@
     { "name": "getOrder", "runtime": "Nodejs16.13" },
     { "name": "getMyOrders", "runtime": "Nodejs16.13" },
     { "name": "getOrders", "runtime": "Nodejs16.13" },
-    { "name": "updateOrderStatus", "runtime": "Nodejs16.13" }
+    { "name": "updateOrderStatus", "runtime": "Nodejs16.13" },
+    { "name": "joinGathering", "runtime": "Nodejs16.13" }
   ]
 }

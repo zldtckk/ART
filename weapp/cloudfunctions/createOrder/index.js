@@ -8,6 +8,11 @@ const MAX_QTY = 50;
 
 exports.main = async (event) => {
   const openid = cloud.getWXContext().OPENID;
+
+  const userRes = await db.collection('users').where({ _openid: openid }).get();
+  const user = userRes.data[0] || {};
+  if (!user.is_verified) return { code: -2, msg: '仅认证画室学生可下单，请先完成认证' };
+
   const rawItems = Array.isArray(event.items) ? event.items : [];
   if (!rawItems.length) return { code: -1, msg: '购物车为空' };
 
@@ -43,9 +48,6 @@ exports.main = async (event) => {
 
   const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const note = String(event.note || '').trim().slice(0, MAX_NOTE_LEN);
-
-  const userRes = await db.collection('users').where({ _openid: openid }).get();
-  const user = userRes.data[0] || {};
 
   const doc = {
     _openid: openid,

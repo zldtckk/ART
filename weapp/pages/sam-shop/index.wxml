@@ -6,7 +6,12 @@
   </view>
 
   <scroll-view scroll-y class="shop-scroll">
-    <view wx:if="{{loading}}" class="loading-spinner"></view>
+    <view wx:if="{{unavailable}}" class="empty-state">
+      <text class="empty-icon">🚧</text>
+      <text class="empty-text">该功能暂未在杭州开放</text>
+      <text class="empty-hint">切换到广州即可使用</text>
+    </view>
+    <view wx:elif="{{loading}}" class="loading-spinner"></view>
     <view wx:elif="{{dishes.length === 0}}" class="empty-state">
       <text class="empty-icon">🛒</text>
       <text class="empty-text">暂无可代购的商品</text>
@@ -30,7 +35,7 @@
     <view class="shop-bottom-spacer"></view>
   </scroll-view>
 
-  <view wx:if="{{cartCount > 0}}" class="cart-bar" bindtap="goCart">
+  <view wx:if="{{!unavailable && cartCount > 0}}" class="cart-bar" bindtap="goCart">
     <view class="cart-icon-wrap">
       <text class="cart-icon">🛒</text>
       <text class="cart-badge">{{cartCount}}</text>

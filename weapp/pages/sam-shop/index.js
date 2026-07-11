@@ -7,9 +7,14 @@ Page({
     loading: true,
     cartCount: 0,
     cartTotal: '0.00',
+    unavailable: false,
   },
 
   onLoad() {
+    if (getApp().getCurrentCity() !== 'guangzhou') {
+      this.setData({ unavailable: true, loading: false });
+      return;
+    }
     this.loadDishes();
   },
 

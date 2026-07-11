@@ -103,7 +103,18 @@ Page({
       wx.showToast({ title: wasJoined ? '已取消报名' : '报名成功', icon: 'success' });
     } catch (e) {
       this.setData({ post: { ...this.data.post, is_joined: wasJoined, gather_count: post.gather_count } });
-      wx.showToast({ title: e.message || '操作失败', icon: 'none' });
+      if (e.code === 2) {
+        wx.showModal({
+          title: '需要先完成认证',
+          content: e.message,
+          confirmText: '去认证',
+          success: (res) => {
+            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
+          },
+        });
+      } else {
+        wx.showToast({ title: e.message || '操作失败', icon: 'none' });
+      }
     }
   },
 
