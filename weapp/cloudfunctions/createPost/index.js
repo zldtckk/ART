@@ -28,12 +28,14 @@ exports.main = async (event) => {
   const userRes = await db.collection('users').where({ _openid: openid }).get();
   const user = userRes.data[0] || {};
 
-  if (is_gathering && !user.is_verified) {
+  // 攒局页(create-gathering)直接传 board:'gathering'；旧的发帖页攒局开关传 is_gathering，两种都认
+  const isGatheringPost = board === 'gathering' || !!is_gathering;
+
+  if (isGatheringPost && !user.is_verified) {
     return { code: -2, msg: '仅认证画室学生可发起攒局，请先完成认证' };
   }
 
-  // 攒局帖固定存为 board:'gathering'，与 getGatherings() 的查询条件对齐
-  const finalBoard = is_gathering ? 'gathering' : board;
+  const finalBoard = isGatheringPost ? 'gathering' : board;
 
   const doc = {
     board: finalBoard,
@@ -57,7 +59,7 @@ exports.main = async (event) => {
     if (market_category) doc.market_category = market_category;
     if (price != null && price !== '') doc.price = parseFloat(price);
   }
-  if (is_gathering) {
+  if (isGatheringPost) {
     doc.is_gathering = true;
     doc.gather_type = gather_type || 'other';
     doc.gather_time = gather_time || '';
