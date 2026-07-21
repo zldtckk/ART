@@ -24,7 +24,10 @@
     "pages/sam-shop/index",
     "pages/sam-cart/index",
     "pages/sam-order-detail/index",
-    "pages/sam-my-orders/index"
+    "pages/sam-my-orders/index",
+    "pages/ai-score/index",
+    "pages/ai-score-result/index",
+    "pages/my-ai-scores/index"
   ],
   "window": {
     "navigationStyle": "custom",

@@ -40,14 +40,7 @@ Page({
 
   async loadPosts(page) {
     try {
-      const db = api.db;
-      const res = await db.collection('posts')
-        .where({ _openid: this.uid })
-        .orderBy('createTime', 'desc')
-        .skip((page - 1) * PAGE_LIMIT)
-        .limit(PAGE_LIMIT)
-        .get();
-      const posts = res.data.map(p => ({ ...p, id: p._id }));
+      const posts = await api.getUserPosts(this.uid, { page, limit: PAGE_LIMIT });
       this.setData({
         posts: page === 1 ? posts : this.data.posts.concat(posts),
         loading: false,

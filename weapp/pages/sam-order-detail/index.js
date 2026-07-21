@@ -9,13 +9,27 @@ Page({
     order: null,
     loading: true,
     isAdmin: false,
+    currentUserOpenid: '',
+    adminNoteInput: '',
+    noteSaving: false,
+    staffQr: '',
   },
 
   onLoad(options) {
     this.orderId = options.id;
     const user = auth.getUserProfile();
-    this.setData({ isAdmin: !!(user && (user.role === 'admin' || user.role === 'circle_master')) });
+    this.setData({
+      isAdmin: !!(user && user.is_admin),
+      currentUserOpenid: user && (user._openid || user.openid),
+    });
     this.loadOrder();
+    api.getStaffQr().then(staffQr => this.setData({ staffQr })).catch(() => {});
+  },
+
+  previewStaffQr() {
+    if (!this.data.staffQr) return;
+    wx.showToast({ title: '长按图片识别二维码添加', icon: 'none', duration: 2000 });
+    wx.previewImage({ urls: [this.data.staffQr], current: this.data.staffQr });
   },
 
   async loadOrder() {
@@ -28,6 +42,7 @@ Page({
           _statusText: STATUS_TEXT[order.status] || order.status,
           _createdAt: formatTime(order.createTime),
         },
+        adminNoteInput: order.admin_note || '',
         loading: false,
       });
     } catch (e) {
@@ -44,6 +59,37 @@ Page({
     } catch (e) {
       wx.showToast({ title: e.message || '操作失败', icon: 'none' });
     }
+  },
+
+  onAdminNoteInput(e) {
+    this.setData({ adminNoteInput: e.detail.value });
+  },
+
+  saveAdminNote() {
+    this.setData({ noteSaving: true });
+    api.updateOrderAdminNote(this.orderId, this.data.adminNoteInput.trim()).then(() => {
+      this.setData({ noteSaving: false });
+      wx.showToast({ title: '备注已保存', icon: 'success' });
+    }).catch((e) => {
+      this.setData({ noteSaving: false });
+      wx.showToast({ title: e.message || '保存失败', icon: 'none' });
+    });
+  },
+
+  cancelOrder() {
+    wx.showModal({
+      title: '确认取消',
+      content: '取消后不可恢复，确定要取消这个订单吗？',
+      success: (res) => {
+        if (!res.confirm) return;
+        api.cancelOrder(this.orderId).then(() => {
+          wx.showToast({ title: '已取消', icon: 'success' });
+          this.loadOrder();
+        }).catch((e) => {
+          wx.showToast({ title: e.message || '取消失败', icon: 'none' });
+        });
+      },
+    });
   },
 
   previewImage(e) {

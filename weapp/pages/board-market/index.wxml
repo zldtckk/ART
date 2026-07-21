@@ -33,7 +33,6 @@
         <view class="post-meta">
           <text class="post-name">{{item.display_name || '用户'}}</text>
         </view>
-        <text class="post-price">¥{{item.price}}</text>
       </view>
       <view class="post-content">{{item.content}}</view>
       <view wx:if="{{item._imageCount > 0}}" class="post-img-grid post-img-grid-{{item._imageCount}}">

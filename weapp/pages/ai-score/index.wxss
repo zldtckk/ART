@@ -1,0 +1,181 @@
+/* 参照 D:\Brain\07_Projects\04-ART-画室圈\local-score-web 的编辑风视觉语言：
+   暖纸色底 + 墨黑 + 朱红，锐角边框，衬线大标题，等宽字母眉标，细描边、细进度条。
+   与全局粉色系其他页面刻意区分开，测分是这个功能独立的产品调性。 */
+
+.ai-score-page {
+  --paper: #f1eee6;
+  --paper-deep: #e6e0d3;
+  --ink: #171713;
+  --muted: #706d64;
+  --line: rgba(23, 23, 19, 0.16);
+  --red: #d94b38;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.ai-score-page .header {
+  background: rgba(241,238,230,0.92);
+  border-bottom: 1px solid var(--line);
+}
+.ai-score-page .header-title { color: var(--ink); font-weight: 700; }
+.ai-score-page .back-btn { color: var(--red); }
+
+.score-scroll { flex: 1; min-height: 0; padding: 32rpx 28rpx; box-sizing: border-box; }
+
+/* ── Hero ── */
+.hero { padding: 8rpx 4rpx 40rpx; display: flex; flex-direction: column; }
+.eyebrow {
+  font-size: 20rpx;
+  font-weight: 700;
+  letter-spacing: 3rpx;
+  color: var(--red);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  margin-bottom: 20rpx;
+}
+.hero-title {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 52rpx;
+  font-weight: 500;
+  line-height: 1.32;
+  color: var(--ink);
+  letter-spacing: -1rpx;
+}
+.hero-em { color: var(--red); position: relative; }
+.hero-copy {
+  font-size: 25rpx;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-top: 20rpx;
+  display: block;
+}
+
+/* ── 卡片基础：锐角 + 细描边，不用圆角、不用粉色阴影 ── */
+.card {
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 0;
+  box-shadow: 0 20rpx 60rpx rgba(42,37,28,0.08);
+  padding: 36rpx 28rpx;
+  margin-bottom: 24rpx;
+}
+
+/* ── Step 标题 ── */
+.step-title { display: flex; gap: 20rpx; align-items: flex-start; margin-bottom: 28rpx; }
+.step-title-compact { margin-top: 40rpx; }
+.step-num {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: var(--red);
+  border-top: 3rpx solid var(--red);
+  padding-top: 10rpx;
+  flex-shrink: 0;
+}
+.step-title-body { flex: 1; }
+.step-h { font-family: Georgia, "Songti SC", serif; font-size: 32rpx; font-weight: 600; color: var(--ink); display: block; }
+.step-p { font-size: 21rpx; color: var(--muted); display: block; margin-top: 6rpx; }
+
+/* ── 上传区 ── */
+.upload-zone {
+  position: relative;
+  min-height: 320rpx;
+  border: 1px dashed rgba(23,23,19,0.32);
+  background: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.upload-zone.has-image { border-style: solid; border-color: var(--line); background: #272621; }
+.upload-preview { width: 100%; height: 460rpx; display: block; }
+.upload-empty { text-align: center; padding: 40rpx 0; }
+.upload-icon {
+  width: 96rpx;
+  height: 96rpx;
+  margin: 0 auto 14rpx;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-weight: 300;
+  font-size: 52rpx;
+  color: var(--red);
+}
+.upload-empty-strong { font-size: 26rpx; color: var(--ink); display: block; }
+.upload-empty-sub { font-size: 20rpx; color: var(--muted); display: block; margin-top: 10rpx; }
+.replace-button {
+  position: absolute;
+  right: 20rpx;
+  top: 20rpx;
+  background: rgba(241,238,230,0.92);
+  padding: 12rpx 20rpx;
+  font-size: 22rpx;
+  color: var(--ink);
+}
+
+/* ── 表单字段 ── */
+.field-grid { display: flex; gap: 20rpx; margin-top: 32rpx; }
+.field { flex: 1; }
+.field-label { font-size: 21rpx; color: var(--muted); display: block; margin-bottom: 12rpx; }
+.field-select {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.4);
+  padding: 22rpx 20rpx;
+  font-size: 26rpx;
+  color: var(--ink);
+}
+
+.quota-line { margin-top: 24rpx; font-size: 22rpx; color: var(--muted); text-align: center; }
+.quota-line.quota-line-empty { color: var(--red); font-weight: 600; }
+
+.submit-button {
+  margin-top: 28rpx;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: 26rpx 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 27rpx;
+}
+.submit-button[disabled] { background: rgba(23,23,19,0.35); color: #fff; }
+.submit-label { flex: 1; text-align: left; }
+.submit-arrow { font-size: 27rpx; }
+
+.disclaimer { display: block; text-align: center; font-size: 19rpx; color: var(--muted); margin-top: 8rpx; }
+
+.score-bottom-spacer { height: 60rpx; }
+
+/* ── 对比模式横幅 ── */
+.compare-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  background: var(--ink);
+  padding: 24rpx 24rpx;
+  margin-bottom: 0;
+}
+.compare-banner-icon {
+  font-size: 34rpx;
+  color: #f1eee6;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.compare-banner-body { flex: 1; }
+.compare-banner-title {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #f1eee6;
+  display: block;
+  margin-bottom: 6rpx;
+}
+.compare-banner-sub {
+  font-size: 20rpx;
+  color: rgba(241,238,230,0.65);
+  line-height: 1.6;
+}

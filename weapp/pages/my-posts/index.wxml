@@ -15,7 +15,7 @@
         <view class="post-card" bindtap="onCardTap" data-id="{{item._id || item.id}}">
           <view class="post-content">{{item.content}}</view>
           <view class="post-meta-line">
-            <text class="meta-item">{{item.board === 'market' ? '二手' : item.board === 'circle' ? '画室圈' : '粉丝圈'}}</text>
+            <text class="meta-item">{{item.board === 'market' ? '二手' : item.board === 'circle' ? '艺考圈' : '粉丝圈'}}</text>
             <text class="meta-item">{{item.created_at}}</text>
             <text class="meta-item">💬 {{item.comment_count}}</text>
             <text class="meta-item">{{item.is_liked ? '❤️' : '🤍'}} {{item.like_count}}</text>

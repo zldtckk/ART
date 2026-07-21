@@ -3,6 +3,7 @@ const auth = require('../../utils/auth');
 const { BOARDS, PAGE_SIZE } = require('../../utils/constants');
 const { getCircleTypeName } = require('../../utils/formatter');
 const { CITIES } = require('../../config/city');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -17,7 +18,7 @@ Page({
     tabs: [
       { key: 'all', name: '全部' },
       { key: 'hot', name: '热帖' },
-      { key: 'circle', name: '画室圈' },
+      { key: 'circle', name: '艺考圈' },
       { key: 'market', name: '二手' },
     ],
     currentTab: 'all',
@@ -207,6 +208,10 @@ Page({
     wx.navigateTo({ url: '/pages/sam-shop/index' });
   },
 
+  goAIScore() {
+    wx.navigateTo({ url: '/pages/ai-score/index' });
+  },
+
   goSearch() { wx.navigateTo({ url: '/pages/search/index' }); },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goLogin() { wx.navigateTo({ url: '/pages/login/index' }); },
@@ -225,12 +230,13 @@ Page({
           : p
       ),
     });
-    api.toggleLike(id).catch(() => {
+    api.toggleLike(id).catch((err) => {
       this.setData({
         posts: this.data.posts.map(p =>
           (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
         ),
       });
+      handleApiError(err);
     });
   },
 
@@ -245,12 +251,13 @@ Page({
         (p._id === id || p.id === id) ? { ...p, is_favorited: !wasFavorited } : p
       ),
     });
-    api.toggleFavorite(id).catch(() => {
+    api.toggleFavorite(id).catch((err) => {
       this.setData({
         posts: this.data.posts.map(p =>
           (p._id === id || p.id === id) ? { ...p, is_favorited: wasFavorited } : p
         ),
       });
+      handleApiError(err);
     });
   },
 
@@ -285,7 +292,7 @@ Page({
   onShareAppMessage() {
     const city = CITIES.find(c => c.slug === this.data.currentCity);
     return {
-      title: city ? city.shareTitle : '画室圈',
+      title: city ? city.shareTitle : '艺考圈',
       path: '/pages/index/index',
     };
   },
@@ -293,7 +300,7 @@ Page({
   onShareTimeline() {
     const city = CITIES.find(c => c.slug === this.data.currentCity);
     return {
-      title: city ? city.shareTitle : '画室圈',
+      title: city ? city.shareTitle : '艺考圈',
       query: '',
     };
   },

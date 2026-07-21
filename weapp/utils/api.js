@@ -1,5 +1,4 @@
-const db = wx.cloud.database();
-const _ = db.command;
+const request = require('./request');
 const { formatTime, displayName } = require('./formatter');
 const { CITIES } = require('../config/city');
 
@@ -9,528 +8,259 @@ function getCurrentCity() {
 }
 
 // ── Helpers ──
-
+// 新后端返回 id/openid/created_at，这里补回 _id/_openid/createTime，
+// 让页面层（大量用 post._id、post._openid、post.createTime）基本不用改，
+// created_at 覆盖成格式化后的展示字符串，和原来客户端 enrichPosts 的行为一致
 function mapDoc(doc) {
   if (!doc) return doc;
-  return { id: doc._id, ...doc };
+  const out = { ...doc };
+  if (doc.id !== undefined) out._id = doc.id;
+  // 原客户端 enrichPosts/enrichComments 会把作者 openid 额外存一份到 user_id 字段
+  // （用于头像点击跳转等），这里补回来，否则 data-uid="{{post.user_id}}" 会是空的点了没反应
+  if (doc.openid !== undefined) { out._openid = doc.openid; out.user_id = doc.openid; }
+  if (doc.created_at !== undefined) {
+    out.createTime = doc.created_at;
+    out.created_at = formatTime(doc.created_at);
+  }
+  if (doc.updated_at !== undefined) out.updateTime = doc.updated_at;
+  return out;
 }
-
 function mapDocs(docs) {
   return (docs || []).map(mapDoc);
-}
-
-// ── Enrichment (fetch user profiles for display) ──
-
-// 通过云函数批量获取公开资料（users 集合已锁为仅创建者可读写，客户端无法读他人）
-async function fetchUserMap(openids) {
-  const unique = [...new Set((openids || []).filter(Boolean))];
-  if (!unique.length) return {};
-  const userMap = {};
-  try {
-    const res = await wx.cloud.callFunction({ name: 'getUserProfiles', data: { openids: unique } });
-    (res.result && res.result.users || []).forEach(u => { userMap[u._openid] = u; });
-  } catch (e) { /* 失败时回退为空，展示兜底名称 */ }
-  return userMap;
-}
-
-async function enrichPosts(posts) {
-  if (!posts || !posts.length) return posts;
-  const openids = posts.map(p => p._openid);
-  const userMap = await fetchUserMap(openids);
-  return posts.map(p => {
-    const author = userMap[p._openid] || {};
-    return {
-      ...p,
-      display_name: displayName(author),
-      display_avatar: author.avatar_url || '',
-      user_id: p._openid,
-      created_at: formatTime(p.createTime),
-    };
-  });
-}
-
-async function enrichComments(comments) {
-  if (!comments || !comments.length) return comments;
-  const allOpenIds = comments.map(c => c._openid);
-  // 也拉取被回复者的信息
-  const replyToIds = comments.filter(c => c.reply_to_user_id).map(c => c.reply_to_user_id);
-  const uniqueIds = [...new Set([...allOpenIds, ...replyToIds])].filter(Boolean);
-  const userMap = await fetchUserMap(uniqueIds);
-  return comments.map(c => {
-    const author = userMap[c._openid] || {};
-    const replyToUser = c.reply_to_user_id ? userMap[c.reply_to_user_id] : null;
-    return {
-      ...c,
-      display_name: displayName(author),
-      display_avatar: author.avatar_url || '',
-      user_id: c._openid,
-      created_at: formatTime(c.createTime),
-      reply_to_name: replyToUser ? displayName(replyToUser) : null,
-    };
-  });
-}
-
-// ── Auth ──
-
-async function login() {
-  const res = await wx.cloud.callFunction({ name: 'login' });
-  return res.result;
 }
 
 // ── Studios ──
 
 async function getStudios() {
-  const res = await wx.cloud.callFunction({ name: 'getStudios', data: { city: getCurrentCity() } });
-  if (res.result.code !== 0) return [];
-  return mapDocs(res.result.studios || []);
+  const res = await request.get('/studios', { city: getCurrentCity() }).catch(() => ({ studios: [] }));
+  return mapDocs(res.studios);
 }
 
-// 管理后台用，查全部画室
 async function getAllStudios() {
-  const res = await wx.cloud.callFunction({ name: 'getStudios', data: { city: null } });
-  if (res.result.code !== 0) return [];
-  return mapDocs(res.result.studios || []);
+  const res = await request.get('/studios').catch(() => ({ studios: [] }));
+  return mapDocs(res.studios);
 }
 
 // ── Posts ──
 
 async function getPosts({ board, studio_id, circle_type, fan_type, market_category, market_tag, sort, page = 1, limit = 20 } = {}) {
-  const conditions = {};
-  if (board) conditions.board = board;
-  else conditions.board = _.neq('gathering'); // 主信息流不显示攒局帖
-  if (studio_id) conditions.studio_id = studio_id;
-  if (circle_type && circle_type !== 'all') conditions.circle_type = circle_type;
-  if (fan_type && fan_type !== 'all') conditions.fan_type = fan_type;
-  if (market_category && market_category !== 'all') conditions.market_category = market_category;
-  if (market_tag && market_tag !== 'all') conditions.market_tag = market_tag;
-
-  conditions.city = getCurrentCity();
-
-  let query = db.collection('posts').where(conditions);
-  if (sort === 'hot') {
-    query = query.orderBy('like_count', 'desc');
-  } else {
-    query = query.orderBy('createTime', 'desc');
-  }
-  query = query.skip((page - 1) * limit).limit(limit);
-
-  const res = await query.get();
-  const posts = mapDocs(res.data);
-  const enriched = await enrichPosts(posts);
-
-  const openid = getApp().globalData.user && getApp().globalData.user._openid;
-  if (openid && enriched.length > 0) {
-    try {
-      const postIds = enriched.map(p => p._id);
-      const [myLikes, myFavs] = await Promise.all([
-        db.collection('likes').where({ post_id: _.in(postIds) }).get(),
-        db.collection('favorites').where({ post_id: _.in(postIds) }).get(),
-      ]);
-      const likedSet = new Set(myLikes.data.map(l => l.post_id));
-      const favSet = new Set(myFavs.data.map(f => f.post_id));
-      return enriched.map(p => ({ ...p, is_liked: likedSet.has(p._id), is_favorited: favSet.has(p._id) }));
-    } catch (e) {
-      return enriched;
-    }
-  }
-  return enriched;
+  const res = await request.get('/posts', {
+    board, studio_id, circle_type, fan_type, market_category, market_tag, sort, page, limit,
+    city: getCurrentCity(),
+  });
+  return mapDocs(res.posts);
 }
 
 async function getPost(id) {
-  const res = await db.collection('posts').doc(id).get();
-  const post = mapDoc(res.data);
-  const enriched = await enrichPosts([post]);
-  const p = enriched[0] || post;
-
-  const openid = getApp().globalData.user && getApp().globalData.user._openid;
-  if (openid) {
-    try {
-      const [likeRes, favRes] = await Promise.all([
-        db.collection('likes').where({ post_id: id }).get(),
-        db.collection('favorites').where({ post_id: id }).get(),
-      ]);
-      p.is_liked = likeRes.data.some(l => l._openid === openid);
-      p.is_favorited = favRes.data.some(f => f._openid === openid);
-    } catch (e) { /* 查询失败不影响帖子展示 */ }
-  }
-  return p;
+  const res = await request.get(`/posts/${id}`);
+  return mapDoc(res.post);
 }
 
 async function createPost(data) {
-  const res = await wx.cloud.callFunction({ name: 'createPost', data: { ...data, city: getCurrentCity() } });
-  const result = res.result || {};
-  if (result.code !== 0) {
-    const err = new Error(result.msg || '发布失败');
-    err.code = result.code;
-    throw err;
-  }
-  return mapDoc(result.post);
+  const res = await request.post('/posts', { ...data, city: getCurrentCity() });
+  return mapDoc(res.post);
 }
 
 async function deletePost(id) {
-  // 走云函数：校验作者/管理员，一次删净所有用户的关联数据
-  const res = await wx.cloud.callFunction({ name: 'deletePost', data: { postId: id } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '删除失败');
-  return result;
+  return request.del(`/posts/${id}`);
 }
 
 // ── Comments ──
 
 async function getComments(postId) {
-  const res = await db.collection('comments')
-    .where({ post_id: postId })
-    .orderBy('createTime', 'asc')
-    .get();
-  const comments = mapDocs(res.data);
-  return enrichComments(comments);
+  const res = await request.get(`/posts/${postId}/comments`);
+  return mapDocs(res.comments);
 }
 
 async function addComment(postId, content, opts = {}) {
-  // 走云函数：校验帖子存在、原子更新评论数、发通知
-  const res = await wx.cloud.callFunction({
-    name: 'addComment',
-    data: {
-      postId,
-      content,
-      parent_comment_id: opts.parentCommentId || undefined,
-      reply_to_user_id: opts.replyToUserId || undefined,
-    },
+  const res = await request.post(`/posts/${postId}/comments`, {
+    content,
+    parent_comment_id: opts.parentCommentId || undefined,
+    reply_to_user_id: opts.replyToUserId || undefined,
   });
-  const result = res.result || {};
-  if (result.code !== 0 || !result.comment) {
-    throw new Error(result.msg || '评论失败');
-  }
-  const user = (getApp().globalData.user) || {};
-  const comment = {
-    ...result.comment,
-    display_name: displayName(user),
-    display_avatar: user.avatar_url || '',
-    user_id: result.comment._openid || user._openid,
-    created_at: formatTime(result.comment.createTime),
-  };
-  // 如果是回复，解析被回复者昵称
-  if (comment.reply_to_user_id) {
-    const replyUserMap = await fetchUserMap([comment.reply_to_user_id]);
-    const replyToUser = replyUserMap[comment.reply_to_user_id];
-    comment.reply_to_name = replyToUser ? displayName(replyToUser) : null;
-  }
-  return mapDoc(comment);
+  return mapDoc(res.comment);
 }
 
-// ── Likes ──
+// ── Likes / Favorites ──
 
 async function toggleLike(postId) {
-  const res = await wx.cloud.callFunction({ name: 'toggleLike', data: { postId } });
-  return res.result;
+  return request.post(`/posts/${postId}/like`);
 }
 
-// ── Favorites ──
-
 async function toggleFavorite(postId) {
-  const res = await wx.cloud.callFunction({ name: 'toggleFavorite', data: { postId } });
-  return res.result;
+  return request.post(`/posts/${postId}/favorite`);
 }
 
 // ── Users ──
 
 async function getUserProfile(userId) {
-  // 走云函数取公开资料（users 集合客户端只能读自己）
-  const map = await fetchUserMap([userId]);
-  const u = map[userId];
-  return u ? mapDoc(u) : null;
+  try {
+    const res = await request.get(`/users/${userId}`);
+    return mapDoc(res.user);
+  } catch (e) {
+    return null;
+  }
+}
+
+async function getUserPosts(userId, { page = 1, limit = 20 } = {}) {
+  const res = await request.get(`/users/${userId}/posts`, { page, limit }).catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
 async function getMyProfile() {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return null;
-  const res = await db.collection('users').where({ _openid: openid }).get();
-  return mapDoc(res.data[0]);
+  const res = await request.get('/me/profile').catch(() => null);
+  return res ? mapDoc(res.user) : null;
 }
 
 async function updateUser(data) {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return null;
-  const res = await db.collection('users').where({
-    _openid: openid,
-  }).update({ data });
-  return res;
+  return request.patch('/me/profile', data);
 }
 
 async function getUserStats() {
-  const res = await wx.cloud.callFunction({ name: 'getUserStats' });
-  return res.result;
+  return request.get('/me/stats');
 }
 
 async function submitVerification(data) {
-  const openid = getApp().globalData.user._openid;
-  if (!openid) return null;
-  const res = await db.collection('users').where({
-    _openid: openid,
-  }).update({
-    data: {
-      real_name: data.real_name,
-      student_id_url: data.student_id_url,
-      studio_id: data.studio_id,
-      class_name: data.class_name,
-      verification_status: 'pending',
-      verification_method: data.method,
-    },
-  });
-  return res;
+  return request.post('/me/verification', data);
 }
 
 async function incrementViewCount(postId) {
-  wx.cloud.callFunction({ name: 'incrementViewCount', data: { postId } }).catch(() => {});
+  request.post(`/posts/${postId}/view`).catch(() => {});
 }
 
 async function getPendingVerifications() {
-  // 走云函数（含管理员校验，users 集合客户端只能读自己）
-  const res = await wx.cloud.callFunction({ name: 'getPendingVerifications' });
-  return mapDocs((res.result && res.result.users) || []);
+  const res = await request.get('/admin/verifications/pending').catch(() => ({ users: [] }));
+  return mapDocs(res.users);
 }
 
 async function approveVerification(userId) {
-  const res = await wx.cloud.callFunction({ name: 'approveVerification', data: { userId } });
-  return res.result;
+  return request.post(`/admin/verifications/${userId}/approve`);
 }
 
 async function rejectVerification(userId, reason) {
-  const res = await wx.cloud.callFunction({ name: 'rejectVerification', data: { userId, reason } });
-  return res.result;
+  return request.post(`/admin/verifications/${userId}/reject`, { reason });
 }
 
 // ── Admin ──
 
 async function addStudio(name, district) {
-  const res = await wx.cloud.callFunction({ name: 'addStudio', data: { name, district, city: getCurrentCity() } });
-  if (res.result.code !== 0) throw new Error(res.result.msg || '添加失败');
-  return res.result.studio;
+  const res = await request.post('/admin/studios', { name, district, city: getCurrentCity() });
+  return mapDoc(res.studio);
 }
 
 // ── My Content ──
 
 async function getMyPosts({ page = 1, limit = 20 } = {}) {
-  const user = (getApp().globalData.user) || {};
-  const openid = user._openid;
-  if (!openid) return [];
-  const res = await db.collection('posts')
-    .where({ _openid: openid })
-    .orderBy('createTime', 'desc')
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .get();
-  const posts = mapDocs(res.data);
-  return enrichPosts(posts);
+  const res = await request.get('/me/posts', { page, limit }).catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
 async function getMyComments({ page = 1, limit = 20 } = {}) {
-  const user = (getApp().globalData.user) || {};
-  const openid = user._openid;
-  if (!openid) return [];
-  const res = await db.collection('comments')
-    .where({ _openid: openid })
-    .orderBy('createTime', 'desc')
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .get();
-
-  if (!res.data.length) return [];
-
-  const postIds = [...new Set(res.data.map(c => c.post_id))];
-  const postsRes = await db.collection('posts').where({ _id: _.in(postIds) }).get();
-  const postMap = {};
-  postsRes.data.forEach(p => { postMap[p._id] = p; });
-
-  return mapDocs(res.data).map(c => ({
-    ...c,
-    post_content: (postMap[c.post_id] && postMap[c.post_id].content) || '',
-  }));
+  const res = await request.get('/me/comments', { page, limit }).catch(() => ({ comments: [] }));
+  return mapDocs(res.comments);
 }
 
 async function getMyFavorites({ page = 1, limit = 20 } = {}) {
-  const user = (getApp().globalData.user) || {};
-  const openid = user._openid;
-  if (!openid) return [];
-  const favRes = await db.collection('favorites')
-    .where({ _openid: openid })
-    .orderBy('createTime', 'desc')
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .get();
-
-  if (!favRes.data.length) return [];
-
-  // 去重：同一帖子多条收藏记录，保留首条，多余的标记待清理
-  const seen = new Set();
-  const dupIds = [];
-  favRes.data.forEach(f => {
-    if (seen.has(f.post_id)) dupIds.push(f._id);
-    else seen.add(f.post_id);
-  });
-
-  const postIds = [...seen];
-  const postsRes = await db.collection('posts').where({ _id: _.in(postIds) }).get();
-  const posts = mapDocs(postsRes.data);
-  const existingPostIds = new Set(posts.map(p => p._id));
-
-  // 自愈：清理孤儿收藏（帖子已删除）+ 重复记录，使收藏数与实际一致
-  const orphanIds = favRes.data.filter(f => !existingPostIds.has(f.post_id)).map(f => f._id);
-  const toRemove = [...new Set([...dupIds, ...orphanIds])];
-  if (toRemove.length) {
-    Promise.all(toRemove.map(id => db.collection('favorites').doc(id).remove())).catch(() => {});
-  }
-
-  return enrichPosts(posts);
+  const res = await request.get('/me/favorites', { page, limit }).catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
-// ── Conversations & Messages (云函数，集合已锁为仅管理端可读写) ──
+// ── Conversations & Messages ──
 
 async function getConversationList() {
-  const res = await wx.cloud.callFunction({ name: 'getConversationList' });
-  return mapDocs((res.result && res.result.conversations) || []);
+  const res = await request.get('/conversations').catch(() => ({ conversations: [] }));
+  return mapDocs(res.conversations);
 }
 
 async function getConversationMessages(conversationId) {
-  const res = await wx.cloud.callFunction({ name: 'getConversationMessages', data: { conversationId } });
-  return mapDocs((res.result && res.result.messages) || []);
+  const res = await request.get(`/conversations/${conversationId}/messages`).catch(() => ({ messages: [] }));
+  return mapDocs(res.messages);
 }
 
 async function markConversationRead(conversationId) {
-  await wx.cloud.callFunction({ name: 'markConversationRead', data: { conversationId } }).catch(() => {});
+  await request.post(`/conversations/${conversationId}/read`).catch(() => {});
 }
 
-// ── Messages (cloud functions) ──
-
 async function getConversation(peerId) {
-  const res = await wx.cloud.callFunction({
-    name: 'getConversation',
-    data: { peerId },
-  });
-  return res.result;
+  const res = await request.post('/conversations', { peerId });
+  return { conversation: mapDoc(res.conversation) };
 }
 
 async function sendMessage(conversationId, content, extra = {}) {
-  const res = await wx.cloud.callFunction({
-    name: 'sendMessage',
-    data: { conversationId, content, ...extra },
-  });
-  return res.result;
+  const res = await request.post(`/conversations/${conversationId}/messages`, { content, ...extra });
+  return { ...res, message: mapDoc(res.message) };
 }
 
 async function getNotifications() {
-  const res = await wx.cloud.callFunction({ name: 'getNotifications' });
-  return res.result;
+  const res = await request.get('/notifications');
+  return { ...res, notifications: mapDocs(res.notifications) };
 }
 
 async function getUnreadCount() {
-  const res = await wx.cloud.callFunction({ name: 'getUnreadCount' });
-  return res.result || { notification_unread: 0, message_unread: 0, total_unread: 0 };
+  return request.get('/me/unread-count').catch(() => ({ notification_unread: 0, message_unread: 0, total_unread: 0 }));
 }
 
 async function deleteNotification(notificationId) {
-  const res = await wx.cloud.callFunction({ name: 'deleteNotification', data: { notificationId } });
-  return res.result;
+  return request.del(`/notifications/${notificationId}`);
 }
 
 async function deleteConversation(conversationId) {
-  const res = await wx.cloud.callFunction({ name: 'deleteConversation', data: { conversationId } });
-  return res.result;
+  return request.del(`/conversations/${conversationId}`);
 }
 
 async function markNotificationsRead() {
   const user = getApp().globalData.user;
   if (!user) return;
-  await wx.cloud.callFunction({ name: 'markNotificationsRead' });
+  await request.post('/notifications/read').catch(() => {});
 }
 
 // ── Search ──
 
 async function searchPosts(keyword, limit = 20) {
   if (!keyword || !keyword.trim()) return [];
-  const reg = db.RegExp({ regexp: keyword.trim(), options: 'i' });
-  const res = await db.collection('posts')
-    .where({ content: reg, board: _.neq('gathering'), city: getCurrentCity() })
-    .orderBy('createTime', 'desc')
-    .limit(limit)
-    .get();
-  const posts = mapDocs(res.data).map(p => ({
-    ...p,
-    created_at: formatTime(p.createTime),
-    display_name: p.display_name || null,
-  }));
-  return await enrichPosts(posts);
+  const res = await request.get('/posts/search', { q: keyword.trim(), limit, city: getCurrentCity() }).catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
 // ── Verification Code ──
 
 async function verifyStudioCode(code) {
-  const res = await wx.cloud.callFunction({
-    name: 'verifyCode',
-    data: { code },
-  });
-  return res.result;
+  return request.post('/verify/code', { code });
 }
 
 // ── Gatherings ──
 
 async function getJoinedGatherings() {
-  const openid = getApp().globalData.user && getApp().globalData.user._openid;
-  if (!openid) return [];
-  const joinRes = await db.collection('gatherings').where({ _openid: openid }).orderBy('createTime', 'desc').get();
-  if (!joinRes.data.length) return [];
-  const postIds = joinRes.data.map(g => g.post_id);
-  const postsRes = await db.collection('posts').where({ _id: _.in(postIds) }).get();
-  const posts = mapDocs(postsRes.data);
-  return enrichPosts(posts);
+  const res = await request.get('/me/gatherings').catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
 async function getGatherings({ type, page = 1, limit = 20 } = {}) {
-  const conditions = { board: 'gathering', city: getCurrentCity() };
-  if (type && type !== 'all') conditions.gather_type = type;
-  const res = await db.collection('posts')
-    .where(conditions)
-    .orderBy('createTime', 'desc')
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .get();
-  const posts = mapDocs(res.data);
-  const enriched = await enrichPosts(posts);
-  const openid = getApp().globalData.user && getApp().globalData.user._openid;
-  if (openid && enriched.length) {
-    const postIds = enriched.map(p => p._id);
-    const joinRes = await db.collection('gatherings').where({ post_id: _.in(postIds), _openid: openid }).get().catch(() => ({ data: [] }));
-    const joinedSet = new Set(joinRes.data.map(g => g.post_id));
-    return enriched.map(p => ({ ...p, is_joined: joinedSet.has(p._id) }));
-  }
-  return enriched;
+  const res = await request.get('/gatherings', { type, page, limit, city: getCurrentCity() }).catch(() => ({ posts: [] }));
+  return mapDocs(res.posts);
 }
 
 async function joinGathering(postId) {
-  const res = await wx.cloud.callFunction({ name: 'joinGathering', data: { postId } });
-  const result = res.result || {};
-  if (result.code !== 0) {
-    const err = new Error(result.msg || '操作失败');
-    err.code = result.code;
-    throw err;
-  }
+  const result = await request.post(`/posts/${postId}/join`);
   return result;
 }
 
-async function uploadQrCode(filePath) {
-  const cloudPath = `qrcodes/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
-  const res = await wx.cloud.uploadFile({ cloudPath, filePath });
-  return res.fileID;
+async function setGatherQr(postId, url) {
+  return request.patch(`/posts/${postId}/gather-qr`, { gather_qr: url });
 }
 
 // ── Image Upload ──
 
+async function uploadQrCode(filePath) {
+  const res = await request.uploadFile('/upload/qrcode', filePath);
+  return res.url;
+}
+
 async function uploadImage(filePath) {
   const { compressImage } = require('./compress');
   const compressed = await compressImage(filePath);
-  const cloudPath = `images/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.jpg`;
-  const res = await wx.cloud.uploadFile({ cloudPath, filePath: compressed });
-  return res.fileID;
+  const res = await request.uploadFile('/upload/image', compressed);
+  return res.url;
 }
 
 async function uploadImages(filePaths) {
@@ -538,52 +268,81 @@ async function uploadImages(filePaths) {
   return Promise.all(tasks);
 }
 
+// ── AI素描测分 ──
+
+async function getScoreQuota() {
+  const res = await request.get('/score/quota').catch(() => ({ used: 0, limit: 50, remaining: 50 }));
+  return res;
+}
+
+async function submitScore(imageUrl, foundation, monthsLeft, province, prevScore = null) {
+  const res = await request.post('/score', { imageUrl, foundation, monthsLeft, province, prevScore });
+  return res;
+}
+
+async function getScoreHistory() {
+  const res = await request.get('/score/history').catch(() => ({ scores: [] }));
+  return mapDocs(res.scores);
+}
+
 // ── 山姆代购 ──
 
 async function getDishes() {
-  const res = await wx.cloud.callFunction({ name: 'getDishes' });
-  const result = res.result || {};
-  if (result.code !== 0) return [];
-  return mapDocs(result.dishes || []);
+  const res = await request.get('/sam/dishes').catch(() => ({ dishes: [] }));
+  return mapDocs(res.dishes);
 }
 
-// 管理后台用，查全部菜品（含已下架）
+async function getStaffQr() {
+  const res = await request.get('/sam/staff-qr').catch(() => ({ qr_url: '' }));
+  return res.qr_url || '';
+}
+
+async function setStaffQr(qrUrl) {
+  return request.patch('/admin/sam/staff-qr', { qr_url: qrUrl });
+}
+
 async function getAllDishes() {
-  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'list' } });
-  const result = res.result || {};
-  if (result.code !== 0) return [];
-  return mapDocs(result.dishes || []);
+  const res = await request.get('/admin/sam/dishes').catch(() => ({ dishes: [] }));
+  return mapDocs(res.dishes);
 }
 
 async function addDish(data) {
-  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'create', ...data } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '添加失败');
-  return mapDoc(result.dish);
+  const res = await request.post('/admin/sam/dishes', data);
+  return mapDoc(res.dish);
 }
 
 async function updateDish(id, data) {
-  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'update', id, ...data } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '更新失败');
-  return result;
+  return request.patch(`/admin/sam/dishes/${id}`, data);
 }
 
 async function deleteDish(id) {
-  const res = await wx.cloud.callFunction({ name: 'manageDish', data: { action: 'delete', id } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '删除失败');
-  return result;
+  return request.del(`/admin/sam/dishes/${id}`);
 }
 
-async function createOrder(items, note) {
-  const res = await wx.cloud.callFunction({ name: 'createOrder', data: { items, note } });
-  const result = res.result || {};
-  if (result.code !== 0) {
-    const err = new Error(result.msg || '下单失败');
-    err.code = result.code;
-    throw err;
-  }
+async function getSamLocations() {
+  const res = await request.get('/sam/locations').catch(() => ({ locations: [] }));
+  return res.locations || [];
+}
+
+async function getAdminSamLocations() {
+  const res = await request.get('/admin/sam/locations').catch(() => ({ locations: [] }));
+  return res.locations || [];
+}
+
+async function addSamLocation(data) {
+  return request.post('/admin/sam/locations', data);
+}
+
+async function updateSamLocation(id, data) {
+  return request.patch(`/admin/sam/locations/${id}`, data);
+}
+
+async function deleteSamLocation(id) {
+  return request.del(`/admin/sam/locations/${id}`);
+}
+
+async function createOrder(items, note, deliveryLocation) {
+  const result = await request.post('/sam/orders', { items, note, delivery_location: deliveryLocation || '' });
   return {
     ...mapDoc(result.order),
     _skipped: result.skipped || [],
@@ -592,35 +351,76 @@ async function createOrder(items, note) {
 }
 
 async function getOrder(id) {
-  const res = await wx.cloud.callFunction({ name: 'getOrder', data: { id } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '订单不存在');
-  return mapDoc(result.order);
+  const res = await request.get(`/sam/orders/${id}`);
+  return mapDoc(res.order);
 }
 
 async function getMyOrders() {
-  const res = await wx.cloud.callFunction({ name: 'getMyOrders' });
-  const result = res.result || {};
-  if (result.code !== 0) return [];
-  return mapDocs(result.orders || []);
+  const res = await request.get('/sam/orders/mine').catch(() => ({ orders: [] }));
+  return mapDocs(res.orders);
 }
 
 async function getOrders(status) {
-  const res = await wx.cloud.callFunction({ name: 'getOrders', data: { status } });
-  const result = res.result || {};
-  if (result.code !== 0) return [];
-  return mapDocs(result.orders || []);
+  const res = await request.get('/admin/sam/orders', { status }).catch(() => ({ orders: [] }));
+  return mapDocs(res.orders);
+}
+
+async function getOrdersSummary(status) {
+  const res = await request.get('/admin/sam/orders/summary', { status }).catch(() => ({ summary: [] }));
+  return res.summary || [];
 }
 
 async function updateOrderStatus(id, status) {
-  const res = await wx.cloud.callFunction({ name: 'updateOrderStatus', data: { id, status } });
-  const result = res.result || {};
-  if (result.code !== 0) throw new Error(result.msg || '操作失败');
-  return result;
+  return request.patch(`/admin/sam/orders/${id}`, { status });
+}
+
+async function updateOrderAdminNote(id, adminNote) {
+  return request.patch(`/admin/sam/orders/${id}`, { admin_note: adminNote });
+}
+
+async function cancelOrder(id) {
+  return request.post(`/sam/orders/${id}/cancel`);
+}
+
+// ── 代购全局下单开关 ──
+
+async function getSamOrderSwitch() {
+  const res = await request.get('/admin/sam/order-switch').catch(() => ({ enabled: true }));
+  return res.enabled !== false;
+}
+
+async function setSamOrderSwitch(enabled) {
+  const res = await request.patch('/admin/sam/order-switch', { enabled });
+  return res.enabled !== false;
+}
+
+// ── 管理员管理（超级管理员）──
+
+async function searchUsers(keyword) {
+  const res = await request.get('/admin/users/search', { q: keyword }).catch(() => ({ users: [] }));
+  return mapDocs(res.users);
+}
+
+async function getAdmins() {
+  const res = await request.get('/admin/admins').catch(() => ({ admins: [] }));
+  return mapDocs(res.admins);
+}
+
+async function addAdmin(openid, permissions) {
+  const res = await request.post('/admin/admins', { openid, permissions });
+  return mapDoc(res.admin);
+}
+
+async function updateAdminPermissions(openid, permissions) {
+  const res = await request.patch(`/admin/admins/${openid}`, { permissions });
+  return mapDoc(res.admin);
+}
+
+async function removeAdmin(openid) {
+  return request.del(`/admin/admins/${openid}`);
 }
 
 module.exports = {
-  login,
   getStudios,
   getAllStudios,
   getPosts,
@@ -632,6 +432,7 @@ module.exports = {
   toggleLike,
   toggleFavorite,
   getUserProfile,
+  getUserPosts,
   getMyProfile,
   updateUser,
   getUserStats,
@@ -662,7 +463,15 @@ module.exports = {
   getJoinedGatherings,
   joinGathering,
   uploadQrCode,
+  setGatherQr,
   getDishes,
+  getSamLocations,
+  getAdminSamLocations,
+  addSamLocation,
+  updateSamLocation,
+  deleteSamLocation,
+  getStaffQr,
+  setStaffQr,
   getAllDishes,
   addDish,
   updateDish,
@@ -672,6 +481,17 @@ module.exports = {
   getMyOrders,
   getOrders,
   updateOrderStatus,
-  db,
-  _,
+  cancelOrder,
+  getOrdersSummary,
+  updateOrderAdminNote,
+  getSamOrderSwitch,
+  setSamOrderSwitch,
+  searchUsers,
+  getAdmins,
+  addAdmin,
+  updateAdminPermissions,
+  removeAdmin,
+  getScoreQuota,
+  submitScore,
+  getScoreHistory,
 };

@@ -28,9 +28,27 @@
       </view>
     </view>
 
+    <view wx:if="{{order.delivery_location}}" class="order-note">
+      <text class="order-note-label">送货地点</text>
+      <text class="order-note-text">{{order.delivery_location}}</text>
+    </view>
+
     <view wx:if="{{order.note}}" class="order-note">
-      <text class="order-note-label">备注</text>
+      <text class="order-note-label">买家备注</text>
       <text class="order-note-text">{{order.note}}</text>
+    </view>
+
+    <!-- 管理员自己记的备注，买家看不到这块 -->
+    <view wx:if="{{isAdmin}}" class="admin-note-section">
+      <text class="order-note-label">管理员备注</text>
+      <textarea
+        class="admin-note-textarea"
+        placeholder="记点什么，比如「已联系买家」「缺货改天补」"
+        value="{{adminNoteInput}}"
+        bindinput="onAdminNoteInput"
+        maxlength="200"
+      />
+      <text class="btn btn-secondary admin-note-save" bindtap="saveAdminNote">{{noteSaving ? '保存中...' : '保存备注'}}</text>
     </view>
 
     <view class="order-total-row">
@@ -40,7 +58,9 @@
 
     <view class="order-actions">
       <button wx:if="{{isAdmin && order.status === 'pending'}}" class="btn btn-secondary" bindtap="markDone">标记为已完成</button>
+      <button wx:if="{{!isAdmin && order.status === 'pending' && order._openid === currentUserOpenid}}" class="btn btn-secondary" bindtap="cancelOrder">取消订单</button>
       <button class="btn" open-type="share">转发给工作人员</button>
+      <button wx:if="{{staffQr}}" class="btn btn-secondary" bindtap="previewStaffQr">联系工作人员</button>
     </view>
   </block>
 </view>

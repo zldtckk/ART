@@ -69,6 +69,7 @@
 .quick-icon-2 { background: #fff4e8; }
 .quick-icon-3 { background: #f0f0ff; }
 .quick-icon-4 { background: #f0fff4; }
+.quick-icon-5 { background: #fff9e6; }
 .quick-label {
   font-size: 22rpx;
   color: var(--text2);

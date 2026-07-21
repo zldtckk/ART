@@ -8,7 +8,6 @@
       <text class="post-name">{{post.display_name || '用户'}}</text>
       <text class="post-time">{{post.created_at}}</text>
     </view>
-    <text wx:if="{{post.board === 'market' && post.price != null}}" class="post-price">¥{{post.price}}</text>
   </view>
   <view class="post-content">{{post.content}}</view>
   <scroll-view wx:if="{{images.length > 0}}" class="post-images" scroll-x>

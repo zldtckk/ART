@@ -59,12 +59,6 @@
   line-height: 1.4;
 }
 
-.post-price {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #ff6b35;
-}
-
 .post-content {
   font-size: 28rpx;
   color: #333;

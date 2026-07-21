@@ -65,6 +65,7 @@ Page({
   goMyComments() { wx.navigateTo({ url: '/pages/my-comments/index' }); },
   goMyFavorites() { wx.navigateTo({ url: '/pages/my-favorites/index' }); },
   goSamOrders() { wx.navigateTo({ url: '/pages/sam-my-orders/index' }); },
+  goAIScoreHistory() { wx.navigateTo({ url: '/pages/my-ai-scores/index' }); },
   goVerify() { wx.navigateTo({ url: '/pages/verify/index' }); },
   goAdmin() { wx.navigateTo({ url: '/pages/admin-verify/index' }); },
 

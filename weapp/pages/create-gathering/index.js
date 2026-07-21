@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { GATHERING_TYPES } = require('../../utils/constants');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -72,6 +73,7 @@ Page({
         content: this.data.content.trim(),
         images: [],
         is_anonymous: false,
+        is_gathering: true,
         gather_type: this.data.gatherType,
         gather_time: this.data.gatherTime.trim(),
         gather_place: this.data.gatherPlace.trim(),
@@ -85,7 +87,7 @@ Page({
         wx.switchTab({ url: '/pages/gatherings/index' });
       }, 800);
     } catch (e) {
-      wx.showToast({ title: e.message || '发起失败', icon: 'none' });
+      handleApiError(e, '发起失败');
     } finally {
       this.setData({ submitting: false });
     }

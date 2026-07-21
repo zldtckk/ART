@@ -17,6 +17,11 @@ Page({
     selfName: '我',
     swipeOpenId: null,
     sendingImage: false,
+    pendingImage: '',
+    notificationUnread: 0,
+    messageUnread: 0,
+    scrollTop: 0,
+    inputFocus: false,
   },
   _touchStartX: 0,
   _touchItemId: null,
@@ -45,6 +50,7 @@ Page({
     });
     this.loadConversations();
     this.loadNotifications();
+    this.loadTabUnread();
 
     const pendingConvId = getApp().globalData.pendingConvId;
     if (pendingConvId) {
@@ -57,11 +63,21 @@ Page({
     const tab = e.currentTarget.dataset.tab;
     this.setData({ tab });
     if (tab === 'notification') {
+      this.setData({ notificationUnread: 0 });
       api.markNotificationsRead().catch(() => {});
       if (typeof this.getTabBar === 'function' && this.getTabBar()) {
         this.getTabBar().pollUnread();
       }
     }
+  },
+
+  loadTabUnread() {
+    api.getUnreadCount().then(res => {
+      this.setData({
+        notificationUnread: res.notification_unread || 0,
+        messageUnread: res.message_unread || 0,
+      });
+    }).catch(() => {});
   },
 
   async loadConversations() {
@@ -94,7 +110,9 @@ Page({
     api.getConversationMessages(convId).then(rawMessages => {
       const messages = (rawMessages || []).map(m => ({ ...m, created_at: formatTime(m.createTime || m.created_at) }));
       this.setData({ messages, loading: false });
+      this.scrollToBottom();
       api.markConversationRead(convId).catch(() => {});
+      this.loadTabUnread();
     }).catch((e) => {
       console.error('openChat failed', e);
       this.setData({ loading: false, convId: null });
@@ -109,45 +127,39 @@ Page({
 
   onMessageInput(e) { this.setData({ messageText: e.detail.value }); },
 
-  sendMessage(imageUrl) {
+  // 发送：文字和刚才选好待发的图片（如果有）一起发出去，不再选完图就自动发
+  // input 上加了 hold-keyboard，点发送按钮这种非输入框区域键盘本来就不会收起，
+  // 不需要再手动收一次焦点重新抢回来
+  sendMessage() {
     const text = this.data.messageText.trim();
-    // 纯图片发送
-    if (!text && imageUrl) {
-      this._sendImageMsg(imageUrl);
-      return;
-    }
-    // 纯文字发送
-    if (!text) return;
-    this.setData({ messageText: '' });
-    const extra = imageUrl ? { type: 'mixed', image_url: imageUrl } : {};
+    const imageUrl = this.data.pendingImage;
+    if (!text && !imageUrl) return;
+
+    const type = imageUrl ? (text ? 'mixed' : 'image') : 'text';
+    const extra = imageUrl ? { type, image_url: imageUrl } : {};
+
+    this.setData({ messageText: '', pendingImage: '', sendingImage: false });
     api.sendMessage(this.data.convId, text, extra).then(res => {
       if (res && res.message) {
         this.setData({ messages: [...this.data.messages, res.message] });
+        this.scrollToBottom();
       } else {
-        this.setData({ messageText: text });
+        this.setData({ messageText: text, pendingImage: imageUrl });
         wx.showToast({ title: (res && res.msg) || '发送失败', icon: 'none' });
       }
     }).catch(() => {
-      this.setData({ messageText: text });
+      this.setData({ messageText: text, pendingImage: imageUrl });
       wx.showToast({ title: '发送失败，请重试', icon: 'none' });
     });
   },
 
-  _sendImageMsg(imageUrl) {
-    this.setData({ sendingImage: true });
-    api.sendMessage(this.data.convId, '', { type: 'image', image_url: imageUrl }).then(res => {
-      this.setData({ sendingImage: false });
-      if (res && res.message) {
-        this.setData({ messages: [...this.data.messages, res.message] });
-      } else {
-        wx.showToast({ title: (res && res.msg) || '发送失败', icon: 'none' });
-      }
-    }).catch(() => {
-      this.setData({ sendingImage: false });
-      wx.showToast({ title: '发送失败，请重试', icon: 'none' });
-    });
+  // scroll-into-view 只有值真正变化才会触发滚动，改用 scroll-top 更可靠：
+  // 每次都加一个足够大的增量，微信会自动 clamp 到实际可滚动的最大位置
+  scrollToBottom() {
+    this.setData({ scrollTop: this.data.scrollTop + 100000 });
   },
 
+  // 选图片：先上传好，展示成待发预览，等用户点"发送"才真正发出去
   chooseImage() {
     wx.chooseImage({
       count: 1,
@@ -155,16 +167,19 @@ Page({
       sourceType: ['album', 'camera'],
       success: (res) => {
         const filePath = res.tempFilePaths[0];
-        wx.showLoading({ title: '上传中' });
-        api.uploadImage(filePath).then(cloudId => {
-          wx.hideLoading();
-          this.sendMessage(cloudId);
+        this.setData({ sendingImage: true });
+        api.uploadImage(filePath).then(url => {
+          this.setData({ sendingImage: false, pendingImage: url });
         }).catch(() => {
-          wx.hideLoading();
+          this.setData({ sendingImage: false });
           wx.showToast({ title: '上传失败', icon: 'none' });
         });
       },
     });
+  },
+
+  removePendingImage() {
+    this.setData({ pendingImage: '' });
   },
 
 

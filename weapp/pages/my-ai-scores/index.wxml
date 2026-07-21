@@ -1,0 +1,62 @@
+<view class="page ai-score-list-page">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    <text class="header-title">我的测分记录</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-spinner"></view>
+  <block wx:elif="{{scores.length === 0}}">
+    <view class="empty-state">
+      <view class="empty-art">
+        <text>15</text><text>30</text><text>30</text><text>25</text>
+      </view>
+      <text class="empty-hint">还没有测分记录，先去测一张吧</text>
+    </view>
+  </block>
+  <scroll-view wx:else scroll-y class="score-list-scroll">
+    <view wx:for="{{scores}}" wx:key="id" class="score-item">
+      <view class="score-item-top" bindtap="toggleExpand" data-id="{{item.id}}">
+        <image src="{{item.image_url}}" mode="aspectFill" class="score-thumb" catchtap="previewImage" data-url="{{item.image_url}}" />
+        <view class="score-item-info">
+          <text class="score-item-predicted">{{item.predicted_score}}</text>
+          <view class="score-item-meta">
+            <text class="score-item-tier">{{item.tier}}</text>
+            <text class="score-item-date">{{item.created_at}}</text>
+          </view>
+        </view>
+        <text class="score-item-arrow">{{expandedId === item.id ? '︿' : '﹀'}}</text>
+      </view>
+
+      <view wx:if="{{expandedId === item.id}}" class="score-item-detail">
+        <view class="dimension-list">
+          <view class="dimension-row" wx:for="{{item._dimList}}" wx:for-item="dim" wx:key="name">
+            <text class="dim-name">{{dim.name}}</text>
+            <view class="bar"><view class="bar-fg" style="width:{{dim.value}}%"></view></view>
+            <text class="dim-value">{{dim.value}}</text>
+          </view>
+        </view>
+        <view class="feedback-block">
+          <text class="feedback-h">最突出的优点</text>
+          <text class="feedback-p">{{item.strength}}</text>
+        </view>
+        <view class="feedback-block">
+          <text class="feedback-h">现在最该改</text>
+          <view class="feedback-list">
+            <text class="feedback-li" wx:for="{{item.problems}}" wx:for-item="p" wx:key="*this">· {{p}}</text>
+          </view>
+        </view>
+        <view class="teacher-comment">
+          <text class="feedback-h">老师点评</text>
+          <text class="feedback-p">{{item.comment}}</text>
+        </view>
+        <view class="hw-entry" bindtap="goSubmitHomework" data-item="{{item}}">
+          <view class="hw-entry-left">
+            <text class="hw-entry-title">拍作业 · 让 AI 看进步</text>
+            <text class="hw-entry-desc">练完上传，AI 对比上次作品看有没有改善</text>
+          </view>
+          <text class="hw-entry-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

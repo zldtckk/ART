@@ -1,12 +1,13 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { BOARDS, CIRCLE_TYPES, FAN_TYPES, MARKET_CATEGORIES, MARKET_TAGS } = require('../../utils/constants');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
     boards: BOARDS.map(b => ({
       ...b,
-      name: b.key === 'circle' ? '画室圈子' : b.key === 'fan' ? '爱豆专区' : b.name,
+      name: b.key === 'circle' ? '艺考圈子' : b.key === 'fan' ? '爱豆专区' : b.name,
     })),
     selectedBoard: 'circle',
     content: '',
@@ -34,6 +35,22 @@ Page({
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
+    }
+    // 发帖是 tabBar 页，wx.navigateTo 打不进来（小程序不允许 navigateTo 到 tabBar 页），
+    // 只能用 wx.switchTab，但 switchTab 不传 query 给 onLoad，且 onLoad 只在首次进入时跑一次。
+    // 所以从 AI 测分等页面"分享到画室圈"时，用 globalData 暂存待发内容，这里在 onShow（每次切到这个 tab 都会触发）里消费掉。
+    const pending = getApp().globalData.pendingPost;
+    if (pending) {
+      getApp().globalData.pendingPost = null;
+      this.setData({
+        content: pending.content || '',
+        images: pending.imageUrl ? [pending.imageUrl] : [],
+      });
+    }
+    const pendingBoard = getApp().globalData.pendingBoard;
+    if (pendingBoard) {
+      getApp().globalData.pendingBoard = null;
+      this.setData({ selectedBoard: pendingBoard });
     }
   },
 
@@ -95,7 +112,8 @@ Page({
     try {
       const imageUrls = [];
       for (const img of this.data.images) {
-        if (img.startsWith('cloud://')) {
+        if (img.startsWith('cloud://') || img.startsWith('http')) {
+          // 已经是可访问的远程URL（如从AI测分分享过来的图），不用再上传一次
           imageUrls.push(img);
         } else {
           try {
@@ -132,18 +150,7 @@ Page({
         wx.switchTab({ url: '/pages/index/index' });
       }, 800);
     } catch (e) {
-      if (e.code === -2) {
-        wx.showModal({
-          title: '需要先完成认证',
-          content: e.message,
-          confirmText: '去认证',
-          success: (res) => {
-            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
-          },
-        });
-      } else {
-        wx.showToast({ title: e.message || '发布失败', icon: 'none' });
-      }
+      handleApiError(e, '发布失败');
     } finally {
       this.setData({ submitting: false });
     }

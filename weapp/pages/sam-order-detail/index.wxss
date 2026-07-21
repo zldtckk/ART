@@ -21,6 +21,10 @@
 .order-note-label { display: block; font-size: 22rpx; color: var(--text3); margin-bottom: 8rpx; }
 .order-note-text { font-size: 26rpx; color: var(--text); }
 
+.admin-note-section { margin: 16rpx 32rpx; padding: 24rpx; background: #fff7f0; border: 1rpx solid #ffddb3; border-radius: var(--radius); }
+.admin-note-textarea { width: 100%; min-height: 100rpx; margin-top: 12rpx; font-size: 26rpx; color: var(--text); box-sizing: border-box; }
+.admin-note-save { display: inline-block; margin-top: 12rpx; font-size: 24rpx; padding: 10rpx 28rpx; }
+
 .order-total-row { display: flex; justify-content: flex-end; align-items: baseline; gap: 12rpx; margin: 24rpx 32rpx; }
 .order-total-label { font-size: 26rpx; color: var(--text2); }
 .order-total-price { font-size: 40rpx; font-weight: 700; color: var(--danger); }

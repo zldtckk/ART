@@ -1,5 +1,5 @@
 const BOARDS = [
-  { key: 'circle', name: '画室圈', icon: '🎨' },
+  { key: 'circle', name: '艺考圈', icon: '🎨' },
   { key: 'market', name: '二手集市', icon: '🏪' },
   { key: 'fan', name: '粉丝圈', icon: '⭐' },
 ];

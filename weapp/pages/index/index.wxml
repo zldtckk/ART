@@ -3,7 +3,7 @@
   <view class="top-area">
     <view class="idx-header" style="padding-right:{{headerPaddingRight}}px">
       <view class="idx-logo-wrap" bindtap="switchCity">
-        <text class="idx-logo">画室<text style="color:#FB7299">圈</text></text>
+        <text class="idx-logo">艺考<text style="color:#FB7299">圈</text></text>
         <text class="idx-city">· {{currentCityName}} ⌄</text>
       </view>
       <view class="idx-search" bindtap="goSearch">
@@ -22,22 +22,26 @@
     <view class="quick-entries">
       <view class="quick-entry" bindtap="goBoard" data-board="circle">
         <view class="quick-icon quick-icon-1">🖼</view>
-        <text class="quick-label">画室圈子</text>
+        <text class="quick-label">艺考圈子</text>
+      </view>
+      <view class="quick-entry" bindtap="goAIScore">
+        <view class="quick-icon quick-icon-2">✨</view>
+        <text class="quick-label">AI评画</text>
       </view>
       <view class="quick-entry" bindtap="goBoard" data-board="market">
-        <view class="quick-icon quick-icon-2">🛍</view>
+        <view class="quick-icon quick-icon-3">🛍</view>
         <text class="quick-label">闲置交易</text>
       </view>
       <view wx:if="{{currentCity === 'guangzhou'}}" class="quick-entry" bindtap="goSamShop">
-        <view class="quick-icon quick-icon-3">🛒</view>
+        <view class="quick-icon quick-icon-4">🛒</view>
         <text class="quick-label">山姆代购</text>
       </view>
       <view wx:else class="quick-entry" bindtap="goBoard" data-board="fan">
-        <view class="quick-icon quick-icon-3">⭐</view>
+        <view class="quick-icon quick-icon-4">⭐</view>
         <text class="quick-label">爱豆专区</text>
       </view>
       <view class="quick-entry" bindtap="goGatherings">
-        <view class="quick-icon quick-icon-4">🎉</view>
+        <view class="quick-icon quick-icon-5">🎉</view>
         <text class="quick-label">攒个局</text>
       </view>
     </view>

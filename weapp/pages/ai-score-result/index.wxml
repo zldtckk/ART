@@ -1,0 +1,100 @@
+<view class="page page-flex ai-score-result-page">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">测评报告</text>
+    <view class="header-right"></view>
+  </view>
+
+  <scroll-view scroll-y class="result-scroll">
+    <view wx:if="{{!result}}" class="loading-spinner"></view>
+
+    <block wx:else>
+      <view class="card result-card">
+        <view class="result-header">
+          <view>
+            <text class="result-kicker">PREDICTED SCORE</text>
+            <text class="score-number">{{result.predicted_score}}</text>
+            <text class="score-label">预测集训后联考分数</text>
+          </view>
+          <view class="tier-block">
+            <text class="tier-display">{{result.tier}}</text>
+            <text class="score-label">当前水平约 {{result.current_score}} 分</text>
+          </view>
+        </view>
+
+        <image wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="widthFix" class="score-image" />
+
+        <view class="dimension-list">
+          <view class="dimension-row" wx:for="{{dimList}}" wx:key="name">
+            <text class="dim-name">{{item.name}}</text>
+            <view class="bar"><view class="bar-fg" style="width:{{item.value}}%"></view></view>
+            <text class="dim-value">{{item.value}}</text>
+          </view>
+        </view>
+
+        <view class="feedback">
+          <view class="feedback-block">
+            <text class="feedback-h">最突出的优点</text>
+            <text class="feedback-p">{{result.strength}}</text>
+          </view>
+          <view class="feedback-block">
+            <text class="feedback-h">现在最该改</text>
+            <view class="feedback-list">
+              <text class="feedback-li" wx:for="{{result.problems}}" wx:key="*this">· {{item}}</text>
+            </view>
+          </view>
+          <view class="teacher-comment">
+            <text class="feedback-h">老师点评</text>
+            <text class="feedback-p">{{result.comment}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{result.training_plan && result.training_plan.length > 0}}" class="plan-section">
+          <view class="plan-section-head">
+            <view class="plan-head-left">
+              <text class="plan-title">专项练习计划</text>
+              <text class="plan-desc">AI 根据这张画定制 · 共 {{result.training_plan.length}} 项训练</text>
+            </view>
+            <text class="plan-label-tag">TRAINING</text>
+          </view>
+
+          <view wx:for="{{result.training_plan}}" wx:key="focus" class="plan-item">
+            <view class="plan-num-col">
+              <text class="plan-num">{{index + 1}}</text>
+              <view wx:if="{{index < result.training_plan.length - 1}}" class="plan-num-line"></view>
+            </view>
+            <view class="plan-content-col">
+              <view class="plan-focus-row">
+                <text class="plan-focus">{{item.focus}}</text>
+                <view class="plan-freq-pill"><text class="plan-freq-text">{{item.frequency}}</text></view>
+              </view>
+              <text class="plan-method">{{item.method}}</text>
+
+              <view wx:if="{{item.homework}}" class="hw-card">
+                <view class="hw-card-header">
+                  <text class="hw-icon">✏</text>
+                  <text class="hw-label">今日作业</text>
+                  <view wx:if="{{item.homework.duration}}" class="hw-duration-pill">
+                    <text class="hw-duration-text">{{item.homework.duration}}</text>
+                  </view>
+                </view>
+                <text class="hw-task">{{item.homework.task}}</text>
+              </view>
+            </view>
+          </view>
+
+        </view>
+
+        <view class="post-copy">
+          <text class="post-copy-text">{{result.post_text}}</text>
+          <button class="share-button" bindtap="shareToCircle">分享</button>
+        </view>
+      </view>
+
+      <button class="again-button" bindtap="testAgain">再测一张</button>
+      <text class="disclaimer">评分结果仅供训练参考，不代表官方联考成绩</text>
+    </block>
+
+    <view class="result-bottom-spacer"></view>
+  </scroll-view>
+</view>

@@ -28,6 +28,16 @@
         <view class="cart-remove" bindtap="remove" data-id="{{item.dish_id}}">✕</view>
       </view>
 
+      <view wx:if="{{locations.length > 0}}" class="note-card">
+        <text class="note-label">送货地点<text class="note-required"> *</text></text>
+        <picker range="{{locations}}" range-key="name" value="{{locationIndex}}" bindchange="onLocationChange">
+          <view class="location-picker {{locationIndex < 0 ? 'location-placeholder' : ''}}">
+            <text>{{locationIndex >= 0 ? locations[locationIndex].name : '请选择送货机构'}}</text>
+            <text class="location-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
       <view class="note-card">
         <text class="note-label">备注（选填）</text>
         <textarea class="note-input" placeholder="比如：要冰的 / 帮忙挑新鲜的" value="{{note}}" bindinput="onNoteInput" maxlength="200" />

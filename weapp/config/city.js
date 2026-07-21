@@ -3,13 +3,13 @@ const CITIES = [
   {
     slug: 'hangzhou',
     name: '杭州',
-    shareTitle: '画室圈 - 杭州美术集训生社区',
+    shareTitle: '艺考圈 - 杭州艺考生社区',
     appDesc: '杭州美术集训生社区',
   },
   {
     slug: 'guangzhou',
     name: '广州',
-    shareTitle: '画室圈 - 广州美术生社区',
+    shareTitle: '艺考圈 - 广州艺考生社区',
     appDesc: '广州美术生社区',
   },
 ];

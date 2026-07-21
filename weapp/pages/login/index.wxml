@@ -1,8 +1,15 @@
 <view class="page login-page">
+  <view class="header">
+    <view class="header-left">
+      <view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view>
+    </view>
+    <text class="header-title"></text>
+    <view class="header-right"></view>
+  </view>
+
   <view class="login-header">
     <view class="icon icon-boards-active" style="width:120rpx;height:120rpx;"></view>
-    <text class="login-title">画室圈</text>
-    <text class="login-subtitle">杭州美术集训生社区</text>
+    <text class="login-title">艺考圈</text>
   </view>
 
   <button class="wx-login-btn btn" bindtap="handleWxLogin" loading="{{loading}}" disabled="{{loading}}">

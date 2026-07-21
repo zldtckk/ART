@@ -5,15 +5,13 @@ App({
     user: null,
     feedNeedsRefresh: false,
     pendingConvId: null,
+    pendingPost: null,
+    pendingBoard: null,
     currentCity: DEFAULT_CITY,
     cities: CITIES,
   },
 
   onLaunch() {
-    wx.cloud.init({
-      env: 'cloud1-d5ggpvn6l40fbefe9',
-      traceUser: true,
-    });
     const user = wx.getStorageSync('user');
     if (user) this.globalData.user = user;
     // 恢复上次选择的城市

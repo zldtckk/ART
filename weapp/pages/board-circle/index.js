@@ -2,6 +2,7 @@ const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { CIRCLE_TYPES, PAGE_SIZE } = require('../../utils/constants');
 const { getCircleTypeName } = require('../../utils/formatter');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -83,18 +84,23 @@ Page({
   },
 
   goPost(e) { wx.navigateTo({ url: `/pages/post-detail/index?id=${e.currentTarget.dataset.id}` }); },
-  goCreate() { wx.navigateTo({ url: '/pages/create-post/index?board=circle' }); },
+  goCreate() {
+    // create-post 是 tabBar 页，navigateTo 打不进去，得用 switchTab；
+    // query 传不过去，用 globalData 暂存，create-post 的 onShow 里消费
+    getApp().globalData.pendingBoard = 'circle';
+    wx.switchTab({ url: '/pages/create-post/index' });
+  },
 
   onShareAppMessage() {
     return {
-      title: '画室圈子 - 画室日常、求助、树洞',
+      title: '艺考圈子 - 集训日常、求助、树洞',
       path: '/pages/board-circle/index',
     };
   },
 
   onShareTimeline() {
     return {
-      title: '画室圈子 - 画室日常、求助、树洞',
+      title: '艺考圈子 - 集训日常、求助、树洞',
       query: '',
     };
   },
@@ -112,12 +118,13 @@ Page({
           : p
       ),
     });
-    api.toggleLike(id).catch(() => {
+    api.toggleLike(id).catch((err) => {
       this.setData({
         posts: this.data.posts.map(p =>
           (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
         ),
       });
+      handleApiError(err);
     });
   },
 

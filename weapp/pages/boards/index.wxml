@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page page-has-tabbar">
   <view class="header">
     <text class="header-title">板块</text>
   </view>
@@ -9,7 +9,7 @@
         <view class="icon icon-home-active" style="width:44rpx;height:44rpx;"></view>
       </view>
       <view class="board-item-body">
-        <text class="board-item-label">画室圈子</text>
+        <text class="board-item-label">艺考圈子</text>
         <text class="board-item-desc">闲聊、求助、树洞、拼车、拼饭</text>
       </view>
       <view class="icon icon-chevron-right" style="width:36rpx;height:36rpx;"></view>

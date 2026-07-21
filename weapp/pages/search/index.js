@@ -1,5 +1,6 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -71,12 +72,13 @@ Page({
           : p
       ),
     });
-    api.toggleLike(id).catch(() => {
+    api.toggleLike(id).catch((err) => {
       this.setData({
         results: this.data.results.map(p =>
           (p.id === id || p._id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
         ),
       });
+      handleApiError(err);
     });
   },
 
@@ -84,11 +86,19 @@ Page({
     if (!auth.isLoggedIn()) { wx.navigateTo({ url: '/pages/login/index' }); return; }
     const post = e.detail.post;
     const id = post.id || post._id;
-    api.toggleFavorite(id);
+    const wasFavorited = post.is_favorited;
     this.setData({
       results: this.data.results.map(p =>
-        (p.id === id || p._id === id) ? { ...p, is_favorited: !p.is_favorited } : p
+        (p.id === id || p._id === id) ? { ...p, is_favorited: !wasFavorited } : p
       ),
+    });
+    api.toggleFavorite(id).catch((err) => {
+      this.setData({
+        results: this.data.results.map(p =>
+          (p.id === id || p._id === id) ? { ...p, is_favorited: wasFavorited } : p
+        ),
+      });
+      handleApiError(err);
     });
   },
 

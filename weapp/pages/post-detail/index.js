@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { getCircleTypeName } = require('../../utils/formatter');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -62,13 +63,7 @@ Page({
           const isFull = post.gather_count >= post.gather_limit;
           post.gather_closed = Date.now() > expireTime || isFull;
           post.gather_progress = Math.min(100, Math.round((post.gather_count / post.gather_limit) * 100));
-          // 检查当前用户是否已报名
-          const openid = getApp().globalData.user && getApp().globalData.user._openid;
-          if (openid) {
-            const joinRes = await api.db.collection('gatherings')
-              .where({ post_id: this.postId, _openid: openid }).get().catch(() => ({ data: [] }));
-            post.is_joined = joinRes.data.length > 0;
-          }
+          // 是否已报名由后端 GET /posts/:id 直接返回 post.is_joined，这里不用再查一次
         }
       }
       // 本次是新访问，乐观 +1 显示（云端已异步递增）
@@ -103,18 +98,7 @@ Page({
       wx.showToast({ title: wasJoined ? '已取消报名' : '报名成功', icon: 'success' });
     } catch (e) {
       this.setData({ post: { ...this.data.post, is_joined: wasJoined, gather_count: post.gather_count } });
-      if (e.code === 2) {
-        wx.showModal({
-          title: '需要先完成认证',
-          content: e.message,
-          confirmText: '去认证',
-          success: (res) => {
-            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
-          },
-        });
-      } else {
-        wx.showToast({ title: e.message || '操作失败', icon: 'none' });
-      }
+      handleApiError(e);
     }
   },
 
@@ -123,7 +107,7 @@ Page({
       const res = await wx.chooseImage({ count: 1, sizeType: ['original'] });
       wx.showLoading({ title: '上传中' });
       const fileID = await api.uploadQrCode(res.tempFilePaths[0]);
-      await api.db.collection('posts').doc(this.postId).update({ data: { gather_qr: fileID } });
+      await api.setGatherQr(this.postId, fileID);
       wx.hideLoading();
       this.setData({ post: { ...this.data.post, gather_qr: fileID } });
       wx.showToast({ title: '二维码已更新', icon: 'success' });
@@ -142,8 +126,9 @@ Page({
     this.setData({
       post: { ...post, is_liked: !wasLiked, like_count: post.like_count + (wasLiked ? -1 : 1) },
     });
-    api.toggleLike(this.postId).catch(() => {
+    api.toggleLike(this.postId).catch((e) => {
       this.setData({ post: { ...this.data.post, is_liked: wasLiked, like_count: post.like_count } });
+      handleApiError(e);
     });
   },
 
@@ -154,8 +139,9 @@ Page({
     // 乐观更新
     const wasFavorited = post.is_favorited;
     this.setData({ post: { ...post, is_favorited: !wasFavorited } });
-    api.toggleFavorite(this.postId).catch(() => {
+    api.toggleFavorite(this.postId).catch((e) => {
       this.setData({ post: { ...this.data.post, is_favorited: wasFavorited } });
+      handleApiError(e);
     });
   },
 
@@ -204,29 +190,38 @@ Page({
       created_at: '刚刚',
       _pending: true,
     };
+    const comments = this.data.comments;
+    const addOpts = {};
+    let insertIndex = comments.length; // 默认插到最后（新开一条主评论）
+
     if (replyTarget) {
-      tempComment.parent_comment_id = replyTarget.commentId;
+      const tappedComment = comments.find(c => (c._id || c.id) === replyTarget.commentId);
+      // 回复统一挂到最顶层主评论下面，和后端 addComment 的摊平逻辑保持一致
+      const topLevelId = (tappedComment && tappedComment.parent_comment_id) || replyTarget.commentId;
+      tempComment.parent_comment_id = topLevelId;
       tempComment.reply_to_name = replyTarget.name;
+
+      addOpts.parentCommentId = replyTarget.commentId;
+      if (tappedComment) addOpts.replyToUserId = tappedComment.user_id || tappedComment._openid;
+
+      // 插到该主评论下最后一条回复的后面，而不是整个列表的最后面
+      for (let i = 0; i < comments.length; i++) {
+        const c = comments[i];
+        const cId = c._id || c.id;
+        if (cId === topLevelId || c.parent_comment_id === topLevelId) insertIndex = i + 1;
+      }
     }
 
+    const newComments = [...comments.slice(0, insertIndex), tempComment, ...comments.slice(insertIndex)];
+
     this.setData({
-      comments: [...this.data.comments, tempComment],
+      comments: newComments,
       commentText: '',
       commentValid: false,
       submitting: true,
       replyingTo: null,
       post: this.data.post ? { ...this.data.post, comment_count: this.data.post.comment_count + 1 } : null,
     });
-
-    const addOpts = {};
-    if (replyTarget) {
-      addOpts.parentCommentId = replyTarget.commentId;
-      // 从被回复的评论中找到它的作者 openid
-      const parentComment = this.data.comments.find(c => c._id === replyTarget.commentId || c.id === replyTarget.commentId);
-      if (parentComment) {
-        addOpts.replyToUserId = parentComment.user_id || parentComment._openid;
-      }
-    }
 
     api.addComment(this.postId, text, addOpts).then(comment => {
       // 用真实数据替换临时评论

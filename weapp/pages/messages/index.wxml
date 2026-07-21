@@ -10,8 +10,18 @@
 
   <!-- Tabs (only show when not in chat) -->
   <view wx:if="{{!convId}}" class="tab-bar-inline">
-    <view class="tab {{tab === 'chat' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="chat"><text>私信</text></view>
-    <view class="tab {{tab === 'notification' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="notification"><text>通知</text></view>
+    <view class="tab {{tab === 'chat' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="chat">
+      <text>私信</text>
+      <view wx:if="{{messageUnread > 0}}" class="tab-unread-dot">
+        <text class="tab-unread-dot-text">{{messageUnread > 99 ? '99+' : messageUnread}}</text>
+      </view>
+    </view>
+    <view class="tab {{tab === 'notification' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="notification">
+      <text>通知</text>
+      <view wx:if="{{notificationUnread > 0}}" class="tab-unread-dot">
+        <text class="tab-unread-dot-text">{{notificationUnread > 99 ? '99+' : notificationUnread}}</text>
+      </view>
+    </view>
   </view>
 
   <!-- Chat conversation list -->
@@ -22,7 +32,8 @@
       <view class="swipe-inner {{swipeOpenId === (item._id || item.id) ? 'swiped' : ''}}">
         <view class="conv-item" bindtap="onConvTap" data-convid="{{item._id || item.id}}" data-id="{{item._id || item.id}}">
           <view class="conv-avatar">
-            <view class="avatar-placeholder" style="width:96rpx;height:96rpx;font-size:36rpx;">{{item.peer_name ? item.peer_name[0] : '?'}}</view>
+            <image wx:if="{{item.peer_avatar}}" src="{{item.peer_avatar}}" mode="aspectFill" class="conv-avatar-img" />
+            <view wx:else class="avatar-placeholder" style="width:96rpx;height:96rpx;font-size:36rpx;">{{item.peer_name ? item.peer_name[0] : '?'}}</view>
           </view>
           <view class="conv-body">
             <text class="conv-name">{{item.peer_name || '用户'}}</text>
@@ -55,7 +66,7 @@
         <view class="notif-item" bindtap="onNotifTap" data-postid="{{item.related_post_id}}" data-id="{{item._id || item.id}}">
           <view class="notif-header">
             <text class="notif-type">{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : item.type === 'comment_reply' ? '↩️' : '📢'}}</text>
-            <text class="notif-title">{{item.title}}</text>
+            <text wx:if="{{item.title}}" class="notif-title">{{item.title}}</text>
           </view>
           <text class="notif-content">{{item.content}}</text>
           <text class="notif-time">{{item.created_at}}</text>
@@ -73,7 +84,7 @@
 
   <!-- Inline chat view -->
   <view wx:if="{{convId}}" class="chat-view">
-    <scroll-view scroll-y class="message-list" scroll-into-view="msg-bottom" scroll-with-animation>
+    <scroll-view scroll-y class="message-list" scroll-top="{{scrollTop}}" scroll-with-animation>
       <view wx:for="{{messages}}" wx:key="id" class="msg {{item.sender_id === currentUserId ? 'msg-self' : 'msg-other'}}">
         <view wx:if="{{item.sender_id !== currentUserId}}" class="msg-avatar">
           <image wx:if="{{chatUser.avatar}}" src="{{chatUser.avatar}}" mode="aspectFill" class="msg-avatar-img" />
@@ -88,14 +99,17 @@
           <view wx:else class="msg-avatar-placeholder">{{selfName ? selfName[0] : '我'}}</view>
         </view>
       </view>
-      <view id="msg-bottom"></view>
     </scroll-view>
+    <view wx:if="{{pendingImage}}" class="pending-image-bar">
+      <image src="{{pendingImage}}" mode="aspectFill" class="pending-image-thumb" />
+      <text class="pending-image-remove" bindtap="removePendingImage">✕</text>
+    </view>
     <view class="chat-input-bar">
       <view class="chat-img-btn" bindtap="chooseImage">
         <text wx:if="{{!sendingImage}}">📷</text>
         <text wx:else>⏳</text>
       </view>
-      <input class="chat-input" placeholder="输入消息..." value="{{messageText}}" bindinput="onMessageInput" confirm-type="send" bindconfirm="sendMessage" />
+      <input class="chat-input" placeholder="输入消息..." value="{{messageText}}" bindinput="onMessageInput" confirm-type="send" bindconfirm="sendMessage" focus="{{inputFocus}}" hold-keyboard="{{true}}" />
       <text class="chat-send" bindtap="sendMessage">发送</text>
     </view>
   </view>

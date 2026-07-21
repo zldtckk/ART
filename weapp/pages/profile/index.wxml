@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page page-has-tabbar">
   <view class="header">
     <text class="header-title">我的</text>
   </view>
@@ -63,12 +63,21 @@
         <text class="entry-label">我的代购</text>
         <view class="icon icon-chevron-right" style="width:32rpx;height:32rpx;"></view>
       </view>
+      <view class="profile-entry" bindtap="goAIScoreHistory">
+        <view class="entry-icon-wrap" style="background:rgba(251,114,153,0.08);">
+          <view class="icon icon-trending" style="width:40rpx;height:40rpx;"></view>
+        </view>
+        <text class="entry-label">我的测分记录</text>
+        <view class="icon icon-chevron-right" style="width:32rpx;height:32rpx;"></view>
+      </view>
       <view class="profile-entry" bindtap="goMessages">
         <view class="entry-icon-wrap" style="background:rgba(255,45,85,0.08);">
           <view class="icon icon-message" style="width:40rpx;height:40rpx;"></view>
         </view>
         <text class="entry-label">消息</text>
-        <text class="entry-count">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+        <view wx:if="{{unreadCount > 0}}" class="entry-unread-badge">
+          <text class="entry-unread-text">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+        </view>
         <view class="icon icon-chevron-right" style="width:32rpx;height:32rpx;"></view>
       </view>
     </view>
@@ -80,7 +89,7 @@
     </view>
 
     <!-- Admin & Logout -->
-    <view wx:if="{{user.role === 'admin' || user.role === 'circle_master'}}" class="profile-logout">
+    <view wx:if="{{user.is_admin}}" class="profile-logout">
       <button class="btn btn-secondary btn-block" bindtap="goAdmin" style="font-size:28rpx;">管理后台</button>
     </view>
     <view class="profile-logout">

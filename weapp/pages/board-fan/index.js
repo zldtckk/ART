@@ -2,6 +2,7 @@ const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { FAN_TYPES, PAGE_SIZE } = require('../../utils/constants');
 const { getFanTypeName } = require('../../utils/formatter');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -72,12 +73,13 @@ Page({
           : p
       ),
     });
-    api.toggleLike(id).catch(() => {
+    api.toggleLike(id).catch((err) => {
       this.setData({
         posts: this.data.posts.map(p =>
           (p._id === id || p.id === id) ? { ...p, is_liked: wasLiked, like_count: post.like_count } : p
         ),
       });
+      handleApiError(err);
     });
   },
 });

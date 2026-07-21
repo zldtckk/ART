@@ -15,7 +15,10 @@ Page({
   },
 
   onLoad() { this.loadPosts(); },
-  goCreate() { wx.navigateTo({ url: '/pages/create-post/index?board=market' }); },
+  goCreate() {
+    getApp().globalData.pendingBoard = 'market';
+    wx.switchTab({ url: '/pages/create-post/index' });
+  },
   goBack() { wx.navigateBack(); },
 
   _parseImages(imagesStr) {

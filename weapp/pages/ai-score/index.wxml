@@ -1,0 +1,79 @@
+<view class="page page-flex ai-score-page">
+  <view class="header">
+    <view class="header-left"><view class="back-btn" bindtap="goBack"><text>‹ 返回</text></view></view>
+    <text class="header-title">素描测分</text>
+    <view class="header-right"></view>
+  </view>
+
+  <scroll-view scroll-y class="score-scroll">
+    <view wx:if="{{comparisonMode}}" class="compare-banner">
+      <text class="compare-banner-icon">↗</text>
+      <view class="compare-banner-body">
+        <text class="compare-banner-title">进步对比模式</text>
+        <text class="compare-banner-sub">AI 将对比你上次的作品（{{prevScore.predicted_score}} 分），看看有没有改进</text>
+      </view>
+    </view>
+    <view class="hero">
+      <text class="eyebrow">{{province === 'zhejiang' ? 'ZHEJIANG SKETCH SCORE' : 'GUANGDONG SKETCH SCORE'}}</text>
+      <text class="hero-title">一张画，看看你离<text class="hero-em">联考目标</text>还有多远</text>
+      <text wx:if="{{province === 'zhejiang'}}" class="hero-copy">按浙江联考素描ABCD四类标准，分析构图、结构与比例、细节深入与表现技法。结果仅供训练参考。</text>
+      <text wx:else class="hero-copy">按广东静物素描九档标准，分析构图、结构、深入塑造与表现技法。结果仅供训练参考。</text>
+    </view>
+
+    <view class="card form-card">
+      <view class="step-title">
+        <text class="step-num">01</text>
+        <view class="step-title-body">
+          <text class="step-h">上传你的素描</text>
+          <text class="step-p">正面拍摄、光线均匀，画面越清楚判断越准确</text>
+        </view>
+      </view>
+
+      <view class="upload-zone {{imagePath ? 'has-image' : ''}}" bindtap="chooseImage">
+        <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFit" class="upload-preview" />
+        <view wx:else class="upload-empty">
+          <view class="upload-icon">＋</view>
+          <text class="upload-empty-strong">点击选择素描照片</text>
+          <text class="upload-empty-sub">JPG / PNG · 清晰无反光效果更准确</text>
+        </view>
+        <view wx:if="{{imagePath}}" class="replace-button"><text>更换图片</text></view>
+      </view>
+
+      <view class="step-title step-title-compact">
+        <text class="step-num">02</text>
+        <view class="step-title-body">
+          <text class="step-h">告诉我你的进度</text>
+          <text class="step-p">用于估算集训后的合理提升空间</text>
+        </view>
+      </view>
+
+      <view class="field-grid">
+        <view class="field">
+          <text class="field-label">目前基础</text>
+          <picker range="{{foundationOptions}}" value="{{foundationIndex}}" bindchange="onFoundationChange">
+            <view class="field-select">{{foundationOptions[foundationIndex]}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">距集训结束</text>
+          <picker range="{{monthsOptions}}" value="{{monthsIndex}}" bindchange="onMonthsChange">
+            <view class="field-select">{{monthsOptions[monthsIndex]}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="quota-line {{quota.remaining === 0 ? 'quota-line-empty' : ''}}">
+        <text wx:if="{{quota.remaining > 0}}">今日剩余测分名额 {{quota.remaining}}/{{quota.limit}}</text>
+        <text wx:else>今日测分名额已用完，明天再来</text>
+      </view>
+
+      <button class="submit-button" disabled="{{!imagePath || quota.remaining === 0 || submitting}}" bindtap="submit">
+        <text class="submit-label">{{submitting ? '正在看画，请稍等…' : (quota.remaining === 0 ? '今日名额已用完' : '开始测分')}}</text>
+        <text wx:if="{{!submitting}}" class="submit-arrow">→</text>
+      </button>
+    </view>
+
+    <text class="disclaimer">评分结果仅供训练参考，不代表官方联考成绩</text>
+    <view class="score-bottom-spacer"></view>
+  </scroll-view>
+</view>

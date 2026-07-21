@@ -34,7 +34,9 @@
   <view class="tab-item {{selected === 3 ? 'active' : ''}}" data-index="3" bindtap="switchTab">
     <view class="tab-icon-wrap" style="position:relative;">
       <view class="icon tab-icon icon-{{selected === 3 ? 'profile-active' : 'profile'}}"></view>
-      <view wx:if="{{unreadCount > 0}}" class="tab-badge"></view>
+      <view wx:if="{{unreadCount > 0}}" class="unread-badge">
+        <text class="unread-badge-text">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+      </view>
       <text class="tab-label">{{list[3].text}}</text>
     </view>
   </view>

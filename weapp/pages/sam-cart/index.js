@@ -1,6 +1,7 @@
 const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const cart = require('../../utils/samCart');
+const { handleApiError } = require('../../utils/verifyGate');
 
 Page({
   data: {
@@ -8,10 +9,22 @@ Page({
     note: '',
     total: '0.00',
     submitting: false,
+    locations: [],
+    locationIndex: -1,
   },
 
   onShow() {
     this.refresh();
+    this.loadLocations();
+  },
+
+  async loadLocations() {
+    const locations = await api.getSamLocations();
+    this.setData({ locations, locationIndex: locations.length === 1 ? 0 : -1 });
+  },
+
+  onLocationChange(e) {
+    this.setData({ locationIndex: Number(e.detail.value) });
   },
 
   refresh() {
@@ -58,10 +71,16 @@ Page({
       wx.navigateTo({ url: '/pages/login/index' });
       return;
     }
+    const { locations, locationIndex } = this.data;
+    if (locations.length > 0 && locationIndex < 0) {
+      wx.showToast({ title: '请选择送货地点', icon: 'none' });
+      return;
+    }
+    const deliveryLocation = locations.length > 0 ? locations[locationIndex].name : '';
     this.setData({ submitting: true });
     try {
       const items = this.data.items.map(i => ({ dish_id: i.dish_id, qty: i.qty, name: i.name }));
-      const order = await api.createOrder(items, this.data.note.trim());
+      const order = await api.createOrder(items, this.data.note.trim(), deliveryLocation);
       cart.clearCart();
       const warnings = [];
       if (order._skipped.length) warnings.push(`「${order._skipped.join('、')}」已下架，未加入订单`);
@@ -77,18 +96,7 @@ Page({
         wx.redirectTo({ url: `/pages/sam-order-detail/index?id=${order.id}` });
       }
     } catch (e) {
-      if (e.code === -2) {
-        wx.showModal({
-          title: '需要先完成认证',
-          content: e.message,
-          confirmText: '去认证',
-          success: (res) => {
-            if (res.confirm) wx.navigateTo({ url: '/pages/verify/index' });
-          },
-        });
-      } else {
-        wx.showToast({ title: e.message || '下单失败', icon: 'none' });
-      }
+      handleApiError(e, '下单失败');
     } finally {
       this.setData({ submitting: false });
     }

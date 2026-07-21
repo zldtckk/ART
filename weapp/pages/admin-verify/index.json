@@ -1,1 +1,1 @@
-{ "navigationStyle": "custom", "usingComponents": {} }
+{ "navigationStyle": "custom", "enablePullDownRefresh": true, "usingComponents": {} }

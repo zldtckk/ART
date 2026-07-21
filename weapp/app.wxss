@@ -41,6 +41,11 @@ view, text, image, input, textarea, scroll-view, button, navigator {
   height: 100vh;
   padding-bottom: 0;
 }
+/* 底部有自定义tabBar(160rpx高)的页面要用这个类，
+   原来的100rpx留白不够盖住tabBar，安卓上会把最后的按钮（比如退出登录）挡住 */
+.page.page-has-tabbar {
+  padding-bottom: 200rpx;
+}
 
 .header {
   display: flex;

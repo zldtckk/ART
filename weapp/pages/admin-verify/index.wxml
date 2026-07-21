@@ -5,10 +5,16 @@
   </view>
 
   <view class="tab-bar-inline">
-    <view class="tab {{tab === 'verify' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="verify"><text>认证审核 ({{pendingList.length}})</text></view>
-    <view class="tab {{tab === 'studio' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="studio"><text>画室管理</text></view>
-    <view class="tab {{tab === 'dishes' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="dishes"><text>代购菜品</text></view>
-    <view class="tab {{tab === 'orders' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="orders"><text>代购订单</text></view>
+    <view wx:if="{{canVerify}}" class="tab {{tab === 'verify' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="verify"><text>认证审核 ({{pendingList.length}})</text></view>
+    <view wx:if="{{canStudios}}" class="tab {{tab === 'studio' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="studio"><text>画室管理</text></view>
+    <view wx:if="{{canSam}}" class="tab {{tab === 'dishes' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="dishes"><text>代购设置</text></view>
+    <view wx:if="{{canSam}}" class="tab {{tab === 'orders' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="orders"><text>代购订单</text></view>
+    <view wx:if="{{isSuperAdmin}}" class="tab {{tab === 'admins' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="admins"><text>管理员</text></view>
+  </view>
+
+  <view wx:if="{{!canVerify && !canStudios && !canSam && !isSuperAdmin}}" class="empty-state">
+    <text class="empty-icon">🔒</text>
+    <text class="empty-text">你还没有被分配任何管理权限</text>
   </view>
 
   <!-- Verifications tab -->
@@ -70,6 +76,14 @@
   <!-- Dishes management tab -->
   <view wx:if="{{tab === 'dishes'}}" class="studio-mgmt">
     <view class="add-dish-form">
+      <text class="staff-qr-label">工作人员微信二维码（买家会在订单页看到，长按识别添加）</text>
+      <view class="dish-image-picker" bindtap="chooseStaffQr">
+        <image wx:if="{{staffQr}}" src="{{staffQr}}" mode="aspectFit" class="dish-image-preview" />
+        <view wx:else class="dish-image-placeholder"><text>📷 上传二维码</text></view>
+      </view>
+    </view>
+
+    <view class="add-dish-form">
       <input class="input-field" placeholder="菜品名称" value="{{newDish.name}}" bindinput="onDishNameInput" />
       <view class="dish-form-row">
         <input class="input-field" style="flex:1;" type="digit" placeholder="价格" value="{{newDish.price}}" bindinput="onDishPriceInput" />
@@ -100,6 +114,25 @@
       <text class="empty-icon">🛒</text>
       <text class="empty-text">还没有添加菜品</text>
     </view>
+
+    <view class="section-divider"><text class="section-divider-text">送货机构</text></view>
+    <view class="add-studio-form">
+      <input class="input-field" placeholder="机构名称（如：某某画室）" value="{{newLocationName}}" bindinput="onLocationNameInput" />
+      <button class="btn" bindtap="addLocation">添加机构</button>
+    </view>
+    <view wx:for="{{locations}}" wx:key="id" class="dish-mgmt-card">
+      <view class="dish-mgmt-body">
+        <text class="dish-mgmt-name">{{item.name}}</text>
+      </view>
+      <view class="dish-mgmt-actions">
+        <text class="dish-toggle {{item.is_enabled ? 'dish-toggle-on' : ''}}" bindtap="toggleLocation" data-id="{{item.id}}" data-enabled="{{item.is_enabled}}">{{item.is_enabled ? '已开通' : '已关闭'}}</text>
+        <text class="dish-delete" bindtap="deleteLocation" data-id="{{item.id}}">删除</text>
+      </view>
+    </view>
+    <view wx:if="{{locations.length === 0}}" class="empty-state">
+      <text class="empty-icon">🏫</text>
+      <text class="empty-text">还没有添加机构</text>
+    </view>
   </view>
 
   <!-- Orders management tab -->
@@ -108,6 +141,16 @@
       <text class="order-filter {{orderFilter === 'pending' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="pending">待采购</text>
       <text class="order-filter {{orderFilter === 'done' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="done">已完成</text>
       <text class="order-filter {{orderFilter === 'all' ? 'order-filter-active' : ''}}" bindtap="switchOrderFilter" data-filter="all">全部</text>
+    </view>
+
+    <!-- 采购清单：待采购订单按商品汇总，一眼看清每样要买几份 -->
+    <view wx:if="{{orderSummary.length > 0}}" class="order-summary-card">
+      <text class="order-summary-title">🛒 采购清单（待采购订单汇总）</text>
+      <view wx:for="{{orderSummary}}" wx:for-item="s" wx:key="dish_id" class="order-summary-row">
+        <text class="order-summary-name">{{s.name}}</text>
+        <text class="order-summary-qty">× {{s.total_qty}}{{s.unit}}</text>
+        <text class="order-summary-amount">¥{{s.total_amount}}</text>
+      </view>
     </view>
 
     <view wx:for="{{orders}}" wx:key="id" class="order-mgmt-card" bindtap="viewOrder" data-id="{{item.id}}">
@@ -125,6 +168,53 @@
     <view wx:if="{{orders.length === 0}}" class="empty-state">
       <text class="empty-icon">🧾</text>
       <text class="empty-text">暂无订单</text>
+    </view>
+
+    <!-- 全局下单开关 -->
+    <view class="section-divider"><text class="section-divider-text">全局下单开关</text></view>
+    <view class="order-switch-card" bindtap="toggleSamOrderSwitch">
+      <view class="order-switch-info">
+        <text class="order-switch-title">用户下单功能</text>
+        <text class="order-switch-desc {{samOrderEnabled ? 'status-on' : 'status-off'}}">{{samOrderEnabled ? '当前开放，所有用户可下单' : '当前关闭，所有用户无法下单'}}</text>
+      </view>
+      <text class="dish-toggle {{samOrderEnabled ? 'dish-toggle-on' : ''}}">{{samOrderEnabled ? '关闭下单' : '开启下单'}}</text>
+    </view>
+  </view>
+
+  <!-- Admin management tab（仅超级管理员可见）-->
+  <view wx:if="{{tab === 'admins'}}" class="studio-mgmt">
+    <view class="add-studio-form">
+      <input class="input-field" placeholder="输入昵称或数字ID搜索用户" value="{{searchKeyword}}" bindinput="onSearchKeywordInput" />
+      <view wx:if="{{searchResults.length > 0}}" class="search-result-list">
+        <view wx:for="{{searchResults}}" wx:key="openid" class="search-result-item" bindtap="selectSearchResult" data-openid="{{item.openid}}">
+          <image wx:if="{{item.avatar_url}}" src="{{item.avatar_url}}" mode="aspectFill" class="search-result-avatar" />
+          <text>{{item.nickname || '未设置昵称'}} {{item.sys_user_id ? '(用户' + item.sys_user_id + ')' : ''}}</text>
+        </view>
+      </view>
+      <view wx:if="{{selectedUser}}" class="verify-meta">已选中：{{selectedUser.nickname || selectedUser.sys_user_id}}</view>
+      <view class="dish-form-row">
+        <text class="dish-toggle {{newAdminPermissions.verify ? 'dish-toggle-on' : ''}}" bindtap="toggleNewAdminPerm" data-key="verify">认证审核</text>
+        <text class="dish-toggle {{newAdminPermissions.studios ? 'dish-toggle-on' : ''}}" bindtap="toggleNewAdminPerm" data-key="studios">画室管理</text>
+        <text class="dish-toggle {{newAdminPermissions.sam ? 'dish-toggle-on' : ''}}" bindtap="toggleNewAdminPerm" data-key="sam">代购后台</text>
+      </view>
+      <button class="btn" bindtap="addAdmin">添加管理员</button>
+    </view>
+
+    <view wx:for="{{admins}}" wx:key="openid" class="dish-mgmt-card">
+      <view class="dish-mgmt-body">
+        <text class="dish-mgmt-name">{{item.nickname || item.openid}}{{item.is_super_admin ? '（超级管理员）' : ''}}</text>
+        <text class="verify-meta">{{item._permLabels}}</text>
+      </view>
+      <view wx:if="{{!item.is_super_admin}}" class="dish-mgmt-actions">
+        <text class="dish-toggle {{item.permissions.includes('verify') ? 'dish-toggle-on' : ''}}" bindtap="toggleAdminPerm" data-openid="{{item.openid}}" data-key="verify">审核</text>
+        <text class="dish-toggle {{item.permissions.includes('studios') ? 'dish-toggle-on' : ''}}" bindtap="toggleAdminPerm" data-openid="{{item.openid}}" data-key="studios">画室</text>
+        <text class="dish-toggle {{item.permissions.includes('sam') ? 'dish-toggle-on' : ''}}" bindtap="toggleAdminPerm" data-openid="{{item.openid}}" data-key="sam">代购</text>
+        <text class="dish-delete" bindtap="removeAdmin" data-openid="{{item.openid}}">撤销</text>
+      </view>
+    </view>
+    <view wx:if="{{admins.length === 0}}" class="empty-state">
+      <text class="empty-icon">👤</text>
+      <text class="empty-text">暂无管理员</text>
     </view>
   </view>
 </view>

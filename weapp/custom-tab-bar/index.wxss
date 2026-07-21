@@ -53,39 +53,29 @@
   color: #FB7299;
 }
 
-/* Unread badge on 消息 tab */
+/* 我的 tab 未读红点（带数字，类似微信） */
 .unread-badge {
   position: absolute;
-  top: 8rpx;
-  right: 8rpx;
+  top: -4rpx;
+  right: -18rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 6rpx;
+  box-sizing: border-box;
   background: #ff3b30;
-  color: #fff;
-  font-size: 18rpx;
-  border-radius: 18rpx;
-  padding: 2rpx 12rpx;
-  min-width: 28rpx;
-  text-align: center;
-  line-height: 1.8;
+  border: 2rpx solid #fff;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 1001;
   pointer-events: none;
 }
-
-.unread-text {
+.unread-badge-text {
   color: #fff;
-  font-size: 18rpx;
-}
-
-/* 我的 tab 红点 */
-.tab-badge {
-  position: absolute;
-  top: 4rpx;
-  right: 10rpx;
-  width: 16rpx;
-  height: 16rpx;
-  background: #FB7299;
-  border-radius: 50%;
-  border: 2rpx solid #fff;
-  pointer-events: none;
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1;
 }
 
 /* FAB button - 等宽居中 */

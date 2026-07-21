@@ -26,4 +26,14 @@ Page({
   goHome() {
     wx.switchTab({ url: '/pages/index/index' });
   },
+
+  // 微信审核要求：登录页必须有显著的取消/返回入口，不能强制用户登录
+  goBack() {
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      wx.navigateBack();
+    } else {
+      wx.switchTab({ url: '/pages/index/index' });
+    }
+  },
 });
