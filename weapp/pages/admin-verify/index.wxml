@@ -154,15 +154,21 @@
     </view>
 
     <view wx:for="{{orders}}" wx:key="id" class="order-mgmt-card" bindtap="viewOrder" data-id="{{item.id}}">
-      <view class="order-mgmt-main">
-        <text class="order-mgmt-title">{{item.buyer_name}} · 共{{item._count}}件</text>
-        <text class="order-mgmt-time">{{item._createdAt}}</text>
-        <text wx:if="{{item.note}}" class="order-mgmt-note">备注：{{item.note}}</text>
+      <view class="order-mgmt-top">
+        <view class="order-mgmt-main">
+          <text class="order-mgmt-title">{{item.buyer_name}} · 共{{item._count}}件</text>
+          <text class="order-mgmt-time">{{item._createdAt}}</text>
+          <text wx:if="{{item.note}}" class="order-mgmt-note">备注：{{item.note}}</text>
+        </view>
+        <view class="order-mgmt-side">
+          <text class="order-mgmt-price">¥{{item.total}}</text>
+          <text wx:if="{{item.status === 'pending'}}" class="btn-approve" catchtap="markOrderDone" data-id="{{item.id}}">标记完成</text>
+          <text wx:else class="order-mgmt-status">{{item._statusText}}</text>
+        </view>
       </view>
-      <view class="order-mgmt-side">
-        <text class="order-mgmt-price">¥{{item.total}}</text>
-        <text wx:if="{{item.status === 'pending'}}" class="btn-approve" catchtap="markOrderDone" data-id="{{item.id}}">标记完成</text>
-        <text wx:else class="order-mgmt-status">{{item._statusText}}</text>
+      <view wx:if="{{item.delivery_location}}" class="order-mgmt-addr">
+        <text class="order-mgmt-addr-label">送货地点</text>
+        <text class="order-mgmt-addr-text">{{item.delivery_location}}</text>
       </view>
     </view>
     <view wx:if="{{orders.length === 0}}" class="empty-state">

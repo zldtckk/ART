@@ -12,13 +12,19 @@
   </view>
   <block wx:else>
     <view wx:for="{{orders}}" wx:key="id" class="order-row" bindtap="goOrder" data-id="{{item.id}}">
-      <view class="order-row-main">
-        <text class="order-row-title">共{{item._count}}件商品</text>
-        <text class="order-row-time">{{item._createdAt}}</text>
+      <view class="order-row-top">
+        <view class="order-row-main">
+          <text class="order-row-title">共{{item._count}}件商品</text>
+          <text class="order-row-time">{{item._createdAt}}</text>
+        </view>
+        <view class="order-row-side">
+          <text class="order-row-price">¥{{item.total}}</text>
+          <text class="order-row-status status-{{item.status}}">{{item._statusText}}</text>
+        </view>
       </view>
-      <view class="order-row-side">
-        <text class="order-row-price">¥{{item.total}}</text>
-        <text class="order-row-status status-{{item.status}}">{{item._statusText}}</text>
+      <view wx:if="{{item.delivery_location}}" class="order-row-addr">
+        <text class="order-row-addr-label">送货地点</text>
+        <text class="order-row-addr-text">{{item.delivery_location}}</text>
       </view>
     </view>
   </block>
