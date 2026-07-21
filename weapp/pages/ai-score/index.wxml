@@ -10,7 +10,7 @@
       <text class="compare-banner-icon">↗</text>
       <view class="compare-banner-body">
         <text class="compare-banner-title">进步对比模式</text>
-        <text class="compare-banner-sub">AI 将对比你上次的作品（{{prevScore.predicted_score}} 分），看看有没有改进</text>
+        <text class="compare-banner-sub">AI 将对比你上次的作品（当前水平 {{prevScore.current_score}} 分），看看有没有改进</text>
       </view>
     </view>
     <view class="hero">

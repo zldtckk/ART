@@ -24,6 +24,30 @@
 
         <image wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="widthFix" class="score-image" />
 
+        <!-- 对比模式：前后水平对比 + 进退步结论 -->
+        <view wx:if="{{prevScore}}" class="compare-block">
+          <view class="compare-row">
+            <view class="compare-item">
+              <text class="compare-item-label">上次水平</text>
+              <text class="compare-item-score">{{prevScore.current_score}}</text>
+            </view>
+            <view class="compare-mid">
+              <text class="compare-delta {{scoreDelta > 2 ? 'delta-up' : scoreDelta < -2 ? 'delta-down' : 'delta-flat'}}">
+                {{scoreDelta > 0 ? '+' + scoreDelta : scoreDelta}}
+              </text>
+              <text class="compare-arrow-line">→</text>
+            </view>
+            <view class="compare-item">
+              <text class="compare-item-label">本次水平</text>
+              <text class="compare-item-score {{scoreDelta > 2 ? 'score-up' : scoreDelta < -2 ? 'score-down' : ''}}">{{result.current_score}}</text>
+            </view>
+          </view>
+          <view class="compare-verdict {{scoreDelta > 2 ? 'verdict-up' : scoreDelta < -2 ? 'verdict-down' : 'verdict-flat'}}">
+            <text class="verdict-label">{{verdict}}</text>
+            <text class="verdict-sub">{{verdictSub}}</text>
+          </view>
+        </view>
+
         <view class="dimension-list">
           <view class="dimension-row" wx:for="{{dimList}}" wx:key="name">
             <text class="dim-name">{{item.name}}</text>

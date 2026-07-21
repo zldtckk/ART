@@ -98,7 +98,12 @@ Page({
       wx.navigateTo({
         url: '/pages/ai-score-result/index',
         success: (navRes) => {
-          navRes.eventChannel.emit('scoreResult', { result: res.data, imageUrl, dimList });
+          navRes.eventChannel.emit('scoreResult', {
+            result: res.data,
+            imageUrl,
+            dimList,
+            prevScore: this.data.comparisonMode ? this.data.prevScore : null,
+          });
         },
       });
     } catch (e) {

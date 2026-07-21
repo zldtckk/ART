@@ -3,12 +3,33 @@ Page({
     result: null,
     imageUrl: '',
     dimList: [],
+    prevScore: null,
+    scoreDelta: null,
+    verdict: '',
+    verdictSub: '',
   },
 
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('scoreResult', (data) => {
-      this.setData({ result: data.result, imageUrl: data.imageUrl, dimList: data.dimList });
+      const prevScore = data.prevScore || null;
+      let scoreDelta = null;
+      let verdict = '';
+      let verdictSub = '';
+      if (prevScore && data.result && data.result.current_score != null) {
+        scoreDelta = data.result.current_score - prevScore.current_score;
+        if (scoreDelta > 2) {
+          verdict = '进步了';
+          verdictSub = '上次的问题有改善，继续保持这个方向练';
+        } else if (scoreDelta >= -2) {
+          verdict = '基本持平';
+          verdictSub = '整体水平稳定，继续针对具体问题强化练习';
+        } else {
+          verdict = '本次有所下滑';
+          verdictSub = '状态波动很正常，看看老师点评里说了哪里可以调整';
+        }
+      }
+      this.setData({ result: data.result, imageUrl: data.imageUrl, dimList: data.dimList, prevScore, scoreDelta, verdict, verdictSub });
     });
   },
 

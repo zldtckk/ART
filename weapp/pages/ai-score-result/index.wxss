@@ -38,6 +38,43 @@
 
 .score-image { width: 100%; margin-top: 28rpx; border: 1px solid var(--line); display: block; }
 
+/* ── 对比块 ──────────────────────────────────────── */
+.compare-block {
+  margin-top: 32rpx;
+  padding: 28rpx 24rpx;
+  background: var(--paper-deep);
+  border-left: 3px solid var(--ink);
+}
+.compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.compare-item { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
+.compare-item-label { font-size: 19rpx; color: var(--muted); letter-spacing: 1rpx; }
+.compare-item-score { font-family: Georgia, serif; font-size: 72rpx; font-weight: 500; color: var(--ink); line-height: 1; }
+.score-up { color: #2a7a4b; }
+.score-down { color: var(--red); }
+.compare-mid { display: flex; flex-direction: column; align-items: center; gap: 6rpx; }
+.compare-delta { font-family: Georgia, serif; font-size: 34rpx; font-weight: 700; line-height: 1; }
+.compare-arrow-line { font-size: 28rpx; color: var(--muted); }
+.delta-up { color: #2a7a4b; }
+.delta-down { color: var(--red); }
+.delta-flat { color: var(--muted); }
+.compare-verdict {
+  margin-top: 22rpx;
+  padding-top: 20rpx;
+  border-top: 1px solid rgba(23,23,19,0.1);
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+.verdict-label { font-size: 26rpx; font-weight: 700; white-space: nowrap; }
+.verdict-sub { font-size: 21rpx; color: var(--muted); line-height: 1.6; }
+.verdict-up .verdict-label { color: #2a7a4b; }
+.verdict-down .verdict-label { color: var(--red); }
+.verdict-flat .verdict-label { color: var(--ink); }
+
 .dimension-list { margin-top: 32rpx; }
 .dimension-row { display: flex; align-items: center; gap: 16rpx; margin-bottom: 20rpx; font-size: 22rpx; }
 .dim-name { width: 132rpx; color: var(--muted); flex-shrink: 0; }
