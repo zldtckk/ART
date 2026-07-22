@@ -2,7 +2,7 @@ const api = require('../../utils/api');
 const auth = require('../../utils/auth');
 const { formatTime } = require('../../utils/formatter');
 
-const STATUS_TEXT = { pending: '待采购', done: '已完成', cancelled: '已取消' };
+const STATUS_TEXT = { pending_payment: '待付款', pending: '待采购', done: '已完成', cancelled: '已取消' };
 
 Page({
   data: {
@@ -74,6 +74,20 @@ Page({
       this.setData({ noteSaving: false });
       wx.showToast({ title: e.message || '保存失败', icon: 'none' });
     });
+  },
+
+  async repay() {
+    try {
+      const payParams = await api.prepayOrder(this.orderId);
+      await wx.requestPayment(payParams);
+      wx.showToast({ title: '支付成功', icon: 'success' });
+      this.loadOrder();
+    } catch (e) {
+      const errMsg = e && e.errMsg || '';
+      if (!errMsg.includes('cancel')) {
+        wx.showToast({ title: e.message || '支付失败', icon: 'none' });
+      }
+    }
   },
 
   cancelOrder() {

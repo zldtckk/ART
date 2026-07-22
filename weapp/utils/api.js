@@ -382,6 +382,11 @@ async function cancelOrder(id) {
   return request.post(`/sam/orders/${id}/cancel`);
 }
 
+async function prepayOrder(id) {
+  const res = await request.post(`/sam/orders/${id}/prepay`);
+  return res.payParams;
+}
+
 // ── 代购全局下单开关 ──
 
 async function getSamOrderSwitch() {
@@ -482,6 +487,7 @@ module.exports = {
   getOrders,
   updateOrderStatus,
   cancelOrder,
+  prepayOrder,
   getOrdersSummary,
   updateOrderAdminNote,
   getSamOrderSwitch,

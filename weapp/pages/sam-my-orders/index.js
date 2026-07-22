@@ -1,7 +1,7 @@
 const api = require('../../utils/api');
 const { formatTime } = require('../../utils/formatter');
 
-const STATUS_TEXT = { pending: '待采购', done: '已完成', cancelled: '已取消' };
+const STATUS_TEXT = { pending_payment: '待付款', pending: '待采购', done: '已完成', cancelled: '已取消' };
 
 Page({
   data: {
