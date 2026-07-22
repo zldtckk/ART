@@ -46,8 +46,6 @@ Page({
     if (pending) {
       this.setData({ comparisonMode: true, prevScore: pending });
       app.globalData.pendingComparison = null;
-    } else {
-      this.setData({ comparisonMode: false, prevScore: null });
     }
   },
 
