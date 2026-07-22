@@ -48,7 +48,11 @@
         bindinput="onAdminNoteInput"
         maxlength="200"
       />
-      <text class="btn btn-secondary admin-note-save" bindtap="saveAdminNote">{{noteSaving ? '保存中...' : '保存备注'}}</text>
+      <view class="admin-note-footer">
+        <button class="admin-note-save-btn" bindtap="saveAdminNote" loading="{{noteSaving}}" disabled="{{noteSaving}}">
+          {{noteSaving ? '保存中...' : '保存备注'}}
+        </button>
+      </view>
     </view>
 
     <view class="order-total-row">
