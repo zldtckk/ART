@@ -47,6 +47,6 @@
 
   <view wx:if="{{items.length > 0}}" class="cart-footer">
     <text class="cart-footer-total">合计 <text class="cart-footer-price">¥{{total}}</text></text>
-    <button class="btn cart-footer-btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">生成订单并分享</button>
+    <button class="btn cart-footer-btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">{{submitting ? '处理中...' : '去支付'}}</button>
   </view>
 </view>
