@@ -3,6 +3,8 @@ const auth = require('../../utils/auth');
 const { formatTime } = require('../../utils/formatter');
 
 const STATUS_TEXT = { pending_payment: '待付款', pending: '待采购', done: '已完成', cancelled: '已取消' };
+const POLL_INTERVAL = 1500;
+const POLL_MAX = 12;
 
 Page({
   data: {
@@ -13,17 +15,60 @@ Page({
     adminNoteInput: '',
     noteSaving: false,
     staffQr: '',
+    waitingPayConfirm: false,
   },
 
   onLoad(options) {
     this.orderId = options.id;
+    this._pollCount = 0;
+    this._pollTimer = null;
     const user = auth.getUserProfile();
     this.setData({
       isAdmin: !!(user && user.is_admin),
       currentUserOpenid: user && (user._openid || user.openid),
     });
-    this.loadOrder();
+    if (options.waitPayment === '1') {
+      this.setData({ waitingPayConfirm: true });
+      this.loadOrder().then(() => this._startPolling());
+    } else {
+      this.loadOrder();
+    }
     api.getStaffQr().then(staffQr => this.setData({ staffQr })).catch(() => {});
+  },
+
+  onUnload() {
+    this._stopPolling();
+  },
+
+  _startPolling() {
+    this._pollCount = 0;
+    this._pollTimer = setInterval(async () => {
+      this._pollCount++;
+      try {
+        const order = await api.getOrder(this.orderId);
+        if (order.status !== 'pending_payment') {
+          this._stopPolling();
+          this.setData({
+            order: { ...order, _statusText: STATUS_TEXT[order.status] || order.status, _createdAt: formatTime(order.createTime) },
+            waitingPayConfirm: false,
+          });
+          wx.showToast({ title: '支付成功，快分享给工作人员', icon: 'success', duration: 2500 });
+          return;
+        }
+      } catch (_) {}
+      if (this._pollCount >= POLL_MAX) {
+        this._stopPolling();
+        this.setData({ waitingPayConfirm: false });
+        wx.showToast({ title: '支付确认中，请稍后刷新', icon: 'none' });
+      }
+    }, POLL_INTERVAL);
+  },
+
+  _stopPolling() {
+    if (this._pollTimer) {
+      clearInterval(this._pollTimer);
+      this._pollTimer = null;
+    }
   },
 
   previewStaffQr() {
@@ -80,8 +125,8 @@ Page({
     try {
       const payParams = await api.prepayOrder(this.orderId);
       await wx.requestPayment(payParams);
-      wx.showToast({ title: '支付成功', icon: 'success' });
-      this.loadOrder();
+      this.setData({ waitingPayConfirm: true });
+      this._startPolling();
     } catch (e) {
       const errMsg = e && e.errMsg || '';
       if (!errMsg.includes('cancel')) {

@@ -29,4 +29,8 @@
 .order-total-label { font-size: 26rpx; color: var(--text2); }
 .order-total-price { font-size: 40rpx; font-weight: 700; color: var(--danger); }
 
+.pay-confirm-tip { display: flex; align-items: center; gap: 16rpx; margin: 0 32rpx 8rpx; padding: 20rpx 24rpx; background: #e8f4fd; border-radius: var(--radius); }
+.loading-spinner-sm { width: 36rpx; height: 36rpx; border: 4rpx solid #b3d7f5; border-top-color: #1989fa; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+.pay-confirm-text { font-size: 26rpx; color: #1989fa; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .order-actions { margin: 32rpx 32rpx; display: flex; flex-direction: column; gap: 16rpx; }

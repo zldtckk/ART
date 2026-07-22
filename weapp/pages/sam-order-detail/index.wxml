@@ -56,13 +56,19 @@
       <text class="order-total-price">¥{{order.total}}</text>
     </view>
 
+    <!-- 支付后等待微信回调确认中 -->
+    <view wx:if="{{waitingPayConfirm}}" class="pay-confirm-tip">
+      <view class="loading-spinner-sm"></view>
+      <text class="pay-confirm-text">正在确认支付，请稍候…</text>
+    </view>
+
     <view class="order-actions">
       <button wx:if="{{!isAdmin && order.status === 'pending_payment' && order._openid === currentUserOpenid}}" class="btn btn-primary" bindtap="repay">去支付</button>
       <button wx:if="{{!isAdmin && order.status === 'pending_payment' && order._openid === currentUserOpenid}}" class="btn btn-secondary" bindtap="cancelOrder">取消订单</button>
       <button wx:if="{{isAdmin && order.status === 'pending'}}" class="btn btn-secondary" bindtap="markDone">标记为已完成</button>
       <button wx:if="{{!isAdmin && order.status === 'pending' && order._openid === currentUserOpenid}}" class="btn btn-secondary" bindtap="cancelOrder">取消订单</button>
-      <button class="btn" open-type="share">转发给工作人员</button>
-      <button wx:if="{{staffQr}}" class="btn btn-secondary" bindtap="previewStaffQr">联系工作人员</button>
+      <button wx:if="{{order.status === 'pending'}}" class="btn" open-type="share">转发给工作人员</button>
+      <button wx:if="{{staffQr && order.status === 'pending'}}" class="btn btn-secondary" bindtap="previewStaffQr">联系工作人员</button>
     </view>
   </block>
 </view>

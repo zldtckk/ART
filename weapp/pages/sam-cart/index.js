@@ -90,9 +90,9 @@ Page({
         // 拉取微信支付参数
         const payParams = await api.prepayOrder(order.id);
         await wx.requestPayment(payParams);
-        // 支付成功
+        // 支付成功，跳详情页轮询等回调确认
         cart.clearCart();
-        wx.redirectTo({ url: `/pages/sam-order-detail/index?id=${order.id}` });
+        wx.redirectTo({ url: `/pages/sam-order-detail/index?id=${order.id}&waitPayment=1` });
       };
 
       if (warnings.length) {
